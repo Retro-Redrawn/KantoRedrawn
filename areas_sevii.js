@@ -3,9 +3,7 @@ var seviiAreas = [
     order: null,
     title: "One Island: Treasure Beach",
     ident: "One-Island-Treasure-Beach",
-    artist: "@KarlestonChew",
-    artistImageOverride: "",
-    url: "https://twitter.com/KarlestonChew",
+    artistId: "KARL",
     animation: false,
     point: {
       x: 0,
@@ -21,15 +19,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/KarlestonChew/status/1482883281808986113"
+    post_url: "https://x.com/KarlestonChew/status/1482883281808986113"
   },  
   {
     order: 1,
     title: "One Island Town",
     ident: "One-Island-Town",
-    artist: "@Anima_nel",
-    artistImageOverride: "",
-    url: "https://twitter.com/Anima_nel",
+    artistId: "ANIM",
     animation: false,
     point: {
       x: 0,
@@ -45,15 +41,13 @@ var seviiAreas = [
     type: "town",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/Anima_nel/status/1547326349253148674"
+    post_url: "https://x.com/Anima_nel/status/1547326349253148674"
   },
   {
     order: 2,
     title: "One Island: Kindle Road",
     ident: "One-Island-Kindle-Road",
-    artist: "@Dewndeym",
-    artistImageOverride: "",
-    url: "https://twitter.com/Dewndeym",
+    artistId: "DEWN",
     animation: false,
     point: {
       x: 0,
@@ -75,9 +69,7 @@ var seviiAreas = [
     order: 3,
     title: "One Island: Mt. Ember",
     ident: "One-Island-Mt-Ember",
-    artist: "@Dewndeym",
-    artistImageOverride: "",
-    url: "https://twitter.com/Dewndeym",
+    artistId: "DEWN",
     animation: false,
     point: {
       x: 0,
@@ -93,15 +85,13 @@ var seviiAreas = [
     type: "mountain",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/Dewndeym/status/1393800531047485441"
+    post_url: "https://x.com/Dewndeym/status/1393800531047485441"
   },
   {
     order: 4,
     title: "Two Island Town",
     ident: "Two-Island-Town",
-    artist: "@_unsettled_",
-    artistImageOverride: "unsettled",
-    url: "https://twitter.com/_unsettled_",
+    artistId: "UNSE",
     animation: false,
     point: {
       x: 592,
@@ -117,15 +107,13 @@ var seviiAreas = [
     type: "town",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/_unsettled_/status/1403027122223001611"
+    post_url: "https://x.com/_unsettled_/status/1403027122223001611"
   },
   {
     order: 5,
     title: "Two Island: Cape Brink",
     ident: "Two-Island-Cape-Brink",
-    artist: "@Paprika_d",
-    artistImageOverride: "",
-    url: "https://twitter.com/Paprika_d",
+    artistId: "PAPR",
     animation: false,
     point: {
       x: 912,
@@ -141,15 +129,13 @@ var seviiAreas = [
     type: "town",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/Paprika_d/status/1481656412463722506"
+    post_url: "https://x.com/Paprika_d/status/1481656412463722506"
   },
   {
     order: 6,
     title: "Three Island Town",
     ident: "Three-Island-Town",
-    artist: "@HaywireJo",
-    artistImageOverride: "",
-    url: "https://twitter.com/HaywireJo",
+    artistId: "HAYW",
     animation: false,
     point: {
       x: 2896,
@@ -165,15 +151,13 @@ var seviiAreas = [
     type: "town",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/HaywireJo/status/1370096913681416194"
+    post_url: "https://x.com/HaywireJo/status/1370096913681416194"
   },
   {
     order: 7,
     title: "Three Island: Bond Bridge",
     ident: "Three-Island-Bond-Bridge",
-    artist: "@SuperZikoure",
-    artistImageOverride: "",
-    url: "https://twitter.com/SuperZikoure",
+    artistId: "SUPE",
     animation: false,
     point: {
       x: 1584,
@@ -195,9 +179,7 @@ var seviiAreas = [
     order: 8,
     title: "Four Island Town",
     ident: "Four-Island-Town",
-    artist: "@StrawBe",
-    artistImageOverride: "",
-    url: "https://twitter.com/StrawPact",
+    artistId: "STRA",
     animation: false,
     point: {
       x: 0,
@@ -213,15 +195,13 @@ var seviiAreas = [
     type: "town",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/StrawPact/status/1578148922630975492/photo/1"
+    post_url: "https://x.com/StrawPact/status/1578148922630975492/photo/1"
   },
   {
     order: 9,
     title: "Five Island Memorial Pillar",
     ident: "Five-Island-Memorial-Pillar",
-    artist: "@StrawBe",
-    artistImageOverride: "",
-    url: "https://twitter.com/StrawPact",
+    artistId: "STRA",
     animation: false,
     point: {
       x: 2400,
@@ -237,15 +217,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/StrawPact/status/1436843389195104257"
+    post_url: "https://x.com/StrawPact/status/1436843389195104257"
   },
   {
     order: 10,
     title: "Five Island Town and Meadow",
     ident: "Five-Island-Town-Meadow",
-    artist: "@StrawBe",
-    artistImageOverride: "",
-    url: "https://twitter.com/StrawPact",
+    artistId: "STRA",
     animation: false,
     point: {
       x: 1760,
@@ -261,15 +239,13 @@ var seviiAreas = [
     type: "town",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/StrawPact/status/1459286160727969796"
+    post_url: "https://x.com/StrawPact/status/1459286160727969796"
   },
   {
     order: 11,
     title: "Five Island: Water Labyrinth",
     ident: "Five-Island-Water-Labyrinth",
-    artist: "@1000_toasters",
-    artistImageOverride: "",
-    url: "https://twitter.com/1000_toasters",
+    artistId: "1000",
     animation: false,
     point: {
       x: 1104,
@@ -285,15 +261,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/1000_toasters/status/1599805934980673539"
+    post_url: "https://x.com/1000_toasters/status/1599805934980673539"
   },
   {
     order: 12,
     title: "Five Island: Resort Gorgeous",
     ident: "Five-Island-Resort-Gorgeous",
-    artist: "@Blindeduif",
-    artistImageOverride: "",
-    url: "https://twitter.com/blindeduif",
+    artistId: "BLIN_2",
     animation: false,
     point: {
       x: 1760,
@@ -309,15 +283,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/blindeduif/status/1389625876720070656"
+    post_url: "https://x.com/blindeduif/status/1389625876720070656"
   },
   {
     order: 13,
     title: "Six Island: Outcast Island",
     ident: "Six-Island-Outcast-Island",
-    artist: "@gif_not_jiff",
-    artistImageOverride: "",
-    url: "https://twitter.com/gif_not_jif",
+    artistId: "GIFN",
     animation: false,
     point: {
       x: 3068,
@@ -333,15 +305,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/gif_not_jif/status/1690105812486852609"
+    post_url: "https://x.com/gif_not_jif/status/1690105812486852609"
   },
   {
     order: 14,
     title: "Six Island: Green Path",
     ident: "Six-Island-Green-Path",
-    artist: "@YukiPixels",
-    artistImageOverride: "",
-    url: "https://twitter.com/YukiPixels",
+    artistId: "YUKI",
     animation: false,
     point: {
       x: 3136,
@@ -357,15 +327,13 @@ var seviiAreas = [
     type: "route",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/YukiPixels/status/1565375680875008002"
+    post_url: "https://x.com/YukiPixels/status/1565375680875008002"
   },
    {
     order: 15,
     title: "Six Island Town",
     ident: "Six-Island-Town",
-    artist: "@Arkflinn",
-    artistImageOverride: "",
-    url: "https://twitter.com/Arkflinn",
+    artistId: "ARKF",
     animation: false,
     point: {
       x: 3792,
@@ -381,15 +349,13 @@ var seviiAreas = [
     type: "town",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/Arkflinn/status/1452650498310516749"
+    post_url: "https://x.com/Arkflinn/status/1452650498310516749"
   },
   {
     order: 16,
     title: "Six Island: Ruin Valley",
     ident: "Six-Island-Ruin-Valley",
-    artist: "@Zaebucca",
-    artistImageOverride: "zaebucca",
-    url: "https://twitter.com/zaebucca",
+    artistId: "ZAEB",
     animation: false,
     point: {
       x: 3408,
@@ -405,15 +371,13 @@ var seviiAreas = [
     type: "mountain",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/zaebucca/status/1723124537665937639"
+    post_url: "https://x.com/zaebucca/status/1723124537665937639"
   },
     {
     order: 17,
     title: "Seven Island Town and Trainer Tower",
     ident: "Seven-Island-Town-Trainer-Tower",
-    artist: "@Woodspixl_",
-    artistImageOverride: "",
-    url: "https://twitter.com/Woodspixl_",
+    artistId: "WOOD",
     animation: false,
     point: {
       x: 848,
@@ -429,15 +393,13 @@ var seviiAreas = [
     type: "town",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/Woodspixl_/status/1380866320376401922"
+    post_url: "https://x.com/Woodspixl_/status/1380866320376401922"
   },
   {
     order: 18,
     title: "Seven Island: Seavault Canyon North",
     ident: "Seven-Island-Seavault-Canyon-North",
-    artist: "@LuisEnr13182831",
-    artistImageOverride: "",
-    url: "https://twitter.com/LuisEnr13182831",
+    artistId: "LUIS",
     animation: false,
     point: {
       x: 928,
@@ -453,15 +415,13 @@ var seviiAreas = [
     type: "mountain",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/LuisEnr13182831/status/1435083713554042881"
+    post_url: "https://x.com/LuisEnr13182831/status/1435083713554042881"
   },
   {
     order: 19,
     title: "Seven Island: Seavault Canyon South",
     ident: "Seven-Island-Seavault-Canyon-South",
-    artist: "@RunicPixels",
-    artistImageOverride: "",
-    url: "https://twitter.com/RunicPixels",
+    artistId: "RUNI",
     animation: false,
     point: {
       x: 1267,
@@ -477,15 +437,13 @@ var seviiAreas = [
     type: "mountain",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/RunicPixels/status/1398219473014951937"
+    post_url: "https://x.com/RunicPixels/status/1398219473014951937"
   },
   {
     order: 20,
     title: "Seven Island: Tanoby Ruins",
     ident: "Seven-Island-Tanoby-Ruins",
-    artist: "@RunicPixels",
-    artistImageOverride: "",
-    url: "https://twitter.com/RunicPixels",
+    artistId: "RUNI",
     animation: false,
     point: {
       x: 688,
@@ -501,15 +459,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/RunicPixels/status/1457707748108509184"
+    post_url: "https://x.com/RunicPixels/status/1457707748108509184"
   },
   {
     order: 21,
     title: "Sevii Islands: Navel Rock",
     ident: "Sevii-Islands-Navel-Rock",
-    artist: "@StrawBe",
-    artistImageOverride: "",
-    url: "https://twitter.com/StrawPact",
+    artistId: "STRA",
     animation: false,
     point: {
       x: 720,
@@ -525,15 +481,13 @@ var seviiAreas = [
     type: "surfing",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/StrawPact/status/1446185979631579148"
+    post_url: "https://x.com/StrawPact/status/1446185979631579148"
   },  
   {
     order: 22,
     title: "Sevii Islands: Birth Island",
     ident: "Sevii-Islands-Birth-Island",
-    artist: "@r_ramenoodles",
-    artistImageOverride: "",
-    url: "https://twitter.com/r_ramenoodles",
+    artistId: "RAMI",
     animation: false,
     point: {
       x: 3312,
@@ -549,6 +503,6 @@ var seviiAreas = [
     type: "surfing",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/r_ramenoodles/status/1369126920865124353"
+    post_url: "https://x.com/r_ramenoodles/status/1369126920865124353"
   }
 ] 

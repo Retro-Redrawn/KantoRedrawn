@@ -3,9 +3,7 @@ var kantoAreas = [
     order: null,
     title: "Pallet Town",
     ident: "pallet_town",
-    artist: "@Pixel_Pit",
-    artistImageOverride: "",
-    url: "https://twitter.com/Pixel_Pit",
+    artistId: "PIXE_3",
     animation: false,
     point: {
       x: 832,
@@ -43,15 +41,13 @@ var kantoAreas = [
         height: "68"
       }
     ],
-    post_url: "https://twitter.com/Pixel_Pit/status/1392844655822348290"
+    post_url: "https://x.com/Pixel_Pit/status/1392844655822348290"
   },
   {
     order: 1,
     title: "Route 1",
     ident: "route_1",
-    artist: "@Joogleous",
-    artistImageOverride: "",
-    url: "https://twitter.com/Joogleous",
+    artistId: "JOOG",
     animation: false,
     point: {
       x: 832,
@@ -67,15 +63,13 @@ var kantoAreas = [
     type: "route",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/Joogleous/status/1500563916593709063"
+    post_url: "https://x.com/Joogleous/status/1500563916593709063"
   },
   {
     order: 2,
     title: "Viridian City",
     ident: "viridian_city",
-    artist: "@OhNoItsMonroe",
-    artistImageOverride: "",
-    url: "https://twitter.com/OhNoItsMonroe",
+    artistId: "OHNO",
     animation: false,
     point: {
       x: 672,
@@ -113,15 +107,13 @@ var kantoAreas = [
         height: "78"
       }
     ],
-    post_url: "https://twitter.com/OhNoItsMonroe/status/1384503192088727554"
+    post_url: "https://x.com/OhNoItsMonroe/status/1384503192088727554"
   },
   {
     order: 3,
     title: "Route 2 South",
     ident: "route_2_south",
-    artist: "@witch_warren",
-    artistImageOverride: "",
-    url: "https://twitter.com/witch_warren",
+    artistId: "WITC",
     animation: false,
     point: {
       x: 800,
@@ -137,15 +129,13 @@ var kantoAreas = [
     type: "route",
     zoom: 2,
     teleporters: [],
-    post_url: "https://twitter.com/witch_warren/status/1444399420095844355"
+    post_url: "https://x.com/witch_warren/status/1444399420095844355"
   },
   {
     order: 4,
     title: "Viridian Forest",
     ident: "viridian_forest",
-    artist: "@Woodspixl_",
-    artistImageOverride: "",
-    url: "https://twitter.com/Woodspixl_",
+    artistId: "WOOD",
     animation: false,
     point: {
       x: 608,
@@ -161,14 +151,12 @@ var kantoAreas = [
     type: "forest",
     zoom: 1,
     teleporters: [],
-    post_url: "https://twitter.com/Woodspixl_/status/1437038089323622403"
+    post_url: "https://x.com/Woodspixl_/status/1437038089323622403"
   },
   {
     title: "Route 2 North",
     ident: "route_2_north",
-    artist: "@rbatistadelima",
-    artistImageOverride: "",
-    url: "https://twitter.com/rbatistadelima",
+    artistId: "RBAT",
     animation: false,
     point: {
       x: 608,
@@ -185,14 +173,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 5,
-    post_url: "https://twitter.com/rbatistadelima/status/1551637742349688833/photo/1"
+    post_url: "https://x.com/rbatistadelima/status/1551637742349688833/photo/1"
   },
   {
     title: "Viridian Forest Bypass",
     ident: "viridian_forest_bypass",
-    artist: "@fiopico",
-    artistImageOverride: "",
-    url: "https://twitter.com/fiopico",
+    artistId: "FIOP",
     animation: false,
     point: {
       x: 1152,
@@ -209,14 +195,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 6,
-    post_url: "https://twitter.com/fiopico/status/1422301164146761747"
+    post_url: "https://x.com/fiopico/status/1422301164146761747"
   },
   {
     title: "Pewter City",
     ident: "pewter_city",
-    artist: "@saltiestbunny",
-    artistImageOverride: "",
-    url: "https://twitter.com/saltiestbunny",
+    artistId: "SALT",
     animation: false,
     point: {
       x: 672,
@@ -233,14 +217,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 7,
-    post_url: "https://twitter.com/saltiestbunny/status/1517022842310770689"
+    post_url: "https://x.com/saltiestbunny/status/1517022842310770689"
   },
   {
     title: "Route 3 West",
     ident: "route_3_west",
-    artist: "@chreniafoka",
-    artistImageOverride: "",
-    url: "https://twitter.com/chreniafoka",
+    artistId: "CHRE",
     animation: false,
     point: {
       x: 1312,
@@ -257,14 +239,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 8,
-    post_url: "https://twitter.com/chreniafoka/status/1512833781484371983"
+    post_url: "https://x.com/chreniafoka/status/1512833781484371983"
   },
   {
     title: "Route 3 East",
     ident: "route_3_east",
-    artist: "cjlm123",
-    artistImageOverride: "",
-    url: "https://pixeljoint.com/p/220173.htm",
+    artistId: "CJLM",
     animation: false,
     point: {
       x: 2112,
@@ -286,9 +266,7 @@ var kantoAreas = [
   {
     title: "Mt. Moon Square",
     ident: "mt_moon_square",
-    artist: "@Woodspixl_",
-    artistImageOverride: "",
-    url: "https://twitter.com/Woodspixl_",
+    artistId: "WOOD",
     animation: false,
     point: {
       x: 2224,
@@ -305,14 +283,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 10,
-    post_url: "https://twitter.com/Woodspixl_/status/1480278230628188166"
+    post_url: "https://x.com/Woodspixl_/status/1480278230628188166"
   },
   {
     title: "Route 4",
     ident: "route_4",
-    artist: "@1000_toasters",
-    artistImageOverride: "",
-    url: "https://twitter.com/1000_toasters",
+    artistId: "1000",
     animation: false,
     point: {
       x: 2464,
@@ -329,14 +305,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 11,
-    post_url: "https://twitter.com/1000_toasters/status/1486462814466482176"
+    post_url: "https://x.com/1000_toasters/status/1486462814466482176"
   },
   {
     title: "Cerulean City",
     ident: "cerulean_city",
-    artist: "@EdelweissPkmn",
-    artistImageOverride: "",
-    url: "https://twitter.com/EdelweissPkmn",
+    artistId: "EDEL",
     animation: false,
     point: {
       x: 3552,
@@ -353,14 +327,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 12,
-    post_url: "https://twitter.com/EdelweissPkmn/status/1370800436912009222"
+    post_url: "https://x.com/EdelweissPkmn/status/1370800436912009222"
   },
   {
     title: "Route 24",
     ident: "route_24",
-    artist: "@yoYokaiy",
-    artistImageOverride: "",
-    url: "https://twitter.com/yoYokaiy",
+    artistId: "YOKA",
     animation: false,
     point: {
       x: 3712,
@@ -377,14 +349,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 13,
-    post_url: "https://twitter.com/yoYokaiy/status/1511106544976470019"
+    post_url: "https://x.com/yoYokaiy/status/1511106544976470019"
   },
   {
     title: "Route 25",
     ident: "route_25",
-    artist: "@huttaburger",
-    artistImageOverride: "",
-    url: "https://twitter.com/huttaburger",
+    artistId: "HUTT",
     animation: false,
     point: {
       x: 4032,
@@ -401,14 +371,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 14,
-    post_url: "https://twitter.com/huttaburger/status/1484520005463154696"
+    post_url: "https://x.com/huttaburger/status/1484520005463154696"
   },
   {
     title: "Bill’s Lighthouse",
     ident: "bills_lighthouse",
-    artist: "@Pixelkauz",
-    artistImageOverride: "",
-    url: "https://twitter.com/Pixelkauz",
+    artistId: "PIXE_4",
     animation: false,
     point: {
       x: 4704,
@@ -425,14 +393,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 15,
-    post_url: "https://twitter.com/Pixelkauz/status/1470834784427462664"
+    post_url: "https://x.com/Pixelkauz/status/1470834784427462664"
   },
   {
     title: "Route 5",
     ident: "route_5",
-    artist: "@ashenwater",
-    artistImageOverride: "",
-    url: "https://twitter.com/ashenwater",
+    artistId: "ASHE",
     animation: false,
     point: {
       x: 3712,
@@ -449,14 +415,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 16,
-    post_url: "https://twitter.com/ashenwater/status/1548817069788975104"
+    post_url: "https://x.com/ashenwater/status/1548817069788975104"
   },
   {
     title: "Route 6",
     ident: "route_6",
-    artist: "@RaspberryMilks1",
-    artistImageOverride: "",
-    url: "https://twitter.com/RaspberryMilks1",
+    artistId: "RASP",
     animation: false,
     point: {
       x: 3696,
@@ -473,14 +437,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 17,
-    post_url: "https://twitter.com/RaspberryMilks1/status/1527868976176721920"
+    post_url: "https://x.com/RaspberryMilks1/status/1527868976176721920"
   },
   {
     title: "Vermilion City",
     ident: "vermilion_city",
-    artist: "@HyperJerk",
-    artistImageOverride: "",
-    url: "https://twitter.com/HyperJerk",
+    artistId: "HYPE",
     animation: false,
     point: {
       x: 3552,
@@ -497,14 +459,14 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 18,
-    post_url: "https://twitter.com/HyperJerk/status/1402390849888174082"
+    post_url: "https://x.com/HyperJerk/status/1402390849888174082"
   },
   {
     title: "Route 11",
     ident: "route_11",
-    artist: "@pixellerjeremy",
+    artistId: "PIXE_5",
     artistImageOverride: "",
-    url: "https://twitter.com/pixellerjeremy",
+    url: "https://x.com/pixellerjeremy",
     animation: false,
     point: {
       x: 4208,
@@ -521,14 +483,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 19,
-    post_url: "https://twitter.com/pixellerjeremy/status/1385885613128253444"
+    post_url: "https://x.com/pixellerjeremy/status/1385885613128253444"
   },
   {
     title: "Route 9",
     ident: "route_9",
-    artist: "@HaywireJo",
-    artistImageOverride: "",
-    url: "https://twitter.com/HaywireJo",
+    artistId: "HAYW",
     animation: false,
     point: {
       x: 4192,
@@ -545,14 +505,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 20,
-    post_url: "https://twitter.com/HaywireJo/status/1372546808480677889"
+    post_url: "https://x.com/HaywireJo/status/1372546808480677889"
   },
   {
     title: "Route 10 North",
     ident: "route_10_north",
-    artist: "@Seva86706122",
-    artistImageOverride: "",
-    url: "https://twitter.com/Seva86706122",
+    artistId: "SEVA",
     animation: false,
     point: {
       x: 5152,
@@ -569,14 +527,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 21,
-    post_url: "https://twitter.com/Seva86706122/status/1421859274653904896"
+    post_url: "https://x.com/Seva86706122/status/1421859274653904896"
   },
   {
     title: "Power Plant",
     ident: "power_plant",
-    artist: "@gif_not_jif",
-    artistImageOverride: "",
-    url: "https://twitter.com/gif_not_jif",
+    artistId: "GIFN",
     animation: false,
     point: {
       x: 5152,
@@ -593,14 +549,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 22,
-    post_url: "https://twitter.com/gif_not_jif/status/1388518060391288832"
+    post_url: "https://x.com/gif_not_jif/status/1388518060391288832"
   },
   {
     title: "Route 10 South",
     ident: "route_10_south",
-    artist: "@StrawPact",
-    artistImageOverride: "",
-    url: "https://twitter.com/StrawPact",
+    artistId: "STRA",
     animation: false,
     point: {
       x: 5152,
@@ -617,14 +571,12 @@ var kantoAreas = [
     zoom: 4,
     teleporters: [],
     order: 23,
-    post_url: "https://twitter.com/StrawPact/status/1471994887981600772"
+    post_url: "https://x.com/StrawPact/status/1471994887981600772"
   },
   {
     title: "Lavender Town",
     ident: "lavender_town",
-    artist: "@cure_pixel",
-    artistImageOverride: "",
-    url: "https://twitter.com/cure_pixel",
+    artistId: "CURE_2",
     animation: false,
     point: {
       x: 5152,
@@ -641,14 +593,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 24,
-    post_url: "https://twitter.com/cure_pixel/status/1458219829962297348"
+    post_url: "https://x.com/cure_pixel/status/1458219829962297348"
   },
   {
     title: "Route 8",
     ident: "route_8",
-    artist: "KerrieLake",
-    artistImageOverride: "",
-    url: "https://twitter.com/KerrieLake",
+    artistId: "KERR",
     animation: false,
     point: {
       x: 4192,
@@ -665,14 +615,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 25,
-    post_url: "https://twitter.com/KerrieLake/status/1396998599494492163"
+    post_url: "https://x.com/KerrieLake/status/1396998599494492163"
   },
   {
     title: "Route 7",
     ident: "route_7",
-    artist: "@SarahBoevingArt",
-    artistImageOverride: "",
-    url: "https://twitter.com/SarahBoevingArt",
+    artistId: "SARA",
     animation: false,
     point: {
       x: 3232,
@@ -689,14 +637,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 26,
-    post_url: "https://twitter.com/SarahBoevingArt/status/1394324238434283522"
+    post_url: "https://x.com/SarahBoevingArt/status/1394324238434283522"
   },
   {
     title: "Celadon City",
     ident: "celadon_city",
-    artist: "@MetaruPX",
-    artistImageOverride: "",
-    url: "https://twitter.com/MetaruPX",
+    artistId: "META",
     animation: false,
     point: {
       x: 2432,
@@ -713,14 +659,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 27,
-    post_url: "https://twitter.com/MetaruPX/status/1542194452994850817"
+    post_url: "https://x.com/MetaruPX/status/1542194452994850817"
   },
   {
     title: "Saffron City",
     ident: "saffron_city",
-    artist: "@Foofarawr",
-    artistImageOverride: "",
-    url: "https://twitter.com/foofarawr",
+    artistId: "FOOF",
     animation: false,
     point: {
       x: 3552,
@@ -737,14 +681,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 28,
-    post_url: "https://twitter.com/foofarawr/status/1490396449791750146"
+    post_url: "https://x.com/foofarawr/status/1490396449791750146"
   },
   {
     title: "Route 16",
     ident: "route_16",
-    artist: "@MetaruPX",
-    artistImageOverride: "",
-    url: "https://twitter.com/MetaruPX",
+    artistId: "META",
     animation: false,
     point: {
       x: 1792,
@@ -761,14 +703,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 29,
-    post_url: "https://twitter.com/MetaruPX/status/1424808687747600385"
+    post_url: "https://x.com/MetaruPX/status/1424808687747600385"
   },
   {
     title: "Route 17",
     ident: "route_17",
-    artist: "@Anima_nel",
-    artistImageOverride: "",
-    url: "https://twitter.com/Anima_nel",
+    artistId: "ANIM",
     animation: false,
     point: {
       x: 1792,
@@ -785,14 +725,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 30,
-    post_url: "https://twitter.com/Anima_nel/status/1406672088845410306"
+    post_url: "https://x.com/Anima_nel/status/1406672088845410306"
   },
   {
     title: "Route 18",
     ident: "route_18",
-    artist: "@Anima_nel",
-    artistImageOverride: "",
-    url: "https://twitter.com/Anima_nel",
+    artistId: "ANIM",
     animation: false,
     point: {
       x: 1792,
@@ -809,14 +747,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 31,
-    post_url: "https://twitter.com/Anima_nel/status/1449414543092879364"
+    post_url: "https://x.com/Anima_nel/status/1449414543092879364"
   },
   {
     title: "Fuchsia City",
     ident: "fuchsia_city",
-    artist: "@Dewndeym",
-    artistImageOverride: "",
-    url: "https://twitter.com/Dewndeym",
+    artistId: "DEWN",
     animation: false,
     point: {
       x: 2592,
@@ -833,14 +769,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 32,
-    post_url: "https://twitter.com/Dewndeym/status/1374829843150483457"
+    post_url: "https://x.com/Dewndeym/status/1374829843150483457"
   },
   {
     title: "Safari Zone Central",
     ident: "safari_zone_central",
-    artist: "@Dewndeym",
-    artistImageOverride: "",
-    url: "https://twitter.com/Dewndeym",
+    artistId: "DEWN",
     animation: false,
     point: {
       x: 2656,
@@ -857,14 +791,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 33,
-    post_url: "https://twitter.com/Dewndeym/status/1526231005161472000"
+    post_url: "https://x.com/Dewndeym/status/1526231005161472000"
   },
   {
     title: "Safari Zone East",
     ident: "safari_zone_east",
-    artist: "chubbopx",
-    artistImageOverride: "",
-    url: "https://www.instagram.com/chubbopx/",
+    artistId: "CHUB",
     animation: false,
     point: {
       x: 3168,
@@ -886,9 +818,7 @@ var kantoAreas = [
   {
     title: "Safari Zone North",
     ident: "safari_zone_north",
-    artist: "@_Mechano_",
-    artistImageOverride: "Mechano",
-    url: "https://twitter.com/_Mechano_",
+    artistId: "MECH",
     animation: false,
     point: {
       x: 2464,
@@ -905,14 +835,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 35,
-    post_url: "https://twitter.com/_Mechano_/status/1545874240473550848"
+    post_url: "https://x.com/_Mechano_/status/1545874240473550848"
   },
   {
     title: "Safari Zone West",
     ident: "safari_zone_west",
-    artist: "@Daydream_Stream",
-    artistImageOverride: "",
-    url: "https://twitter.com/Daydream_Stream",
+    artistId: "DAYD",
     animation: false,
     point: {
       x: 2144,
@@ -929,14 +857,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 36,
-    post_url: "https://twitter.com/Daydream_Stream/status/1395075458383990786"
+    post_url: "https://x.com/Daydream_Stream/status/1395075458383990786"
   },
   {
     title: "Route 15",
     ident: "route_15",
-    artist: "cjlm123",
-    artistImageOverride: "",
-    url: "https://pixeljoint.com/p/220173.htm",
+    artistId: "CJLM",
     animation: false,
     point: {
       x: 3232,
@@ -958,9 +884,7 @@ var kantoAreas = [
   {
     title: "Route 14",
     ident: "route_14",
-    artist: "@KarlestonChew",
-    artistImageOverride: "",
-    url: "https://twitter.com/KarlestonChew",
+    artistId: "KARL",
     animation: false,
     point: {
       x: 4240,
@@ -977,14 +901,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 38,
-    post_url: "https://twitter.com/KarlestonChew/status/1403357074298388480"
+    post_url: "https://x.com/KarlestonChew/status/1403357074298388480"
   },
   {
     title: "Route 13",
     ident: "route_13",
-    artist: "cjlm123",
-    artistImageOverride: "",
-    url: "https://pixeljoint.com/p/220173.htm",
+    artistId: "CJLM",
     animation: false,
     point: {
       x: 4240,
@@ -1006,9 +928,7 @@ var kantoAreas = [
   {
     title: "Route 12 South",
     ident: "route_12_south",
-    artist: "@SarahBoevingArt",
-    artistImageOverride: "",
-    url: "https://twitter.com/SarahBoevingArt",
+    artistId: "SARA",
     animation: false,
     point: {
       x: 5184,
@@ -1025,14 +945,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 40,
-    post_url: "https://twitter.com/SarahBoevingArt/status/1483090433307811840"
+    post_url: "https://x.com/SarahBoevingArt/status/1483090433307811840"
   },
   {
     title: "Route 12 North",
     ident: "route_12_north",
-    artist: "mysticaldrop",
-    artistImageOverride: "",
-    url: "https://www.instagram.com/mysticaldrop/",
+    artistId: "MYST",
     animation: false,
     point: {
       x: 5184,
@@ -1054,9 +972,7 @@ var kantoAreas = [
   {
     title: "Route 19",
     ident: "route_19",
-    artist: "@VCorbi",
-    artistImageOverride: "",
-    url: "https://twitter.com/VCorbi",
+    artistId: "VCOR",
     animation: false,
     point: {
       x: 2752,
@@ -1073,14 +989,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 42,
-    post_url: "https://twitter.com/VCorbi/status/1392879617980223488"
+    post_url: "https://x.com/VCorbi/status/1392879617980223488"
   },
   {
     title: "Route 20",
     ident: "route_20",
-    artist: "@natnatart",
-    artistImageOverride: "",
-    url: "https://twitter.com/natnatart",
+    artistId: "NATN",
     animation: false,
     point: {
       x: 1248,
@@ -1097,14 +1011,12 @@ var kantoAreas = [
     zoom: 1,
     teleporters: [],
     order: 43,
-    post_url: "https://twitter.com/natnatart/status/1487890485037481984"
+    post_url: "https://x.com/natnatart/status/1487890485037481984"
   },
   {
     title: "Cinnabar Island",
     ident: "cinnabar_island",
-    artist: "@Anima_nel",
-    artistImageOverride: "",
-    url: "https://twitter.com/Anima_nel",
+    artistId: "ANIM",
     animation: false,
     point: {
       x: 832,
@@ -1121,14 +1033,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 44,
-    post_url: "https://twitter.com/Anima_nel/status/1400072176024403968"
+    post_url: "https://x.com/Anima_nel/status/1400072176024403968"
   },
   {
     title: "Route 21",
     ident: "route_21",
-    artist: "@SalamiChild",
-    artistImageOverride: "",
-    url: "https://twitter.com/SalamiChild",
+    artistId: "SALA",
     animation: false,
     point: {
       x: 832,
@@ -1150,9 +1060,7 @@ var kantoAreas = [
   {
     title: "Route 22",
     ident: "route_22",
-    artist: "@Geno_CL",
-    artistImageOverride: "",
-    url: "https://twitter.com/Geno_CL",
+    artistId: "GENO",
     animation: false,
     point: {
       x: null,
@@ -1169,14 +1077,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 46,
-    post_url: "https://twitter.com/Geno_CL/status/1483484339153387521"
+    post_url: "https://x.com/Geno_CL/status/1483484339153387521"
   },
   {
     title: "Route 23 Part 1",
     ident: "route_23_1",
-    artist: "@incrediblemaker",
-    artistImageOverride: "",
-    url: "https://twitter.com/incrediblemaker",
+    artistId: "INCR",
     animation: false,
     point: {
       x: null,
@@ -1193,14 +1099,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 47,
-    post_url: "https://twitter.com/incrediblemaker/status/1456984649125797894"
+    post_url: "https://x.com/incrediblemaker/status/1456984649125797894"
   },
   {
     title: "Route 23 Part 2",
     ident: "route_23_2",
-    artist: "@incrediblemaker",
-    artistImageOverride: "",
-    url: "https://twitter.com/incrediblemaker",
+    artistId: "INCR",
     animation: false,
     point: {
       x: null,
@@ -1217,14 +1121,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 48,
-    post_url: "https://twitter.com/incrediblemaker/status/1482517142327156740"
+    post_url: "https://x.com/incrediblemaker/status/1482517142327156740"
   },
   {
     title: "Route 23 Part 3",
     ident: "route_23_3",
-    artist: "@chromegnomes",
-    artistImageOverride: "",
-    url: "https://twitter.com/chromegnomes",
+    artistId: "CHRO",
     animation: false,
     point: {
       x: null,
@@ -1241,14 +1143,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 49,
-    post_url: "https://twitter.com/chromegnomes/status/1484561251032346631"
+    post_url: "https://x.com/chromegnomes/status/1484561251032346631"
   },
   {
     title: "Route 23 Part 4",
     ident: "route_23_4",
-    artist: "@jooniverz",
-    artistImageOverride: "",
-    url: "https://twitter.com/jooniverz",
+    artistId: "JOON",
     animation: false,
     point: {
       x: null,
@@ -1265,14 +1165,12 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 50,
-    post_url: "https://twitter.com/jooniverz/status/1482593462406959106"
+    post_url: "https://x.com/jooniverz/status/1482593462406959106"
   },
   {
     title: "Indigo Plateau",
     ident: "indigo_plateau",
-    artist: "@jdzombi_",
-    artistImageOverride: "",
-    url: "https://twitter.com/jdzombi_",
+    artistId: "JDZO",
     animation: false,
     point: {
       x: null,
@@ -1289,6 +1187,6 @@ var kantoAreas = [
     zoom: 2,
     teleporters: [],
     order: 51,
-    post_url: "https://twitter.com/jdzombi_/status/1397216701410914309"
+    post_url: "https://x.com/jdzombi_/status/1397216701410914309"
   }
 ] 

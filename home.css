@@ -14,6 +14,9 @@ a{
     height:100vh;
     position:absolute;
 }
+.rrlogo {
+    text-align: center;
+}
 .menu{
     color:#ddd;
     background-color: #222034;
@@ -95,8 +98,7 @@ a{
     top:0;
     bottom:0;
     height:100%;
-    background-color: #222034;
-    
+    background-color: #222034;    
 }
 .menu.active{
     transform:translateX(0%);
@@ -158,6 +160,10 @@ a{
 }
 .rrlogo {
       text-align: center;
+}
+.menu__actions{
+    display:flex;
+    margin-top:10px;
 }
 
 .rrlogo figure img {
@@ -268,7 +274,7 @@ a{
     padding:5px;
     
     background-color: rgb(130 94 108);
-    border-bottom:2px solid #22222;
+    border-bottom:2px solid #2222;
     border-radius: 5px;
     
     transition: background-color .2s;
@@ -340,6 +346,9 @@ a{
     width:50px;
     display:block;
 }
+.settings__checkbox{
+    margin: 2px;
+}
 #error{
     color:red;
     font-size:20px;
@@ -393,6 +402,12 @@ a{
     margin:auto;
     margin-bottom:10px;
 }
+.content {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
 .loading-bar{
     width:100%;
     border:2px solid #ddd;
@@ -420,6 +435,7 @@ a{
     padding:8px 20px;
     font-size:1.2em;
     border-radius: 5px;
+    border-bottom:4px solid #222;
     background-color: rgb(53, 199, 53);
     cursor:pointer;
     transition: background-color .2s;
@@ -435,4 +451,22 @@ a{
 }
 .reverse-range{
     direction: rtl;
+}
+.artist_mobile {
+    display: none;
+}
+.artist_mobile {
+    display: flex;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: 64px;
+    margin: 2%;
+    background-color: rgba(0, 0, 0, .6);
+}
+
+.artist_mobile .area__info__name {
+    padding-left: 20px;
+    padding-right: 20px;
 }

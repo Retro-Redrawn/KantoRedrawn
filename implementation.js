@@ -5,14 +5,16 @@
 *   Frontend data container of the Redrawn Viewer. 
 *   Contains implementation data specific to a Redrawn project.
 *
-*   by Tyson Moll (vvvvvvv), 2023.
+*   Author: Tyson Moll (vvvvvvv)
 *
+*   Created in 2023
 */
 
 // Directories
-var artistImgDir = "img/profiles/";
-var artistImgExtension = '.png';  // Image extension for artist images.
-// (having JavaScript self-determine if an image exists without a particular extension is difficult)
+const GRID_CELL_IMAGE = 'img/website/grid_test.png'; // Tiled background image (blank if none)
+
+// Audio
+var bgmTrack = null;
 
 /** Content layers in the Redrawn */
 var activeLayerIndex = 0;           // Currently active layer index (and initial index)

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no"> <!--App should handle scaling-->
     <meta property="og:title" content="Kanto Redrawn">
     <meta property="og:site_name" content="Retro Redrawn">
-    <meta property="og:url" content="http://retroredrawn.com/">
+    <meta property="og:url" content="https://retroredrawn.com/">
     <meta property="og:description" content="Kanto Redrawn is a collaborative art project by a group of passionate pixel artists from across the world.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="img\website\kanto_redrawn_logo_1x.png"><!---->
@@ -18,13 +18,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!--PIXI-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.3.12/pixi.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi-filters@4.2/dist/pixi-filters.js"></script>
-
+    
     <!--Retro Redrawn: CSS-->
     <link rel="stylesheet" href="home.css">
 </head>
-<body>
+<body class="content">
     <div id="app">
         <canvas id="canvas"></canvas>
         <div id="error"></div>
@@ -32,7 +32,7 @@
             <div class="menu__button" onclick="toggleMenu()"></div>
             <div class="menu__inner">
                 <div class="menu__logo">
-                    <a href="https://twitter.com/PokemonRedrawn" title="Visit our Twitter!" target="_blank">
+                    <a href="https://bsky.app/profile/retroredrawn.bsky.social" title="Visit our BlueSky!" target="_blank">
                         <img src="img/website/kanto_redrawn_logo.png" alt="Kanto Redrawn" draggable="false" />
                     </a>
                 </div>
@@ -68,20 +68,16 @@
                         <ul id="areas"></ul>
                     </div>
                     <div id="settings" style="text-align: center;">
-                        <div class="bgm">
-                            <label>Vermilion City - Pokerus Project</label>
-                            <audio class="bgmPlayer" controls loop> 
-                                <source src="audio/VermilionCity_PokerusPr.mp3" type="audio/mpeg" autoplay="false">
-                            </audio><br>
-                            <label>Route 12 - Toribobs</label>
-                            <audio class="bgmPlayer" controls loop>
-                                <source src="audio/Route12_Toribobs.mp3" type="audio/mpeg" autoplay="false">
-                            </audio>
-                        </div>
                         <hr>
-                        <div class="tour">
-                            <button id="tourButton" onclick="toggleTour()"><span class="material-icons">play_arrow</span> <span>Begin Tour</span></button>
-                            </p>
+                        <div>
+                            <input class="settings__checkbox" type="checkbox" id="disableBlur"><label for="disableBlur">Disable Zoom Blur</label> <br><br>
+                            <input class="settings__checkbox" type="checkbox" id="areaBorderToggle" oninput="onAreaBorderToggled(this.checked)"><label for="areaBorderToggle">Hide Area Border</label> 
+                        </div><br>
+                        <hr>
+                        <div>
+                            <label>Camera Speed</label><br>
+                            <input type="range" min="0.5" max="2" value="1" step="0.25" id="cameraSpeed" oninput="changeCameraSpeed(this.value)">
+                            <small>1x</small>
                         </div>
                         <div>
                             <label>Tour Speed</label><br>
@@ -89,29 +85,20 @@
                             <small>1x</small>
                         </div>
                         <hr>
-                        <div>
-                            <label>Camera Speed</label><br>
-                            <input type="range" min="0.5" max="2" value="1" step="0.25" id="cameraSpeed" oninput="changeCameraSpeed(this.value)">
-                            <small>1x</small>
-                        </div>
-                        <div><input type="checkbox" id="disableBlur"><label for="disableBlur">Disable Zoom Blur</label> </div>
-                        <hr>
                     </div>
                     <div id="about">
                         <p>Kanto Redrawn is a collaborative art project by a group of passionate pixel artists from across the world.</p>
                         <p>The project is an artistic reimagining of the Kanto region as seen in the first generation of Pokémon games and their sequels.</p>
                         <hr>
-                        <p>To navigate, drag and pull to pan and zoom the map, similarly as you would on sites like Google Maps.</p>
-                        <hr>
                         Check out more projects at...
                         <div class="rrlogo">
-                            <a href="http://retroredrawn.com/"><img id="rrlogo_img" src="img/website/retro_redrawn_logo.png" alt = "Retroredrawn Logo"></a>
+                            <a href="https://retroredrawn.com/"><img id="rrlogo_img" src="img/website/retro_redrawn_logo.png" alt="Retro Redrawn Logo"></a>
                         </div>
                         <hr>
                         <p><b>Credits</b></p>
                         <p>The site is the collaborative work of the Retro Redrawn community and is maintained by the Retro Redrawn organizational team.</p>
                         <p>Organized by <a href="https://twitter.com/foofarawr" target="_blank">@foofarawr</a></p>    
-                        <p>Backend development and refactoring by <a href="https://tysonmoll.ca" target="_blank">Tyson Moll (vvvultures)</a></p>
+                        <p>Backend development, maintenance and refactoring by <a href="https://tysonmoll.ca" target="_blank">Tyson Moll (vvvultures)</a></p>
                         <p>Based on Johto Redrawn, developed by <a href="https://twitter.com/hyperjerk" target="_blank">@HyperJerk</a></p>
 						<p>General site maintenance and support by <a href="https://linktr.ee/blindeduif" target="_blank">@blindeduif</a></p>
                         <p>"Vermillion City" BGM by <a href="https://pokerusproject.bandcamp.com/">Pokérus Project</a></p>
@@ -127,9 +114,34 @@
 
                     </div>
                 </div>
-                
+                <br>
+                <div class="bgm">
+                    <label>Vermilion City - Pokerus Project</label>
+                    <audio class="bgmPlayer" controls loop> 
+                        <source src="audio/VermilionCity_PokerusPr.mp3" type="audio/mpeg" autoplay="false">
+                    </audio><br>
+                    <label>Route 12 - Toribobs</label>
+                    <audio class="bgmPlayer" controls loop>
+                        <source src="audio/Route12_Toribobs.mp3" type="audio/mpeg" autoplay="false">
+                    </audio>
+                </div>
+                <div class="tour">
+                    <button id="tourButton" onclick="toggleTour()"><span class="material-icons">play_arrow</span> <span>Begin Tour</span></button>
+                </div>
             </div>
         </div>
+
+        <div class="artist_mobile area__info__inner">
+            <div class="area__info__img">
+                <a href="" target="_blank" title="">
+                    <img src="" alt="">
+                </a>
+            </div>
+            <div class="area__info__name">
+                <a href="" target="_blank" title=""></a>
+            </div>
+        </div>
+
         <div id="loading" class="active">
             <div>
                 <img src="img/website/kanto_redrawn_logo.png" alt="Pokemon Redrawn" draggable="false" />
@@ -147,7 +159,10 @@
 <script src="areas_outdoors.js"></script>
 <script src="areas_interiors.js"></script>
 <script src="areas_sevii.js"></script>
+<script src="https://vulture-boy.github.io/Retro-Redrawn-Data/ArtistData.js"></script>
+<script src="https://vulture-boy.github.io/Retro-Redrawn-Data/RedrawnArtistDataUtils.js"></script>
 <script src="implementation.js"></script>
 <script src="interactive.js"></script>
+<script src="maputils.js"></script>
 
 </html>
