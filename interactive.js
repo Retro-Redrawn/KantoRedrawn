@@ -220,30 +220,40 @@ function setupCanvas () {
     app.stage.removeChildren()
 
     // Establish PIXI containers
-    map = new PIXI.Container()
-    map.name = "Map";
-    mapImages = new PIXI.Container()
-    mapImages.name = "Map Images"
-    mapZones = new PIXI.Container()
-    mapZones.name = "Map Zones" 
     viewport = new PIXI.Container({width: window.innerWidth, height: window.innerHeight})
     viewport.name = "Viewport"
 
-    buildMap()
-    var mapbg = new PIXI.TilingSprite(new PIXI.Texture.from(GRID_CELL_IMAGE), canvasDimensions.width, canvasDimensions.height)
-    mapbg.name = "Map Background"
-    mapbg.zIndex = -1
-    map.addChild(mapbg)
+    map = new PIXI.Container()
+    map.name = "Map";
+
+    if (CANVAS_BACKGROUND_IMAGE !== '') {
+        var mapbg = new PIXI.TilingSprite(new PIXI.Texture.from(CANVAS_BACKGROUND_IMAGE), canvasDimensions.width, canvasDimensions.height)
+        mapbg.name = "Map Background"
+        mapbg.zIndex = -1
+        map.addChild(mapbg)
+    }
+    
+    mapImages = new PIXI.Container()
+    mapImages.name = "Map Images"
     map.addChild(mapImages)
+    
+    mapZones = new PIXI.Container()
+    mapZones.name = "Map Zones" 
     map.addChild(mapZones)
+    
+    buildMap()
+
     var background = new PIXI.Graphics()
     background.name = "Background Fill"
-    //background.beginFill(0x333333)
-    background.beginFill(0x00000)
+    background.beginFill(WINDOW_BACKGROUND_COLOR)
     background.drawRect(0,0,window.innerWidth, window.innerHeight)
     background.endFill()
-    // var background = new PIXI.TilingSprite(new PIXI.Texture.from('grid_test.png'), window.innerWidth, window.innerHeight)
+
+    if (WINDOW_BACKGROUND_IMAGE !== '') {
+        background = new PIXI.TilingSprite(new PIXI.Texture.from(WINDOW_BACKGROUND_IMAGE), window.innerWidth, window.innerHeight)
+    }
     viewport.addChild(background)
+    
     viewport.addChild(map)
     app.stage.addChild(viewport)
 

@@ -11,7 +11,9 @@
 */
 
 // Directories
-const GRID_CELL_IMAGE = 'img/website/grid_test.png'; // Tiled background image (blank if none)
+const CANVAS_BACKGROUND_IMAGE = 'img/website/grid_test.png'; // Tiled background image for the canvas (blank if none)
+const WINDOW_BACKGROUND_COLOR = 0x000000;    // Color for the window background
+const WINDOW_BACKGROUND_IMAGE = ''; // Tiled background image for the window (blank if none)
 
 // Audio
 var bgmTrack = null;
