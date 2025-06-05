@@ -15,6 +15,10 @@ const CANVAS_BACKGROUND_IMAGE = 'img/website/grid_test.png'; // Tiled background
 const WINDOW_BACKGROUND_COLOR = 0x000000;    // Color for the window background
 const WINDOW_BACKGROUND_IMAGE = ''; // Tiled background image for the window (blank if none)
 
+// File Naming
+const NEW_SLICE_SUFFIX = '' // Optional suffix added to new map file names (e.g. '_new' for 'map_name_new.png')
+const OLD_SLICE_SUFFIX = '' // Optional suffix added to old map file names (e.g. '_old' for 'map_name_old.png')
+
 // Audio
 var bgmTrack = null;
 

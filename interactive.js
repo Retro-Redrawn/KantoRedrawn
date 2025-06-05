@@ -108,22 +108,25 @@ function loadLayer (areaArray, areaImageArray, areaOldImageArray, layerSubfolder
 
         // Load new images
         var img = new Image();
-        img.src = createImageLink(layerSubfolder, NEW_STYLE_NAME, area.ident);
+        img.src = createImageLink(layerSubfolder, NEW_STYLE_NAME, area.ident, NEW_SLICE_SUFFIX);
         checkImageLoaded(img, function () { onAreaImageLoaded(areaImageArray); });
         areaImageArray.push(img);
         
         // Load old images
         var oldimg = new Image();
-        oldimg.src = createImageLink(layerSubfolder, OLD_STYLE_NAME, area.ident);
+        oldimg.src = createImageLink(layerSubfolder, OLD_STYLE_NAME, area.ident, OLD_SLICE_SUFFIX);
         checkImageLoaded(oldimg, function () { onAreaImageLoaded(areaImageArray); });
         areaOldImageArray.push(oldimg);
     }
 }
 
 /** Produces an image link from area details. */
-function createImageLink (layerName, mapStyle, areaName) {
+function createImageLink (layerName, mapStyle, areaName, mapSuffix) {
 
     var link = `img/${layerName}/${mapStyle}/${areaName}`;
+    if (!(mapSuffix === undefined || mapSuffix === '')) {
+        link += mapSuffix;
+    }
     link += `.png`; 
     
     return link;
@@ -194,7 +197,14 @@ function init () {
     // Construct the PIXI canvas with pixel perfect settings
     try {
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST     // Nearest neighbour scaling
-        app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, antialias: false, view: document.querySelector('#canvas'), autoResize: true });
+        app = new PIXI.Application(
+            { 
+                width: window.innerWidth, 
+                height: window.innerHeight, 
+                antialias: false, 
+                view: document.querySelector('#canvas'), 
+                autoResize: true 
+            });
         globalThis.__PIXI_APP__ = app; 
     } catch (error) {
         // alert('Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.')
