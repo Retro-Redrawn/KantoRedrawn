@@ -37,7 +37,7 @@ var redrawnLayers = [
     },
     {
         name: "sevii",
-        canvasSize: {width: 4448, height: 6784},
+        canvasSize: {width: 4576, height: 6784},
         areas: seviiAreas
     },
 ];
