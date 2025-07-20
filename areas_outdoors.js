@@ -244,7 +244,7 @@ var kantoAreas = [
   {
     title: "Route 3 East",
     ident: "route_3_east",
-    artistId: "CJLM",
+    artistId: "CHJA",
     animation: false,
     point: {
       x: 2112,
@@ -862,7 +862,7 @@ var kantoAreas = [
   {
     title: "Route 15",
     ident: "route_15",
-    artistId: "CJLM",
+    artistId: "CHJA",
     animation: false,
     point: {
       x: 3232,
@@ -906,7 +906,7 @@ var kantoAreas = [
   {
     title: "Route 13",
     ident: "route_13",
-    artistId: "CJLM",
+    artistId: "CHJA",
     animation: false,
     point: {
       x: 4240,
