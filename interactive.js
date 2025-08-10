@@ -841,8 +841,6 @@ function instantZoom(s,x,y){
         currentZoom = zoomLevel
         currentPos = {... zoomCenter}
 
-        // console.log(zoomCenter)
-
         map.x = zoomCenter.x
         map.y = zoomCenter.y
 
@@ -1147,7 +1145,6 @@ function checkAutoHighlight() {
 
     let area = getAreaOnPoint(mapPosition, activeAreas);
     if (area && highlightedArea != area) {
-        console.log(highlightedArea);
         highlightedArea = area;
         for (let i = 0; i < activeAreas.length; i++) {
             hideAreaZone(activeAreas[i])
