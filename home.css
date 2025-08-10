@@ -295,6 +295,11 @@ a{
 .material-icons{
     margin-right:5px;
 }
+.custom-icons{
+    margin-right:5px;
+    width: 24px;
+    height: auto;
+}
 .area__info {
     overflow:hidden;
     max-height:0;

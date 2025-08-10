@@ -423,14 +423,26 @@ function setUpAreas () {
             artistImageHTML = artistUrl ? `<a href="${artistUrl}" target="_blank" title="${artistName}">
                 <img src="${artistImgPath}" alt="${artistName}" /></a>` : `<img src="${artistImgPath}" alt="${artistName}" />`;
         }
+
+        var iconBlock = 
+            `<span class="material-icons">
+                ${materialIcon}
+            </span>`;
+
+        for (let i = 0; i< iconFiles.length; i++) {
+            if (iconFiles[i].iconId === materialIcon)
+            {
+                iconBlock = 
+                `<img src=${iconFiles[i].path} class="custom-icons">`;
+                i = iconFiles.length;
+            }
+        }
         
         // Prepare the HTML block corresponding to an area and its associated credts
         var html = 
         `<li class="area" title="${area.title}" style="background-color:${backgroundColor}" onclick="focusOnArea('${area.title}')">
             <div class="area__header" >
-                <span class="material-icons">
-                    ${materialIcon}
-                </span>
+                ${iconBlock}
                 <span>
                     ${area.title}
                 </span>
