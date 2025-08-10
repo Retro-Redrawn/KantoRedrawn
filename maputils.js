@@ -7,7 +7,7 @@ function screenToMapPoint(screenPoint, map, currentZoom) {
 }
 
 function getAreaOnPoint(point, activeAreas) {
-    for (var i = 0; i < activeAreas.length; i++) {
+    for (let i = 0; i < activeAreas.length; i++) {
         var area = activeAreas[i];
         if (point.x > area.point.x &&
             point.y > area.point.y &&

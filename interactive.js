@@ -41,7 +41,7 @@ var viewport = null;
 var bordersDisabled = false;
 
 // Auto Highlight
-var autoHighlight = true;
+var autoHighlightEnabled = true;
 var highlightedArea = null;
 
 // Filters
@@ -102,7 +102,7 @@ window.addEventListener('keydown', onKeyDown);
  * @param {string} layerSubfolder Subfolder directory name of the layer's new & old images.
 */
 function loadLayer (areaArray, areaImageArray, areaOldImageArray, layerSubfolder) {
-    for (var i = 0; i < areaArray.length; i++) 
+    for (let i = 0; i < areaArray.length; i++) 
     {
         var area = areaArray[i];
 
@@ -135,7 +135,7 @@ function createImageLink (layerName, mapStyle, areaName, mapSuffix) {
 /** Loads all new & old images pertaining to each layer */
 function loadImages () {
 
-    for (var i = 0; i < layerCount; i++) {
+    for (let i = 0; i < layerCount; i++) {
 
         // Need areas in the layer to load images
         if (redrawnLayers[i].areas.length != 0) {
@@ -299,7 +299,7 @@ function buildMap () {
     while (mapImages.children[0]) { 
         mapImages.removeChild(mapImages.children[0]);
     }
-    for (var i = 0; i < activeAreas.length; i++) {
+    for (let i = 0; i < activeAreas.length; i++) {
 
         // Get area image
         var area = activeAreas[i];
@@ -366,14 +366,14 @@ function RegenerateAreaZones() {
     }
 
     // Cleanup existing zones, if any.
-    for (var i = 0; i < mapZones.children.length; i++) {
+    for (let i = 0; i < mapZones.children.length; i++) {
         var zone = mapZones.children[i];
         zone.destroy();
     }
     mapZones.removeChildren();
 
     // Generate new zones
-    for (var i = 0; i < activeAreas.length; i++) {
+    for (let i = 0; i < activeAreas.length; i++) {
 
         // Prepare PIXI area tile
         var area = activeAreas[i];
@@ -396,14 +396,14 @@ function setUpAreas () {
     RegenerateAreaZones();
 
     // Loop through all active areas
-    for (var i = 0; i < activeAreas.length; i++) {
+    for (let i = 0; i < activeAreas.length; i++) {
 
         var area = activeAreas[i];
 
         // Get biome data
         var backgroundColor = 'rgb(0 0 0)';
         var materialIcon = '';
-        for (var j=0; j< biomes.length; j++) {
+        for (let j=0; j< biomes.length; j++) {
             let biome = biomes[j];
             if (biome.ident === area.type) {
                 backgroundColor = biome.color;
@@ -429,12 +429,12 @@ function setUpAreas () {
                 ${materialIcon}
             </span>`;
 
-        for (let i = 0; i< iconFiles.length; i++) {
-            if (iconFiles[i].iconId === materialIcon)
+        for (let k = 0; k< iconFiles.length; k++) {
+            if (iconFiles[k].iconId === materialIcon)
             {
                 iconBlock = 
-                `<img src=${iconFiles[i].path} class="custom-icons">`;
-                i = iconFiles.length;
+                `<img src=${iconFiles[k].path} class="custom-icons">`;
+                k = iconFiles.length;
             }
         }
         
@@ -701,7 +701,7 @@ function onDragEnd () {
 function changeTab (n) {
     var tabs = document.querySelectorAll('.menu__tab')
     var elems = document.querySelectorAll('.menu__content >*')
-    for (var i = 0; i < tabs.length; i++) {
+    for (let i = 0; i < tabs.length; i++) {
         var tab = tabs[i]
         tab.classList.remove('active')
         elems[i].classList.remove('active')
@@ -823,7 +823,9 @@ function zoom(s,x,y){
     zoomCenter.y = zoomCenter.y - (newScreenPos.y-y)
 }
 
-/** Immediately zoom to a particular scale focused around a point. */
+/** 
+ * Immediately zoom to a particular scale focused around a point. 
+ */
 function instantZoom(s,x,y){
 
     // Perform the requested zoom
@@ -848,6 +850,14 @@ function instantZoom(s,x,y){
     }
 }
 
+/**
+ * Gradually repositions the camera to the specified location.
+ * @param {number} x 
+ * @param {number} y 
+ * @param {number} zoom 
+ * @param {number} camAnimationSpeed 
+ * @param {boolean} useEasing 
+ */
 function moveCameraTo (x, y, zoom, camAnimationSpeed, useEasing) {
     dragVelocity.x = dragVelocity.y = 0
     cameraAnimation.speed = camAnimationSpeed
@@ -869,6 +879,12 @@ function moveCameraTo (x, y, zoom, camAnimationSpeed, useEasing) {
     zoomCenter.y = cameraAnimation.endPos.y
 }
 
+/**
+ * Immediately positions the camera to a specific position with a fixed zoom level.
+ * @param {number} x 
+ * @param {number} y 
+ * @param {number} zoom 
+ */
 function snapCameraTo (x, y, zoom) {
     dragVelocity.x = dragVelocity.y = 0
 
@@ -885,8 +901,9 @@ function snapCameraTo (x, y, zoom) {
     map.y = position.y
 }
 
-/** Focus on a specified area.
- * accepts name string and object
+/** 
+ * Focus on a specified area. ('a' can be a string or area object)
+ * @param {*} a
  */
 function focusOnArea (a) {
     if (tourMode) {
@@ -896,14 +913,14 @@ function focusOnArea (a) {
     if (typeof a === 'string') {
         area = activeAreas.find(x => x.title === a)
     }
-    for (var i = 0; i < activeAreas.length; i++) {
+    for (let i = 0; i < activeAreas.length; i++) {
         hideAreaZone(activeAreas[i])
     }
     var isGoodToFocus = true
     showAreaZone(area)
     var elems = document.querySelectorAll(`#areas li`)
     if (elems.length > 0) {
-        for (var i = 0; i < elems.length; i++) {
+        for (let i = 0; i < elems.length; i++) {
             var elem = elems[i]
             if (area.title === elem.title) {
                 if (elem.classList.contains('active')) {
@@ -927,7 +944,10 @@ function focusOnArea (a) {
     }
 }
 
-/** Opens an area in the DOM menu of the viewer. */
+/** 
+ * Opens an area in the DOM menu of the viewer. ('a' can be a string or area object)
+ * @param {*} a 
+ */
 function openAreaInDOM (a) {
     var area = a
     if (typeof a === 'string') {
@@ -935,7 +955,7 @@ function openAreaInDOM (a) {
     }
     var elems = document.querySelectorAll(`.area`)
     if (elems.length > 0) {
-        for (var i = 0; i < elems.length; i++) {
+        for (let i = 0; i < elems.length; i++) {
             var elem = elems[i]
             if (area.title === elem.title) {
                 elem.classList.add('active')
@@ -949,6 +969,11 @@ function openAreaInDOM (a) {
     updateMobileArtist(area);
 
 }
+
+/**
+ * Updates the floating artist badge.
+ * @param {object} area 
+ */
 function updateMobileArtist(area) {
     
     var artistData = GetArtistData(area.artistId);
@@ -1109,21 +1134,26 @@ function checkMapBoundaries () {
 }
 
 function checkAutoHighlight() {
-    if (autoHighlight) {
-        var mapPosition = screenToMapPoint({ x: app.renderer.width / 2, y: app.renderer.height / 2 }, map, currentZoom);
-        if (isMenuOpen()) {
-            mapPosition.x += (150 / currentZoom);//Offset when menu is open (which has a fixed width of 300px)
+    if (!autoHighlightEnabled || !dragging) {
+        return;
+    }
+
+    var mapPosition = screenToMapPoint({ x: app.renderer.width / 2, y: app.renderer.height / 2 }, map, currentZoom);
+
+    if (isMenuOpen()) {
+        let menuWidth = parseInt(window.getComputedStyle(document.getElementById('menu-bar')).width);
+        mapPosition.x += ((menuWidth / 2) / currentZoom); // Offset when menu is open (assumes pixel size)
+    }
+
+    let area = getAreaOnPoint(mapPosition, activeAreas);
+    if (area && highlightedArea != area) {
+        console.log(highlightedArea);
+        highlightedArea = area;
+        for (let i = 0; i < activeAreas.length; i++) {
+            hideAreaZone(activeAreas[i])
         }
-        var area = getAreaOnPoint(mapPosition, activeAreas);
-        if (area && highlightedArea != area) {
-            // console.log(highlightedArea);
-            highlightedArea = area;
-            for (var i = 0; i < activeAreas.length; i++) {
-                hideAreaZone(activeAreas[i])
-            }
-            showAreaZone(area);
-            openAreaInDOM(area);
-        }
+        showAreaZone(area);
+        openAreaInDOM(area);
     }
 }
 
@@ -1142,7 +1172,7 @@ function easeInOutCubic(x) {
 
 /** Fills an array with arrays */
 function fillWithArrays(array) {
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
         array[i] = Array.apply(null, Array(0));
     }
     return array;
@@ -1190,7 +1220,7 @@ function changeLayer (layer) {
 
     // Find and switch layer
     var layerCount = this.layerCount;
-    for (var i=0; i< layerCount; i++) {
+    for (let i=0; i< layerCount; i++) {
         if (layer === this.redrawnLayers[i].name) {
             this.activeLayerIndex = i;
             this.activeAreas = this.redrawnLayers[i].areas;
