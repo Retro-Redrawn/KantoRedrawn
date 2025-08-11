@@ -553,7 +553,10 @@ function tick () {
         cameraAdjustment.progress = 1;
     }
     if (!cameraAnimation.playing) {
-        if (zoomLevel !== currentZoom) {
+
+        // Perform zoom adjustments
+        let isZooming = zoomLevel !== currentZoom;
+        if (isZooming) {
             if (!blurIsDisabled()) {
                 viewport.filters = [blurFilter]
             }
@@ -568,6 +571,9 @@ function tick () {
             blurFilter.strength = .2 * (Math.abs((currentZoom - zoomLevel)) / zoomLevel)
             blurFilter.center = [ zoomMousePos.x, zoomMousePos.y ]
         }
+
+        // Perform momentum operations
+        // Is there active drag velocity? 
         if (!mouseDown && (dragVelocity.x !== 0 || dragVelocity.y !== 0)) {
             if (dragVelocity.x !== 0) {
                 map.x += Math.round(dragVelocity.x)
@@ -581,6 +587,8 @@ function tick () {
             }
             currentZoom.x = zoomCenter.x = map.x
             currentZoom.y = zoomCenter.y = map.y
+        
+        // Is there active zoom positioning?
         } else if (!mouseDown && (currentPos.x !== zoomCenter.x || currentPos.y !== zoomCenter.y)) {
             var newx = lerp(currentPos.x, zoomCenter.x, 0.2)
             var newy = lerp(currentPos.y, zoomCenter.y, 0.2)
@@ -588,6 +596,8 @@ function tick () {
             map.x = currentPos.x
             map.y = currentPos.y
         }
+
+        // Perform continuous motion operations
         if (pinchForTick) {
             instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
             if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
@@ -600,7 +610,11 @@ function tick () {
             pinchForTick = null
         }
         checkMapBoundaries()
-        checkAutoHighlight()
+
+        if (dragging || isZooming) {
+            checkAutoHighlight();
+        }
+        
     } else {
 
         // Calculate position and scale changes relative to a camera animation adjustment
@@ -1131,7 +1145,7 @@ function checkMapBoundaries () {
 }
 
 function checkAutoHighlight() {
-    if (!autoHighlightEnabled || !dragging) {
+    if (!autoHighlightEnabled) {
         return;
     }
 
