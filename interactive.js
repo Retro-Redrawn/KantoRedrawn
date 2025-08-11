@@ -207,8 +207,7 @@ function init () {
             });
         globalThis.__PIXI_APP__ = app; 
     } catch (error) {
-        // alert('Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.')
-        // document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p><a>View full image</a>'
+        console.error(error);
         document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p>'
         document.querySelector('#error').classList.add('active')
     }
