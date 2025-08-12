@@ -530,11 +530,18 @@ function getAreaBox (area, areaImage, styleOverride = "") {
 
     // Use current style or override?
     var style = styleOverride === "" ? currentMapStyle : styleOverride;
+
+    if (areaImage.naturalWidth == 0 || areaImage.naturalHeight == 0) {
+        console.error("Area Image has a width and/or height of zero; border will not render correctly.")
+    }
+
+    let width = areaImage.naturalWidth || 96;   // Fallback scale
+    let height = areaImage.naturalHeight || 96;
     
     if (style === NEW_STYLE_NAME) {
-        return {x: area.point.x + area.offset.x, y: area.point.y + area.offset.y, width: areaImage.naturalWidth + area.offset.width, height: areaImage.naturalHeight + area.offset.height}
+        return {x: area.point.x + area.offset.x, y: area.point.y + area.offset.y, width: width + area.offset.width, height: height + area.offset.height}
     } else {
-        return {x: area.point.x, y: area.point.y, width: areaImage.naturalWidth, height: areaImage.naturalHeight}
+        return {x: area.point.x, y: area.point.y, width: width, height: height}
     }
 }
 
