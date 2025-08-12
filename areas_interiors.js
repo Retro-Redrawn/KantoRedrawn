@@ -9,10 +9,10 @@ var interiorAreas = [
       y: 4640
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -31,10 +31,10 @@ var interiorAreas = [
       y: 4496
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -53,10 +53,10 @@ var interiorAreas = [
       y: 4576
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -75,10 +75,10 @@ var interiorAreas = [
       y: 3792
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -97,10 +97,10 @@ var interiorAreas = [
       y: 3632
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -119,10 +119,10 @@ var interiorAreas = [
       y: 3488
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -141,10 +141,10 @@ var interiorAreas = [
       y: 3488
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -163,10 +163,10 @@ var interiorAreas = [
       y: 3489
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -185,10 +185,10 @@ var interiorAreas = [
       y: 3728
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -207,10 +207,10 @@ var interiorAreas = [
       y: 3085
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "award_star",
@@ -229,10 +229,10 @@ var interiorAreas = [
       y: 1856
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -251,10 +251,10 @@ var interiorAreas = [
       y: 1328
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -273,10 +273,10 @@ var interiorAreas = [
       y: 1168
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -295,10 +295,10 @@ var interiorAreas = [
       y: 1024
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -317,10 +317,10 @@ var interiorAreas = [
       y: 208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -339,10 +339,10 @@ var interiorAreas = [
       y: 208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -361,10 +361,10 @@ var interiorAreas = [
       y: 208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -383,10 +383,10 @@ var interiorAreas = [
       y: 704
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -405,10 +405,10 @@ var interiorAreas = [
       y: 368
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -427,10 +427,10 @@ var interiorAreas = [
       y: 32
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -449,10 +449,10 @@ var interiorAreas = [
       y: 1200
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -471,10 +471,10 @@ var interiorAreas = [
       y: 1120
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -493,10 +493,10 @@ var interiorAreas = [
       y: 960
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -515,10 +515,10 @@ var interiorAreas = [
       y: 272
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -537,10 +537,10 @@ var interiorAreas = [
       y: 400
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -559,10 +559,10 @@ var interiorAreas = [
       y: 848
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -581,10 +581,10 @@ var interiorAreas = [
       y: 1296
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "factory",
@@ -603,10 +603,10 @@ var interiorAreas = [
       y: 1904
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -625,10 +625,10 @@ var interiorAreas = [
       y: 2200
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -647,10 +647,10 @@ var interiorAreas = [
       y: 2512
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -669,10 +669,10 @@ var interiorAreas = [
       y: 2816
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -691,10 +691,10 @@ var interiorAreas = [
       y: 1904
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -713,10 +713,10 @@ var interiorAreas = [
       y: 2208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -735,10 +735,10 @@ var interiorAreas = [
       y: 2512
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -757,10 +757,10 @@ var interiorAreas = [
       y: 1936
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -779,10 +779,10 @@ var interiorAreas = [
       y: 3312
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -801,10 +801,10 @@ var interiorAreas = [
       y: 3344
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -823,10 +823,10 @@ var interiorAreas = [
       y: 3792
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "directions_boat",
@@ -845,10 +845,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -867,10 +867,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -889,10 +889,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -911,10 +911,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -933,10 +933,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -955,10 +955,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -977,10 +977,10 @@ var interiorAreas = [
       y: 3856
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "directions_boat",
@@ -999,10 +999,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1021,10 +1021,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1043,10 +1043,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1065,10 +1065,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1087,10 +1087,10 @@ var interiorAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1109,10 +1109,10 @@ var interiorAreas = [
       y: 4080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1131,10 +1131,10 @@ var interiorAreas = [
       y: 4080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1153,10 +1153,10 @@ var interiorAreas = [
       y: 4080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1175,10 +1175,10 @@ var interiorAreas = [
       y: 4080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1197,10 +1197,10 @@ var interiorAreas = [
       y: 4080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1219,10 +1219,10 @@ var interiorAreas = [
       y: 4080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "directions_boat",
@@ -1241,10 +1241,10 @@ var interiorAreas = [
       y: 4064
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "directions_boat",
@@ -1263,10 +1263,10 @@ var interiorAreas = [
       y: 3936
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "directions_boat",
@@ -1285,10 +1285,10 @@ var interiorAreas = [
       y: 1840
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "train",
@@ -1307,10 +1307,10 @@ var interiorAreas = [
       y: 1968
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -1329,10 +1329,10 @@ var interiorAreas = [
       y: 1968
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "award_star",
@@ -1351,10 +1351,10 @@ var interiorAreas = [
       y: 2320
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -1373,10 +1373,10 @@ var interiorAreas = [
       y: 2176
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "subway",
@@ -1395,10 +1395,10 @@ var interiorAreas = [
       y: 2320
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "subway",
@@ -1417,10 +1417,10 @@ var interiorAreas = [
       y: 2320
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1441,10 +1441,10 @@ var interiorAreas = [
       y: 2624
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1463,10 +1463,10 @@ var interiorAreas = [
       y: 2929
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1485,10 +1485,10 @@ var interiorAreas = [
       y: 3230
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1507,10 +1507,10 @@ var interiorAreas = [
       y: 2304
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1529,10 +1529,10 @@ var interiorAreas = [
       y: 2625
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1551,10 +1551,10 @@ var interiorAreas = [
       y: 2928
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1573,10 +1573,10 @@ var interiorAreas = [
       y: 3232
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1595,10 +1595,10 @@ var interiorAreas = [
       y: 2928
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "apartment",
@@ -1617,10 +1617,10 @@ var interiorAreas = [
       y: 3232
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1639,10 +1639,10 @@ var interiorAreas = [
       y: 3232
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1661,10 +1661,10 @@ var interiorAreas = [
       y: 2208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1683,10 +1683,10 @@ var interiorAreas = [
       y: 2032
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1705,10 +1705,10 @@ var interiorAreas = [
       y: 1856
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1727,10 +1727,10 @@ var interiorAreas = [
       y: 1665
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1749,10 +1749,10 @@ var interiorAreas = [
       y: 1520
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "apartment",
@@ -1771,10 +1771,10 @@ var interiorAreas = [
       y: 2416
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1793,10 +1793,10 @@ var interiorAreas = [
       y: 2272
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1815,10 +1815,10 @@ var interiorAreas = [
       y: 2128
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1837,10 +1837,10 @@ var interiorAreas = [
       y: 1984
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1859,10 +1859,10 @@ var interiorAreas = [
       y: 1840
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1881,10 +1881,10 @@ var interiorAreas = [
       y: 1568
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1903,10 +1903,10 @@ var interiorAreas = [
       y: 2368
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -1925,10 +1925,10 @@ var interiorAreas = [
       y: 2384
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "storefront",
@@ -1947,10 +1947,10 @@ var interiorAreas = [
       y: 2624
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "warehouse",
@@ -1969,10 +1969,10 @@ var interiorAreas = [
       y: 2624
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "warehouse",
@@ -1991,10 +1991,10 @@ var interiorAreas = [
       y: 3088
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "warehouse",
@@ -2013,10 +2013,10 @@ var interiorAreas = [
       y: 3088
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "warehouse",
@@ -2035,10 +2035,10 @@ var interiorAreas = [
       y: 2320
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2057,10 +2057,10 @@ var interiorAreas = [
       y: 4800
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2079,10 +2079,10 @@ var interiorAreas = [
       y: 4208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2101,10 +2101,10 @@ var interiorAreas = [
       y: 5136
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -2123,10 +2123,10 @@ var interiorAreas = [
       y: 5136
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -2145,10 +2145,10 @@ var interiorAreas = [
       y: 5440
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -2167,10 +2167,10 @@ var interiorAreas = [
       y: 5440
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -2189,10 +2189,10 @@ var interiorAreas = [
       y: 5440
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "hiking",
@@ -2211,10 +2211,10 @@ var interiorAreas = [
       y: 5216
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2233,10 +2233,10 @@ var interiorAreas = [
       y: 5632
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2255,10 +2255,10 @@ var interiorAreas = [
       y: 5488
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -2277,10 +2277,10 @@ var interiorAreas = [
       y: 5488
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -2299,10 +2299,10 @@ var interiorAreas = [
       y: 5488
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "home",
@@ -2321,10 +2321,10 @@ var interiorAreas = [
       y: 5280
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2343,10 +2343,10 @@ var interiorAreas = [
       y: 4816
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2365,10 +2365,10 @@ var interiorAreas = [
       y: 4512
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2387,10 +2387,10 @@ var interiorAreas = [
       y: 4048
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2409,10 +2409,10 @@ var interiorAreas = [
       y: 1632
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -2431,10 +2431,10 @@ var interiorAreas = [
       y: 1248
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -2453,10 +2453,10 @@ var interiorAreas = [
       y: 864
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "hiking",
@@ -2475,10 +2475,10 @@ var interiorAreas = [
       y: 608
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "home",
@@ -2497,10 +2497,10 @@ var interiorAreas = [
       y: 400
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2519,10 +2519,10 @@ var interiorAreas = [
       y: 400
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2541,10 +2541,10 @@ var interiorAreas = [
       y: 400
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2563,10 +2563,10 @@ var interiorAreas = [
       y: 400
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "award_star",
@@ -2585,10 +2585,10 @@ var interiorAreas = [
       y: 256
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "award_star",
@@ -2607,10 +2607,10 @@ var interiorAreas = [
       y: 112
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "award_star",

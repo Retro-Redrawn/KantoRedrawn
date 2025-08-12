@@ -1,6 +1,6 @@
 var kantoAreas = [
   {
-    order: null,
+    order: 0,
     title: "Pallet Town",
     ident: "pallet_town",
     artistId: "PIXE_3",
@@ -10,10 +10,10 @@ var kantoAreas = [
       y: 4512
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -54,10 +54,10 @@ var kantoAreas = [
       y: 3936
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -76,10 +76,10 @@ var kantoAreas = [
       y: 3360
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -120,10 +120,10 @@ var kantoAreas = [
       y: 2848
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -142,10 +142,10 @@ var kantoAreas = [
       y: 2080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "forest",
@@ -163,10 +163,10 @@ var kantoAreas = [
       y: 1824
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -185,10 +185,10 @@ var kantoAreas = [
       y: 2080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -229,10 +229,10 @@ var kantoAreas = [
       y: 1376
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -251,10 +251,10 @@ var kantoAreas = [
       y: 1088
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -295,10 +295,10 @@ var kantoAreas = [
       y: 1088
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -317,10 +317,10 @@ var kantoAreas = [
       y: 960
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -339,10 +339,10 @@ var kantoAreas = [
       y: 384
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -361,10 +361,10 @@ var kantoAreas = [
       y: 384
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -383,9 +383,9 @@ var kantoAreas = [
       y: 64
     },
     offset: {
-      x: null,
+      x: 0,
       y: -52,
-      width: null,
+      width: 0,
       height: 52
     },
     pan: "horizontal",
@@ -405,9 +405,9 @@ var kantoAreas = [
       y: 1536
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
+      x: 0,
+      y: 0,
+      width: 0,
       height: -48
     },
     pan: "vertical",
@@ -427,9 +427,9 @@ var kantoAreas = [
       y: 2688
     },
     offset: {
-      x: null,
+      x: 0,
       y: 48,
-      width: null,
+      width: 0,
       height: -48
     },
     pan: "vertical",
@@ -473,9 +473,9 @@ var kantoAreas = [
       y: 3376
     },
     offset: {
-      x: null,
+      x: 0,
       y: -32,
-      width: null,
+      width: 0,
       height: 32
     },
     pan: "horizontal",
@@ -495,9 +495,9 @@ var kantoAreas = [
       y: 1088
     },
     offset: {
-      x: null,
+      x: 0,
       y: -64,
-      width: null,
+      width: 0,
       height: 64
     },
     pan: "horizontal",
@@ -517,10 +517,10 @@ var kantoAreas = [
       y: 1088
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -539,10 +539,10 @@ var kantoAreas = [
       y: 1568
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -561,10 +561,10 @@ var kantoAreas = [
       y: 1888
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -583,10 +583,10 @@ var kantoAreas = [
       y: 2112
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -606,9 +606,9 @@ var kantoAreas = [
     },
     offset: {
       x: 32,
-      y: null,
+      y: 0,
       width: -48,
-      height: null
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -627,9 +627,9 @@ var kantoAreas = [
       y: 2112
     },
     offset: {
-      x: null,
+      x: 0,
       y: -41,
-      width: null,
+      width: 0,
       height: 41
     },
     pan: "horizontal",
@@ -649,9 +649,9 @@ var kantoAreas = [
       y: 2048
     },
     offset: {
-      x: null,
+      x: 0,
       y: -80,
-      width: null,
+      width: 0,
       height: 80
     },
     pan: "horizontal",
@@ -693,9 +693,9 @@ var kantoAreas = [
       y: 2112
     },
     offset: {
-      x: null,
+      x: 0,
       y: -32,
-      width: null,
+      width: 0,
       height: 32
     },
     pan: "horizontal",
@@ -715,10 +715,10 @@ var kantoAreas = [
       y: 2512
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "bike",
@@ -737,9 +737,9 @@ var kantoAreas = [
       y: 4832
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
+      x: 0,
+      y: 0,
+      width: 0,
       height: 21
     },
     pan: "horizontal",
@@ -759,9 +759,9 @@ var kantoAreas = [
       y: 4704
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
+      x: 0,
+      y: 0,
+      width: 0,
       height: 22
     },
     pan: "vertical",
@@ -781,10 +781,10 @@ var kantoAreas = [
       y: 4256
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "forest",
@@ -803,10 +803,10 @@ var kantoAreas = [
       y: 4064
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "forest",
@@ -825,10 +825,10 @@ var kantoAreas = [
       y: 3648
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "forest",
@@ -847,10 +847,10 @@ var kantoAreas = [
       y: 4256
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "forest",
@@ -869,9 +869,9 @@ var kantoAreas = [
       y: 4880
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
+      x: 0,
+      y: 0,
+      width: 0,
       height: 112
     },
     pan: "horizontal",
@@ -891,10 +891,10 @@ var kantoAreas = [
       y: 4544
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -913,10 +913,10 @@ var kantoAreas = [
       y: 4288
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -935,10 +935,10 @@ var kantoAreas = [
       y: 3504
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -957,10 +957,10 @@ var kantoAreas = [
       y: 2528
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -979,10 +979,10 @@ var kantoAreas = [
       y: 5280
     },
     offset: {
-      x: null,
+      x: 0,
       y: 22,
-      width: null,
-      height: null
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -1002,9 +1002,9 @@ var kantoAreas = [
     },
     offset: {
       x: 48,
-      y: null,
+      y: 0,
       width: -48,
-      height: null
+      height: 0
     },
     pan: "horizontal",
     type: "surfing",
@@ -1045,9 +1045,9 @@ var kantoAreas = [
       y: 4800
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
+      x: 0,
+      y: 0,
+      width: 0,
       height: -48
     },
     pan: "vertical",
@@ -1063,13 +1063,13 @@ var kantoAreas = [
     artistId: "GENO",
     animation: false,
     point: {
-      x: null,
+      x: 0,
       y: 3424
     },
     offset: {
-      x: null,
+      x: 0,
       y: -16,
-      width: null,
+      width: 0,
       height: 16
     },
     pan: "horizontal",
@@ -1085,11 +1085,11 @@ var kantoAreas = [
     artistId: "INCR",
     animation: false,
     point: {
-      x: null,
+      x: 0,
       y: 2832
     },
     offset: {
-      x: null,
+      x: 0,
       y: -96,
       width: 16,
       height: 80
@@ -1107,14 +1107,14 @@ var kantoAreas = [
     artistId: "INCR",
     animation: false,
     point: {
-      x: null,
+      x: 0,
       y: 2352
     },
     offset: {
       x: 16,
       y: -96,
-      width: null,
-      height: null
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -1129,14 +1129,14 @@ var kantoAreas = [
     artistId: "CHRO",
     animation: false,
     point: {
-      x: null,
+      x: 0,
       y: 1728
     },
     offset: {
       x: 16,
       y: -96,
-      width: null,
-      height: null
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -1151,14 +1151,14 @@ var kantoAreas = [
     artistId: "JOON",
     animation: false,
     point: {
-      x: null,
+      x: 0,
       y: 1184
     },
     offset: {
       x: 16,
       y: -96,
-      width: null,
-      height: null
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "route",
@@ -1173,13 +1173,13 @@ var kantoAreas = [
     artistId: "JDZO",
     animation: false,
     point: {
-      x: null,
+      x: 0,
       y: 896
     },
     offset: {
       x: 16,
       y: -320,
-      width: null,
+      width: 0,
       height: 244
     },
     pan: "vertical",

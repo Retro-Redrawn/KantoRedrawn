@@ -1,6 +1,6 @@
 var seviiAreas = [
   {
-    order: null,
+    order: 0,
     title: "One Island: Treasure Beach",
     ident: "One-Island-Treasure-Beach",
     artistId: "KARL",
@@ -10,10 +10,10 @@ var seviiAreas = [
       y: 2720
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -32,10 +32,10 @@ var seviiAreas = [
       y: 2432
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "town",
@@ -54,10 +54,10 @@ var seviiAreas = [
       y: 1136
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -76,10 +76,10 @@ var seviiAreas = [
       y: 0,
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -98,10 +98,10 @@ var seviiAreas = [
       y: 2464
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "town",
@@ -120,10 +120,10 @@ var seviiAreas = [
       y: 2080
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -142,10 +142,10 @@ var seviiAreas = [
       y: 1824
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -164,10 +164,10 @@ var seviiAreas = [
       y: 1824
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -186,10 +186,10 @@ var seviiAreas = [
       y: 3472
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "town",
@@ -208,10 +208,10 @@ var seviiAreas = [
       y: 4208
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -230,10 +230,10 @@ var seviiAreas = [
       y: 3936
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "town",
@@ -252,10 +252,10 @@ var seviiAreas = [
       y: 3664
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "surfing",
@@ -274,10 +274,10 @@ var seviiAreas = [
       y: 3392
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "surfing",
@@ -296,10 +296,10 @@ var seviiAreas = [
       y: 3392
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -318,10 +318,10 @@ var seviiAreas = [
       y: 4400
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "route",
@@ -340,10 +340,10 @@ var seviiAreas = [
       y: 4976
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "town",
@@ -362,10 +362,10 @@ var seviiAreas = [
       y: 5392
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "mountain",
@@ -384,10 +384,10 @@ var seviiAreas = [
       y: 4138
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "town",
@@ -406,10 +406,10 @@ var seviiAreas = [
       y: 5200
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -428,10 +428,10 @@ var seviiAreas = [
       y: 6003
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "mountain",
@@ -450,10 +450,10 @@ var seviiAreas = [
       y: 6512
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "horizontal",
     type: "surfing",
@@ -472,10 +472,10 @@ var seviiAreas = [
       y: 2928
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
@@ -494,10 +494,10 @@ var seviiAreas = [
       y: 6384
     },
     offset: {
-      x: null,
-      y: null,
-      width: null,
-      height: null
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     },
     pan: "vertical",
     type: "surfing",
