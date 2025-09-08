@@ -27,6 +27,18 @@ var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 
+// URL Args
+const urlFocus = parseFocusFromUrl();
+// Update layer if applicable
+if (urlFocus&& urlFocus.layer) {
+    for (let i=0; i< redrawnLayers.length; i++) {
+        if (redrawnLayers[i].name === urlFocus.layer) {
+            activeLayerIndex = i;
+            break;
+        }
+    }
+}
+
 // Map
 const NEW_STYLE_NAME = 'new';
 const OLD_STYLE_NAME = 'old';
@@ -94,7 +106,6 @@ loadImages()
 window.addEventListener('wheel', onMouseWheel);
 window.addEventListener('resize', onResize);
 window.addEventListener('keydown', onKeyDown);
-//
 
 /** Loads new & old images pertaining to a single layer.
  * 
@@ -210,7 +221,15 @@ function init () {
     setupCanvas();
 
     // Select & focus on a random area & open it in DOM
+    // Use URL-provided area if offered, otherwise random
     var startingArea = activeAreas[Math.floor(Math.random() * activeAreas.length)]
+    if (urlFocus && urlFocus.ident) {
+        const areaToFocus = activeAreas.find(a => a.ident === urlFocus.ident);
+        if (areaToFocus) {
+            startingArea = areaToFocus;
+        }
+    }
+    
     focusOnArea(startingArea)
     openAreaInDOM(startingArea)
 
@@ -1280,7 +1299,7 @@ function changeLayer(layer) {
     setupCanvas()
     
     // Adjust canvas focus
-    focusOnArea(activeAreas[Math.floor(Math.random() * layerCount)])
+    focusOnArea(activeAreas[Math.floor(Math.random() * activeAreas.length)])
 }
 
 /** Create a PIXI sprite backed by a canvas for the provided HTMLImageElement (GIF fallback).
@@ -1351,5 +1370,18 @@ function updateGifSprite(sprite) {
         }
     } catch (e) {
         // swallow errors to avoid breaking tick
+    }
+}
+
+/** Parse optional URL focus parameters. Returns {ident, layer} or null. */
+function parseFocusFromUrl() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const ident = params.get('ident');
+        const layer = params.get('layer');
+        if (!ident && !layer) return null;
+        return { ident: ident || null, layer: layer || null };
+    } catch (e) {
+        return null;
     }
 }
