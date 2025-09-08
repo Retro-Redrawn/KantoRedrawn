@@ -34,6 +34,7 @@ if (urlFocus&& urlFocus.layer) {
     for (let i=0; i< redrawnLayers.length; i++) {
         if (redrawnLayers[i].name === urlFocus.layer) {
             activeLayerIndex = i;
+            setActiveLayerDOM();
             break;
         }
     }
@@ -1345,14 +1346,21 @@ function changeLayer(layer) {
         }
     }
 
-    // Adjust tab visibility
-    const tabs = document.querySelectorAll('#layers li button')
-    let activeLayerName = redrawnLayers[activeLayerIndex].name;
-    tabs.forEach((x) => { if (!x.classList.contains(activeLayerName)) {x.classList.remove('active')} else {x.classList.add('active')} })
+    setActiveLayerDOM();
     setupCanvas(true)
     
     // Adjust canvas focus
     focusOnArea(activeAreas[Math.floor(Math.random() * activeAreas.length)])
+}
+
+/**
+ * Adjusts the visibly selected tab.
+ */
+function setActiveLayerDOM() {
+    // Adjust tab visibility
+    const tabs = document.querySelectorAll('#layers li button')
+    let activeLayerName = redrawnLayers[activeLayerIndex].name;
+    tabs.forEach((x) => { if (!x.classList.contains(activeLayerName)) {x.classList.remove('active')} else {x.classList.add('active')} })
 }
 
 /** Create a PIXI sprite backed by a canvas for the provided HTMLImageElement (GIF fallback).
