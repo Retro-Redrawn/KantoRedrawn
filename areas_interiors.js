@@ -1708,7 +1708,7 @@ var interiorAreas = [
   {
     title: "Silph Co. 8F",
     ident: "silph_8f",
-    artistId: "UNDF",
+    artistId: "GWEN",
     animation: false,
     point: {
       x: 4304,
