@@ -291,6 +291,7 @@ a{
     cursor:pointer;
     display:flex;
     align-items: center;
+    position: relative;
 }
 .material-icons{
     margin-right:5px;
@@ -475,3 +476,30 @@ a{
     padding-left: 20px;
     padding-right: 20px;
 }
+
+/* Copy button in area header */
+.area__header{ position: relative; }
+.area__copy{
+    position: absolute;
+    right: 6px;
+    top: 40%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: none; /* hidden by default */
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+.area__copy .material-icons{ font-size: 16px; line-height: 1; }
+.area__copy:hover{ background: rgba(255,255,255,0.06); }
+
+/* Show copy button only when the area is active */
+.area.active .area__header .area__copy{ display: inline-flex; }
+
+/* Slightly reduce the padding of area header when button visible */
+.area__header span{ display: inline-block; padding-right: 28px; }

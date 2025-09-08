@@ -480,6 +480,7 @@ function setUpAreas () {
                 <span>
                     ${area.title}
                 </span>
+                <button class="area__copy" title="Copy link" onclick="event.stopPropagation(); copyAreaLink('${redrawnLayers[activeLayerIndex].name}','${area.ident}')">🔗</button>
             </div>
             <div class="area__info">
                 <div class="area__info__inner">
@@ -495,6 +496,35 @@ function setUpAreas () {
         </li>`
         areaList.innerHTML += html
     }
+}
+
+// Copy area link to clipboard (uses current path + query params)
+function copyAreaLink(layerName, areaIdent) {
+    var base;
+    try {
+        base = window.location.origin + window.location.pathname;
+    } catch (e) {
+        base = window.location.href.split('?')[0];
+    }
+    var url = base + `?layer=${encodeURIComponent(layerName)}&ident=${encodeURIComponent(areaIdent)}`;
+
+    // Use modern Clipboard API when available (requires HTTPS or localhost)
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(url)
+        .catch(function(err) {
+            CopyLinkPrompt(url);
+        });
+        return;
+    }
+
+    CopyLinkPrompt(url);
+}
+
+/**
+ * Fallback for older browsers: show prompt with URL for manual copy
+ */
+function CopyLinkPrompt(url) {
+    try { window.prompt('Copy this URL for a direct focus link!', url); } catch (e) { /* ignore */ }
 }
 
 /** Creates a rectangular fill relative to a PIXIjs graphic (effectively its outline) */
