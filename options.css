@@ -47,7 +47,6 @@ select.option-select {
 }
 
 select.option-select:focus {
-    border-color: #e60012;
     outline: none;
     box-shadow: 0 0 0 2px rgba(230,0,18,0.1);
 }
@@ -56,13 +55,11 @@ select.option-select:focus {
     width: 18px;
     height: 18px;
     margin-right: 8px;
-    accent-color: #e60012;
 }
 
 /* Dark theme support */
 @media (prefers-color-scheme: dark) {
     .options-container {
-        background-color: #2a2a2a;
         color: #ddd;
     }
     

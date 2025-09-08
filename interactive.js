@@ -53,6 +53,7 @@ var mapZones = null;
 var currentMapStyle = NEW_STYLE_NAME;
 var viewport = null;
 var bordersDisabled = false;
+var preferStaticImages = false; // When true, use .png versions even if animation is available
 
 // Auto Highlight
 var autoHighlightEnabled = true;
@@ -218,7 +219,7 @@ function init () {
     }
 
     // Prepare the canvas display
-    setupCanvas();
+    setupCanvas(true);
 
     // Select & focus on a random area & open it in DOM
     // Use URL-provided area if offered, otherwise random
@@ -238,7 +239,7 @@ function init () {
 }
 
 /** Prepares the canvas display */ 
-function setupCanvas () {
+function setupCanvas (useDefaultPosition) {
     app.stage.removeChildren()
 
     // Establish PIXI containers
@@ -262,6 +263,9 @@ function setupCanvas () {
     mapZones = new PIXI.Container()
     mapZones.name = "Map Zones" 
     map.addChild(mapZones)
+    
+    let oldx = currentPos.x;
+    let oldy = currentPos.y;
     
     buildMap()
 
@@ -301,14 +305,26 @@ function setupCanvas () {
     viewport.filters = [colorFilter]
 
     // Set default position/zoom
-    map.scale.set(zoomMin)
-    map.x = -((map.width) - (window.innerWidth / 2)) * map.scale.x
-    map.y = -((map.height) - (window.innerHeight / 2)) * map.scale.x
+    if (useDefaultPosition) {
+        map.scale.set(zoomMin)
+        map.x = -((map.width) - (window.innerWidth / 2)) * map.scale.x
+        map.y = -((map.height) - (window.innerHeight / 2)) * map.scale.x
 
-    zoomCenter.x = map.x
-    currentPos.x = map.x
-    currentPos.y = map.y
-    zoomCenter.y = map.y
+        currentPos.x = map.x
+        currentPos.y = map.y
+        zoomCenter.x = map.x
+        zoomCenter.y = map.y
+    }
+    else
+    {
+        map.scale.set(currentZoom)
+        map.x = oldx;
+        map.y = oldy;
+        currentPos.x = oldx;
+        currentPos.y = oldy;
+        zoomCenter.x = oldx;
+        zoomCenter.y = oldy;
+    }
 }
 
 function buildMap () {
@@ -333,10 +349,10 @@ function buildMap () {
         var areaImage = activeImages[i];
 
             var sprite = null;
-            if (currentMapStyle === NEW_STYLE_NAME && area && area.animation && areaImage.src.match(/\.gif$/i)) {
+            if (currentMapStyle === NEW_STYLE_NAME && area && area.animation && !preferStaticImages && areaImage && areaImage.src && areaImage.src.match(/\.gif$/i)) {
                 sprite = createCanvasGifSprite(areaImage);
             } else {
-            // Fallback: use the normal texture path (works for PNGs and static GIF fallbacks)
+            // Fallback: use the normal texture path
             var src = createImageLink(redrawnLayers[activeLayerIndex].name, currentMapStyle, area.ident);
             sprite = new PIXI.Sprite.from(src);
         }
@@ -788,14 +804,25 @@ function onDragEnd () {
 function changeTab (n) {
     var tabs = document.querySelectorAll('.menu__tab')
     var elems = document.querySelectorAll('.menu__content >*')
+
     for (let i = 0; i < tabs.length; i++) {
         var tab = tabs[i]
         tab.classList.remove('active')
         elems[i].classList.remove('active')
     }
+
+    elems[n].scrollTo(0,0); // Reset scroll
+
     tabs[n].classList.add('active')
     elems[n].classList.add('active')
-    elems.children
+
+    // Focus on selected area if in the areas list
+    if (n === 0) {
+        const activeArea = elems[n].querySelector('.area.active');
+        if (activeArea) {
+            activeArea.scrollIntoView();
+        }
+    }
 }
 
 function onClick (e) {
@@ -1326,7 +1353,7 @@ function changeLayer(layer) {
     const tabs = document.querySelectorAll('#layers li button')
     let activeLayerName = redrawnLayers[activeLayerIndex].name;
     tabs.forEach((x) => { if (!x.classList.contains(activeLayerName)) {x.classList.remove('active')} else {x.classList.add('active')} })
-    setupCanvas()
+    setupCanvas(true)
     
     // Adjust canvas focus
     focusOnArea(activeAreas[Math.floor(Math.random() * activeAreas.length)])
@@ -1414,4 +1441,10 @@ function parseFocusFromUrl() {
     } catch (e) {
         return null;
     }
+}
+
+/** Called when the user toggles the option to prefer static images over animated GIFs. */
+function onPreferStaticToggled(isStatic) {
+    preferStaticImages = !!isStatic;
+    setupCanvas(false);
 }

@@ -212,9 +212,47 @@ a{
 }
 .menu__content > * {
     display:none;
+    background-color: #222034; /* ensure each panel matches the options tab */
 }
 .menu__content > .active {
     display:block;
+}
+
+/* Ensure the three main panels use the same background as the Options tab */
+#areaList, #settings, #about,
+.menu__content > #areaList, .menu__content > #settings, .menu__content > #about {
+    background-color: #222034 !important;
+}
+
+/* Themed scrollbars for menu panels */
+.menu__content, .menu__content > * {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+
+/* WebKit-based browsers */
+.menu__content::-webkit-scrollbar, .menu__content > *::-webkit-scrollbar {
+    width: 10px;
+}
+.menu__content::-webkit-scrollbar-track, .menu__content > *::-webkit-scrollbar-track {
+    background: transparent;
+}
+.menu__content::-webkit-scrollbar-thumb, .menu__content > *::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.menu__content::-webkit-scrollbar-thumb:hover, .menu__content > *::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.14);
+}
+
+/* Slightly more prominent when menu is active */
+.menu.active .menu__content > *::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+}
+.menu.active .menu__content > *::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.18);
 }
 
 .bgmPlayer{
