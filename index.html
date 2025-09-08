@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Kanto Redrawn</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no"> <!--App should handle scaling-->
-    <meta property="og:title" content="Kanto Redrawn">
     <meta property="og:site_name" content="Retro Redrawn">
     <meta property="og:url" content="https://retroredrawn.com/">
     <meta property="og:description" content="Kanto Redrawn is a collaborative art project by a group of passionate pixel artists from across the world.">
@@ -18,11 +15,14 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!--PIXI-->
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.x/dist/browser/pixi.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pixi-filters@5.2/dist/browser/pixi-filters.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.3.12/pixi.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-filters@4.2/dist/pixi-filters.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-gif@2.0.4/dist/pixi-gif.min.js"></script>
     
     <!--Retro Redrawn: CSS-->
     <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="player.css">
+    <link rel="stylesheet" href="options.css">
 </head>
 <body class="content">
     <div id="app">
@@ -45,46 +45,60 @@
                     </label>
                     Original
                 </div>
+
+                <ul id="layers">
+                    <li><button onclick="changeLayer('kanto')" class="kanto active"><span>Kanto</span></button></li>
+                    <li><button onclick="changeLayer('interior')" class="interior"><span>Interiors</span></button></li>
+                    <li><button onclick="changeLayer('sevii')" class="sevii"><span>Sevii Islands</span></button></li>
+                </ul>
                 <div class="menu__actions">
                     <button onclick="changeTab(0)" class="menu__tab active">
                         Area List
                     </button>
                     <button onclick="changeTab(1)" class="menu__tab">
-                        Features
+                        Options
                     </button>
                     <button onclick="changeTab(2)" class="menu__tab">
                         About
                     </button>
                 </div>
                 <div class="menu__content">
-                    
-                    <div id="areaList" class="active">
-                        <ul id="layers">
-                            <li><button onclick="changeLayer('kanto')" class="kanto active"><span>Kanto</span></button></li>
-                            <li><button onclick="changeLayer('interior')" class="interior"><span>Interiors</span></button></li>
-                            <li><button onclick="changeLayer('sevii')" class="sevii"><span>Sevii Islands</span></button></li>
-                        </ul>
-                        <hr>
+                    <div id="areaList" class="active"> 
                         <ul id="areas"></ul>
                     </div>
-                    <div id="settings" style="text-align: center;">
-                        <hr>
-                        <div>
-                            <input class="settings__checkbox" type="checkbox" id="disableBlur"><label for="disableBlur">Disable Zoom Blur</label> <br><br>
-                            <input class="settings__checkbox" type="checkbox" id="areaBorderToggle" oninput="onAreaBorderToggled(this.checked)"><label for="areaBorderToggle">Hide Area Border</label> 
-                        </div><br>
-                        <hr>
-                        <div>
-                            <label>Camera Speed</label><br>
-                            <input type="range" min="0.5" max="2" value="1" step="0.25" id="cameraSpeed" oninput="changeCameraSpeed(this.value)">
-                            <small>1x</small>
+                    <div id="settings" class="options-container">
+                        <div class="options-section">
+                            <h3>Display Settings</h3>
+                            <div class="option-row">
+                                <label class="option-label" for="disableBlur">Disable Zoom Blur</label>
+                                <div class="option-control">
+                                    <input class="option-checkbox" type="checkbox" id="disableBlur">
+                                </div>
+                            </div>
+                            <div class="option-row">
+                                <label class="option-label" for="areaBorderToggle">Hide Area Border</label>
+                                <div class="option-control">
+                                    <input class="option-checkbox" type="checkbox" id="areaBorderToggle" oninput="onAreaBorderToggled(this.checked)">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label>Tour Speed</label><br>
-                            <input type="range" min="0.5" max="2" value="1" step="0.25" id="tourCameraSpeed" oninput="changeTourCameraSpeed(this.value)">
-                            <small>1x</small>
+                        <div class="options-section">
+                            <h3>Camera Controls</h3>
+                            <div class="option-row">
+                                <label class="option-label" for="cameraSpeed">Camera Speed</label>
+                                <div class="option-control">
+                                    <input type="range" min="0.5" max="2" value="1" step="0.25" id="cameraSpeed" oninput="changeCameraSpeed(this.value)">
+                                    <small>1x</small>
+                                </div>
+                            </div>
+                            <div class="option-row">
+                                <label class="option-label" for="tourCameraSpeed">Tour Speed</label>
+                                <div class="option-control">
+                                    <input type="range" min="0.5" max="2" value="1" step="0.25" id="tourCameraSpeed" oninput="changeTourCameraSpeed(this.value)">
+                                    <small>1x</small>
+                                </div>
+                            </div>
                         </div>
-                        <hr>
                     </div>
                     <div id="about">
                         <p>Kanto Redrawn is a collaborative art project by a group of passionate pixel artists from across the world.</p>
@@ -116,21 +130,68 @@
                 </div>
                 <br>
                 <div class="bgm">
-                    <label>Vermilion City - Pokerus Project</label>
-                    <audio class="bgmPlayer" controls loop> 
-                        <source src="audio/VermilionCity_PokerusPr.mp3" type="audio/mpeg" autoplay="false">
-                    </audio><br>
-                    <label>Route 12 - Toribobs</label>
-                    <audio class="bgmPlayer" controls loop>
-                        <source src="audio/Route12_Toribobs.mp3" type="audio/mpeg" autoplay="false">
-                    </audio>
+                    <div class="custom-player" data-player-num="0" data-autoplay="true">
+                        <div class="player-controls">
+                            <button class="control-btn" data-control="restart" title="Restart"><span class="material-icons">replay</span></button>
+                            <button class="control-btn" data-control="play-pause" title="Play/Pause"><span class="material-icons">play_arrow</span></button>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress"></div>
+                                </div>
+                                <span class="time-display">0:00</span>
+                            </div>
+                        </div>
+                        <div class="track-info-container">
+                            <div class="track-info-scroll">
+                                <div class="track-info">
+                                    <span class="track-title"></span>
+                                    <span class="track-info-separator">by</span>
+                                    <span class="track-artist"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="custom-player" data-player-num="1" data-autoplay="false">
+                        <div class="player-controls">
+                            <button class="control-btn" data-control="restart" title="Restart"><span class="material-icons">replay</span></button>
+                            <button class="control-btn" data-control="play-pause" title="Play/Pause"><span class="material-icons">play_arrow</span></button>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress"></div>
+                                </div>
+                                <span class="time-display">0:00</span>
+                            </div>
+                        </div>
+                        <div class="track-info-container">
+                            <div class="track-info-scroll">
+                                <div class="track-info">
+                                    <span class="track-title"></span>
+                                    <span class="track-info-separator">by</span>
+                                    <span class="track-artist"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="tour">
                     <button id="tourButton" onclick="toggleTour()"><span class="material-icons">play_arrow</span> <span>Begin Tour</span></button>
                 </div>
+                <div class="menu__disclaimer">
+                    <hr>
+                    <p>
+                        <small>
+                            <b>Disclaimer</b>
+                        </small>
+                    </p>
+                    <p>
+                        <small>
+                            This is a fan art project - it is in no way affiliated with or authorised by the original rights holders and not a functional game map.
+                        </small>
+                    </p>
+                </div>
             </div>
         </div>
-
+      
         <div class="artist_mobile area__info__inner">
             <div class="area__info__img">
                 <a href="" target="_blank" title="">
@@ -139,6 +200,7 @@
             </div>
             <div class="area__info__name">
                 <a href="" target="_blank" title=""></a>
+        
             </div>
         </div>
 
@@ -162,7 +224,12 @@
 <script src="https://retro-redrawn.github.io/Retro-Redrawn-Data/ArtistData.js"></script>
 <script src="https://retro-redrawn.github.io/Retro-Redrawn-Data/RedrawnArtistDataUtils.js"></script>
 <script src="implementation.js"></script>
-<script src="maputils.js"></script>
+<!-- GIF decoding: omggif + lightweight player (used when browser doesn't expose animated frames to canvas) -->
+<script src="https://cdn.jsdelivr.net/npm/omggif@1.0.10/omggif.min.js"></script>
+<script src="vendor/gif-player-omggif.js"></script>
 <script src="interactive.js"></script>
+<script src="audio-player.js"></script>
+<script src="maputils.js"></script>
+<script src="interactive_overrides.js"></script>
 
 </html>

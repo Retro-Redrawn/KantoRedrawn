@@ -7,7 +7,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 832,
-      y: 4512
+      y: 4512,
+      width: 320,
+      height: 288
     },
     offset: {
       x: 0,
@@ -51,7 +53,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 832,
-      y: 3936
+      y: 3936,
+      width: 320,
+      height: 576
     },
     offset: {
       x: 0,
@@ -73,7 +77,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 672,
-      y: 3360
+      y: 3360,
+      width: 640,
+      height: 576
     },
     offset: {
       x: 0,
@@ -117,7 +123,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 800,
-      y: 2848
+      y: 2848,
+      width: 480,
+      height: 512
     },
     offset: {
       x: 0,
@@ -139,7 +147,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 608,
-      y: 2080
+      y: 2080,
+      width: 544,
+      height: 768
     },
     offset: {
       x: 0,
@@ -160,7 +170,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 608,
-      y: 1824
+      y: 1824,
+      width: 672,
+      height: 256
     },
     offset: {
       x: 0,
@@ -182,7 +194,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 1152,
-      y: 2080
+      y: 2080,
+      width: 128,
+      height: 768
     },
     offset: {
       x: 0,
@@ -204,7 +218,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 672,
-      y: 1248
+      y: 1248,
+      width: 640,
+      height: 576
     },
     offset: {
       x: -58,
@@ -226,7 +242,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 1312,
-      y: 1376
+      y: 1376,
+      width: 800,
+      height: 288
     },
     offset: {
       x: 0,
@@ -248,7 +266,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 1088
+      y: 1088,
+      width: 352,
+      height: 576
     },
     offset: {
       x: 0,
@@ -270,7 +290,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2224,
-      y: 864
+      y: 864,
+      width: 432,
+      height: 224
     },
     offset: {
       x: -68,
@@ -292,7 +314,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2464,
-      y: 1088
+      y: 1088,
+      width: 1088,
+      height: 288
     },
     offset: {
       x: 0,
@@ -314,7 +338,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3552,
-      y: 960
+      y: 960,
+      width: 640,
+      height: 576
     },
     offset: {
       x: 0,
@@ -336,7 +362,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3712,
-      y: 384
+      y: 384,
+      width: 320,
+      height: 576
     },
     offset: {
       x: 0,
@@ -358,7 +386,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4032,
-      y: 384
+      y: 384,
+      width: 960,
+      height: 288
     },
     offset: {
       x: 0,
@@ -380,7 +410,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4704,
-      y: 64
+      y: 64,
+      width: 608,
+      height: 320
     },
     offset: {
       x: 0,
@@ -402,7 +434,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3712,
-      y: 1536
+      y: 1536,
+      width: 320,
+      height: 576
     },
     offset: {
       x: 0,
@@ -424,7 +458,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3696,
-      y: 2688
+      y: 2688,
+      width: 352,
+      height: 560
     },
     offset: {
       x: 0,
@@ -446,7 +482,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3552,
-      y: 3248
+      y: 3248,
+      width: 656,
+      height: 800
     },
     offset: {
       x: -35,
@@ -470,7 +508,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4208,
-      y: 3376
+      y: 3376,
+      width: 976,
+      height: 320
     },
     offset: {
       x: 0,
@@ -492,7 +532,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4192,
-      y: 1088
+      y: 1088,
+      width: 960,
+      height: 288
     },
     offset: {
       x: 0,
@@ -514,7 +556,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 5152,
-      y: 1088
+      y: 1088,
+      width: 320,
+      height: 480
     },
     offset: {
       x: 0,
@@ -536,7 +580,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 5152,
-      y: 1568
+      y: 1568,
+      width: 320,
+      height: 320
     },
     offset: {
       x: 0,
@@ -558,7 +604,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 5152,
-      y: 1888
+      y: 1888,
+      width: 320,
+      height: 224
     },
     offset: {
       x: 0,
@@ -580,7 +628,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 5152,
-      y: 2112
+      y: 2112,
+      width: 320,
+      height: 416
     },
     offset: {
       x: 0,
@@ -602,7 +652,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4192,
-      y: 2240
+      y: 2240,
+      width: 960,
+      height: 288
     },
     offset: {
       x: 32,
@@ -624,7 +676,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3232,
-      y: 2112
+      y: 2112,
+      width: 320,
+      height: 416
     },
     offset: {
       x: 0,
@@ -646,7 +700,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2432,
-      y: 2048
+      y: 2048,
+      width: 800,
+      height: 640
     },
     offset: {
       x: 0,
@@ -668,7 +724,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3552,
-      y: 2112
+      y: 2112,
+      width: 640,
+      height: 576
     },
     offset: {
       x: -48,
@@ -690,7 +748,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 1792,
-      y: 2112
+      y: 2112,
+      width: 640,
+      height: 400
     },
     offset: {
       x: 0,
@@ -712,7 +772,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 1792,
-      y: 2512
+      y: 2512,
+      width: 320,
+      height: 2320
     },
     offset: {
       x: 0,
@@ -734,7 +796,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 1792,
-      y: 4832
+      y: 4832,
+      width: 800,
+      height: 288
     },
     offset: {
       x: 0,
@@ -756,7 +820,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2592,
-      y: 4704
+      y: 4704,
+      width: 640,
+      height: 576
     },
     offset: {
       x: 0,
@@ -778,7 +844,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2656,
-      y: 4256
+      y: 4256,
+      width: 512,
+      height: 448
     },
     offset: {
       x: 0,
@@ -800,7 +868,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3168,
-      y: 4064
+      y: 4064,
+      width: 480,
+      height: 480
     },
     offset: {
       x: 0,
@@ -822,7 +892,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2464,
-      y: 3648
+      y: 3648,
+      width: 704,
+      height: 608
     },
     offset: {
       x: 0,
@@ -844,7 +916,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2144,
-      y: 4256
+      y: 4256,
+      width: 512,
+      height: 480
     },
     offset: {
       x: 0,
@@ -866,7 +940,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 3232,
-      y: 4880
+      y: 4880,
+      width: 1008,
+      height: 192
     },
     offset: {
       x: 0,
@@ -888,7 +964,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4240,
-      y: 4544
+      y: 4544,
+      width: 256,
+      height: 528
     },
     offset: {
       x: 0,
@@ -910,7 +988,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 4240,
-      y: 4288
+      y: 4288,
+      width: 1232,
+      height: 256
     },
     offset: {
       x: 0,
@@ -932,7 +1012,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 5184,
-      y: 3504
+      y: 3504,
+      width: 288,
+      height: 784
     },
     offset: {
       x: 0,
@@ -954,7 +1036,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 5184,
-      y: 2528
+      y: 2528,
+      width: 288,
+      height: 976
     },
     offset: {
       x: 0,
@@ -976,7 +1060,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 2752,
-      y: 5280
+      y: 5280,
+      width: 320,
+      height: 512
     },
     offset: {
       x: 0,
@@ -998,7 +1084,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 1248,
-      y: 5520
+      y: 5520,
+      width: 1504,
+      height: 272
     },
     offset: {
       x: 48,
@@ -1020,7 +1108,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 832,
-      y: 5424
+      y: 5424,
+      width: 416,
+      height: 368
     },
     offset: {
       x: -213,
@@ -1042,7 +1132,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 832,
-      y: 4800
+      y: 4800,
+      width: 320,
+      height: 624
     },
     offset: {
       x: 0,
@@ -1064,7 +1156,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 0,
-      y: 3424
+      y: 3424,
+      width: 672,
+      height: 352
     },
     offset: {
       x: 0,
@@ -1086,7 +1180,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 0,
-      y: 2832
+      y: 2832,
+      width: 384,
+      height: 592
     },
     offset: {
       x: 0,
@@ -1108,7 +1204,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 0,
-      y: 2352
+      y: 2352,
+      width: 384,
+      height: 480
     },
     offset: {
       x: 16,
@@ -1130,7 +1228,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 0,
-      y: 1728
+      y: 1728,
+      width: 384,
+      height: 624
     },
     offset: {
       x: 16,
@@ -1152,7 +1252,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 0,
-      y: 1184
+      y: 1184,
+      width: 384,
+      height: 544
     },
     offset: {
       x: 16,
@@ -1174,7 +1276,9 @@ var kantoAreas = [
     animation: false,
     point: {
       x: 0,
-      y: 896
+      y: 896,
+      width: 384,
+      height: 288
     },
     offset: {
       x: 16,

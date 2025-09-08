@@ -6,7 +6,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 832,
-      y: 4640
+      y: 4640,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -28,7 +30,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 832,
-      y: 4496
+      y: 4496,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -50,7 +54,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 992,
-      y: 4576
+      y: 4576,
+      width: 160,
+      height: 192
     },
     offset: {
       x: 0,
@@ -72,7 +78,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 960,
-      y: 3792
+      y: 3792,
+      width: 224,
+      height: 149
     },
     offset: {
       x: 0,
@@ -94,7 +102,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 960,
-      y: 3632
+      y: 3632,
+      width: 224,
+      height: 144
     },
     offset: {
       x: 0,
@@ -116,7 +126,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1136,
-      y: 3488
+      y: 3488,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -138,7 +150,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 992,
-      y: 3488
+      y: 3488,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -160,7 +174,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 768,
-      y: 3489
+      y: 3489,
+      width: 160,
+      height: 223
     },
     offset: {
       x: 0,
@@ -182,7 +198,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 768,
-      y: 3728
+      y: 3728,
+      width: 160,
+      height: 256
     },
     offset: {
       x: 0,
@@ -204,7 +222,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 944,
-      y: 3085
+      y: 3085,
+      width: 420,
+      height: 387
     },
     offset: {
       x: 0,
@@ -226,7 +246,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1184,
-      y: 1856
+      y: 1856,
+      width: 320,
+      height: 576
     },
     offset: {
       x: 0,
@@ -248,7 +270,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 833,
-      y: 1328
+      y: 1328,
+      width: 159,
+      height: 224
     },
     offset: {
       x: 0,
@@ -270,7 +294,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 768,
-      y: 1168
+      y: 1168,
+      width: 320,
+      height: 128
     },
     offset: {
       x: 0,
@@ -292,7 +318,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 768,
-      y: 1024
+      y: 1024,
+      width: 224,
+      height: 128
     },
     offset: {
       x: 0,
@@ -314,7 +342,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1040,
-      y: 208
+      y: 208,
+      width: 640,
+      height: 576
     },
     offset: {
       x: 0,
@@ -336,7 +366,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1696,
-      y: 208
+      y: 208,
+      width: 640,
+      height: 576
     },
     offset: {
       x: 0,
@@ -358,7 +390,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2352,
-      y: 208
+      y: 208,
+      width: 640,
+      height: 576
     },
     offset: {
       x: 0,
@@ -380,7 +414,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3120,
-      y: 704
+      y: 704,
+      width: 512,
+      height: 320
     },
     offset: {
       x: 0,
@@ -402,7 +438,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3120,
-      y: 368
+      y: 368,
+      width: 512,
+      height: 320
     },
     offset: {
       x: 0,
@@ -424,7 +462,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3120,
-      y: 32
+      y: 32,
+      width: 512,
+      height: 320
     },
     offset: {
       x: 0,
@@ -446,7 +486,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3680,
-      y: 1200
+      y: 1200,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -468,7 +510,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3968,
-      y: 1120
+      y: 1120,
+      width: 160,
+      height: 240
     },
     offset: {
       x: 0,
@@ -490,7 +534,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3984,
-      y: 960
+      y: 960,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -512,7 +558,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4688,
-      y: 272
+      y: 272,
+      width: 160,
+      height: 144
     },
     offset: {
       x: 0,
@@ -534,7 +582,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4864,
-      y: 400
+      y: 400,
+      width: 480,
+      height: 432
     },
     offset: {
       x: 0,
@@ -556,7 +606,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4864,
-      y: 848
+      y: 848,
+      width: 480,
+      height: 432
     },
     offset: {
       x: 0,
@@ -578,7 +630,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4672,
-      y: 1296
+      y: 1296,
+      width: 672,
+      height: 608
     },
     offset: {
       x: 0,
@@ -600,7 +654,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 5184,
-      y: 1904
+      y: 1904,
+      width: 288,
+      height: 288
     },
     offset: {
       x: 0,
@@ -622,7 +678,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 5184,
-      y: 2200
+      y: 2200,
+      width: 288,
+      height: 304
     },
     offset: {
       x: 0,
@@ -644,7 +702,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 5184,
-      y: 2512
+      y: 2512,
+      width: 288,
+      height: 288
     },
     offset: {
       x: 0,
@@ -666,7 +726,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 5184,
-      y: 2816
+      y: 2816,
+      width: 288,
+      height: 288
     },
     offset: {
       x: 0,
@@ -688,7 +750,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4880,
-      y: 1904
+      y: 1904,
+      width: 288,
+      height: 288
     },
     offset: {
       x: 0,
@@ -710,7 +774,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4880,
-      y: 2208
+      y: 2208,
+      width: 288,
+      height: 288
     },
     offset: {
       x: 0,
@@ -732,7 +798,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4880,
-      y: 2512
+      y: 2512,
+      width: 288,
+      height: 288
     },
     offset: {
       x: 0,
@@ -754,7 +822,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4688,
-      y: 1936
+      y: 1936,
+      width: 176,
+      height: 144
     },
     offset: {
       x: 0,
@@ -776,7 +846,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3616,
-      y: 3312
+      y: 3312,
+      width: 160,
+      height: 288
     },
     offset: {
       x: 0,
@@ -798,7 +870,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3440,
-      y: 3344
+      y: 3344,
+      width: 160,
+      height: 128
     },
     offset: {
       x: 0,
@@ -820,7 +894,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3728,
-      y: 3792
+      y: 3792,
+      width: 688,
+      height: 584
     },
     offset: {
       x: 0,
@@ -842,7 +918,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3776,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -864,7 +942,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3888,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -886,7 +966,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4000,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -908,7 +990,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4112,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -930,7 +1014,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4224,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -952,7 +1038,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4336,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -974,7 +1062,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4416,
-      y: 3856
+      y: 3856,
+      width: 608,
+      height: 208
     },
     offset: {
       x: 0,
@@ -996,7 +1086,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4496,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1018,7 +1110,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4608,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1040,7 +1134,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4720,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1062,7 +1158,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4832,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1084,7 +1182,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4944,
-      y: 3664
+      y: 3664,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1106,7 +1206,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4416,
-      y: 4080
+      y: 4080,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1128,7 +1230,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4528,
-      y: 4080
+      y: 4080,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1150,7 +1254,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4640,
-      y: 4080
+      y: 4080,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1172,7 +1278,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4752,
-      y: 4080
+      y: 4080,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1194,7 +1302,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4864,
-      y: 4080
+      y: 4080,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1216,7 +1326,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4976,
-      y: 4080
+      y: 4080,
+      width: 96,
+      height: 112
     },
     offset: {
       x: 0,
@@ -1238,7 +1350,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3248,
-      y: 4064
+      y: 4064,
+      width: 448,
+      height: 144
     },
     offset: {
       x: 0,
@@ -1260,7 +1374,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2880,
-      y: 3936
+      y: 3936,
+      width: 352,
+      height: 384
     },
     offset: {
       x: 0,
@@ -1282,7 +1398,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3280,
-      y: 1840
+      y: 1840,
+      width: 384,
+      height: 320
     },
     offset: {
       x: 0,
@@ -1304,7 +1422,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3680,
-      y: 1968
+      y: 1968,
+      width: 160,
+      height: 192
     },
     offset: {
       x: 0,
@@ -1326,7 +1446,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3856,
-      y: 1968
+      y: 1968,
+      width: 320,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1348,7 +1470,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3488,
-      y: 2320
+      y: 2320,
+      width: 128,
+      height: 226
     },
     offset: {
       x: 0,
@@ -1370,7 +1494,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2960,
-      y: 2176
+      y: 2176,
+      width: 768,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1392,7 +1518,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3632,
-      y: 2320
+      y: 2320,
+      width: 160,
+      height: 528
     },
     offset: {
       x: 0,
@@ -1414,7 +1542,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3808,
-      y: 2320
+      y: 2320,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1438,7 +1568,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3808,
-      y: 2624
+      y: 2624,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1460,7 +1592,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3809,
-      y: 2929
+      y: 2929,
+      width: 478,
+      height: 286
     },
     offset: {
       x: 0,
@@ -1482,7 +1616,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 3808,
-      y: 3230
+      y: 3230,
+      width: 482,
+      height: 290
     },
     offset: {
       x: 0,
@@ -1504,7 +1640,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4304,
-      y: 2304
+      y: 2304,
+      width: 480,
+      height: 304
     },
     offset: {
       x: 0,
@@ -1526,7 +1664,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4305,
-      y: 2625
+      y: 2625,
+      width: 414,
+      height: 286
     },
     offset: {
       x: 0,
@@ -1548,7 +1688,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4304,
-      y: 2928
+      y: 2928,
+      width: 416,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1570,7 +1712,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4304,
-      y: 3232
+      y: 3232,
+      width: 416,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1592,7 +1736,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4736,
-      y: 2928
+      y: 2928,
+      width: 416,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1614,7 +1760,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 4736,
-      y: 3232
+      y: 3232,
+      width: 256,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1636,7 +1784,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 5008,
-      y: 3232
+      y: 3232,
+      width: 272,
+      height: 288
     },
     offset: {
       x: 0,
@@ -1658,7 +1808,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 2208
+      y: 2208,
+      width: 128,
+      height: 160
     },
     offset: {
       x: 0,
@@ -1680,7 +1832,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 2032
+      y: 2032,
+      width: 128,
+      height: 160
     },
     offset: {
       x: 0,
@@ -1702,7 +1856,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 1856
+      y: 1856,
+      width: 128,
+      height: 160
     },
     offset: {
       x: 0,
@@ -1724,7 +1880,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 1665
+      y: 1665,
+      width: 128,
+      height: 175
     },
     offset: {
       x: 0,
@@ -1746,7 +1904,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 1520
+      y: 1520,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1768,7 +1928,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 2416
+      y: 2416,
+      width: 320,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1790,7 +1952,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 2272
+      y: 2272,
+      width: 320,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1812,7 +1976,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 2128
+      y: 2128,
+      width: 320,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1834,7 +2000,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 1984
+      y: 1984,
+      width: 320,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1856,7 +2024,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 1840
+      y: 1840,
+      width: 320,
+      height: 128
     },
     offset: {
       x: 0,
@@ -1878,7 +2048,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2112,
-      y: 1568
+      y: 1568,
+      width: 384,
+      height: 256
     },
     offset: {
       x: 0,
@@ -1900,7 +2072,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2960,
-      y: 2368
+      y: 2368,
+      width: 192,
+      height: 144
     },
     offset: {
       x: 0,
@@ -1922,7 +2096,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2625,
-      y: 2384
+      y: 2384,
+      width: 320,
+      height: 224
     },
     offset: {
       x: 0,
@@ -1944,7 +2120,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2448,
-      y: 2624
+      y: 2624,
+      width: 352,
+      height: 448
     },
     offset: {
       x: 0,
@@ -1966,7 +2144,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 2624
+      y: 2624,
+      width: 480,
+      height: 352
     },
     offset: {
       x: 0,
@@ -1988,7 +2168,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2448,
-      y: 3088
+      y: 3088,
+      width: 352,
+      height: 384
     },
     offset: {
       x: 0,
@@ -2010,7 +2192,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2816,
-      y: 3088
+      y: 3088,
+      width: 352,
+      height: 384
     },
     offset: {
       x: 0,
@@ -2032,7 +2216,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2448,
-      y: 2320
+      y: 2320,
+      width: 160,
+      height: 289
     },
     offset: {
       x: 0,
@@ -2054,7 +2240,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2624,
-      y: 4800
+      y: 4800,
+      width: 160,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2076,7 +2264,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2176,
-      y: 4208
+      y: 4208,
+      width: 160,
+      height: 128
     },
     offset: {
       x: 0,
@@ -2098,7 +2288,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1776,
-      y: 5136
+      y: 5136,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2120,7 +2312,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2272,
-      y: 5136
+      y: 5136,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2142,7 +2336,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1776,
-      y: 5440
+      y: 5440,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2164,7 +2360,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2272,
-      y: 5440
+      y: 5440,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2186,7 +2384,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 2768,
-      y: 5440
+      y: 5440,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2208,7 +2408,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 1056,
-      y: 5216
+      y: 5216,
+      width: 336,
+      height: 304
     },
     offset: {
       x: 0,
@@ -2230,7 +2432,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 528,
-      y: 5632
+      y: 5632,
+      width: 288,
+      height: 96
     },
     offset: {
       x: 0,
@@ -2252,7 +2456,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 528,
-      y: 5488
+      y: 5488,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -2274,7 +2480,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 672,
-      y: 5488
+      y: 5488,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -2296,7 +2504,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 816,
-      y: 5488
+      y: 5488,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -2318,7 +2528,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 5280
+      y: 5280,
+      width: 480,
+      height: 448
     },
     offset: {
       x: 0,
@@ -2340,7 +2552,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 4816
+      y: 4816,
+      width: 480,
+      height: 448
     },
     offset: {
       x: 0,
@@ -2362,7 +2576,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 4512
+      y: 4512,
+      width: 480,
+      height: 288
     },
     offset: {
       x: 0,
@@ -2384,7 +2600,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 4048
+      y: 4048,
+      width: 480,
+      height: 448
     },
     offset: {
       x: 0,
@@ -2406,7 +2624,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 1632
+      y: 1632,
+      width: 320,
+      height: 368
     },
     offset: {
       x: 0,
@@ -2428,7 +2648,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 1248
+      y: 1248,
+      width: 320,
+      height: 368
     },
     offset: {
       x: 0,
@@ -2450,7 +2672,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 32,
-      y: 864
+      y: 864,
+      width: 320,
+      height: 368
     },
     offset: {
       x: 0,
@@ -2472,7 +2696,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 64,
-      y: 608
+      y: 608,
+      width: 256,
+      height: 240
     },
     offset: {
       x: 0,
@@ -2494,7 +2720,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 64,
-      y: 400
+      y: 400,
+      width: 160,
+      height: 192
     },
     offset: {
       x: 0,
@@ -2516,7 +2744,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 240,
-      y: 400
+      y: 400,
+      width: 160,
+      height: 192
     },
     offset: {
       x: 0,
@@ -2538,7 +2768,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 416,
-      y: 400
+      y: 400,
+      width: 160,
+      height: 192
     },
     offset: {
       x: 0,
@@ -2560,7 +2792,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 592,
-      y: 400
+      y: 400,
+      width: 416,
+      height: 416
     },
     offset: {
       x: 0,
@@ -2582,7 +2816,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 624,
-      y: 256
+      y: 256,
+      width: 128,
+      height: 128
     },
     offset: {
       x: 0,
@@ -2604,7 +2840,9 @@ var interiorAreas = [
     animation: false,
     point: {
       x: 608,
-      y: 112
+      y: 112,
+      width: 160,
+      height: 128
     },
     offset: {
       x: 0,

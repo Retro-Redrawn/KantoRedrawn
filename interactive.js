@@ -34,6 +34,8 @@ var activeAreas = redrawnLayers[activeLayerIndex].areas;  // Active array of are
 var layerCount = redrawnLayers.length;  // Total number of layers
 var canvasDimensions = redrawnLayers[activeLayerIndex].canvasSize; // Dimension of active canvas
 var map = null;
+var mapbg;  // Background for the map
+var background; // Background behind the canvas
 var mapImages = null;
 var mapZones = null;
 var currentMapStyle = NEW_STYLE_NAME;
@@ -45,7 +47,7 @@ var autoHighlightEnabled = true;
 var highlightedArea = null;
 
 // Filters
-var blurFilter = null;      // Motion blue used when zooming
+var blurFilter = null;      // Motion blur used when zooming
 var bulgeFilter = null;
 var colorFilter = null;      // Used for fade-to-black sequences (e.g. in tour mode)
 
@@ -106,17 +108,18 @@ function loadLayer (areaArray, areaImageArray, areaOldImageArray, layerSubfolder
     {
         var area = areaArray[i];
 
-        // Load new images
+        // Create and set up new image
         var img = new Image();
-        img.src = createImageLink(layerSubfolder, NEW_STYLE_NAME, area.ident, NEW_SLICE_SUFFIX);
-        checkImageLoaded(img, function () { onAreaImageLoaded(areaImageArray); });
-        areaImageArray.push(img);
-        
-        // Load old images
+        areaImageArray.push(img); // Add to array before loading to maintain order
+        img.onload = onAreaImageLoaded(areaImageArray);
+        var newExt = (area && area.animation && NEW_STYLE_NAME) ? '.gif' : '.png'; // Use animated image?
+        img.src = createImageLink(layerSubfolder, NEW_STYLE_NAME, area.ident, NEW_SLICE_SUFFIX, newExt);
+            
+        // Create and set up old image
         var oldimg = new Image();
-        oldimg.src = createImageLink(layerSubfolder, OLD_STYLE_NAME, area.ident, OLD_SLICE_SUFFIX);
-        checkImageLoaded(oldimg, function () { onAreaImageLoaded(areaImageArray); });
-        areaOldImageArray.push(oldimg);
+        areaOldImageArray.push(oldimg); // Add to array before loading to maintain order
+        oldimg.onload = onAreaImageLoaded(areaImageArray);
+        oldimg.src = createImageLink(layerSubfolder, OLD_STYLE_NAME, area.ident, OLD_SLICE_SUFFIX, '.png');
     }
 }
 
@@ -127,7 +130,12 @@ function createImageLink (layerName, mapStyle, areaName, mapSuffix) {
     if (!(mapSuffix === undefined || mapSuffix === '')) {
         link += mapSuffix;
     }
-    link += `.png`; 
+    // Default to .png unless an explicit extension is provided as the 5th argument
+    var extension = '.png';
+    if (arguments.length >= 5 && arguments[4]) {
+        extension = arguments[4];
+    }
+    link += extension;
     
     return link;
 }
@@ -160,24 +168,6 @@ function onAreaImageLoaded (areaImageArray) {
     }
 }
 
-//Check if the image is properly loaded and rendered, .complete does not mean it is rendered and the size is might be set incorrectly
-function checkImageLoaded(img, callback) {
-    img.onload = function () {
-        if (img.naturalHeight > 0 && img.naturalWidth > 0) callback();
-        var counter = 0;
-        var interval = setInterval(function () {
-            counter++;
-            if ((img.naturalHeight > 0 && img.naturalWidth > 0) || counter >= 20) {
-                clearInterval(interval);
-                callback();
-            }
-        }, 500);
-    };
-    img.onerror = function() {
-        callback();
-    };
-}
-
 /** Completes the loading process. */
 function completeLoading () {
     loading = false;
@@ -207,7 +197,8 @@ function init () {
             });
         globalThis.__PIXI_APP__ = app; 
     } catch (error) {
-        console.error(error);
+        // alert('Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.')
+        // document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p><a>View full image</a>'
         document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p>'
         document.querySelector('#error').classList.add('active')
     }
@@ -236,7 +227,7 @@ function setupCanvas () {
     map.name = "Map";
 
     if (CANVAS_BACKGROUND_IMAGE !== '') {
-        var mapbg = new PIXI.TilingSprite(new PIXI.Texture.from(CANVAS_BACKGROUND_IMAGE), canvasDimensions.width, canvasDimensions.height)
+        mapbg = new PIXI.TilingSprite(new PIXI.Texture.from(CANVAS_BACKGROUND_IMAGE), canvasDimensions.width, canvasDimensions.height)
         mapbg.name = "Map Background"
         mapbg.zIndex = -1
         map.addChild(mapbg)
@@ -252,7 +243,7 @@ function setupCanvas () {
     
     buildMap()
 
-    var background = new PIXI.Graphics()
+    background = new PIXI.Graphics()
     background.name = "Background Fill"
     background.beginFill(WINDOW_BACKGROUND_COLOR)
     background.drawRect(0,0,window.innerWidth, window.innerHeight)
@@ -282,6 +273,10 @@ function setupCanvas () {
     blurFilter = new PIXI.filters.ZoomBlurFilter()
     bulgeFilter = new PIXI.filters.BulgePinchFilter()
     colorFilter = new PIXI.filters.AlphaFilter()
+    colorFilter.alpha = 1 // Start fully visible (transparent)
+
+    // Apply filters to viewport
+    viewport.filters = [colorFilter]
 
     // Set default position/zoom
     map.scale.set(zoomMin)
@@ -295,17 +290,35 @@ function setupCanvas () {
 }
 
 function buildMap () {
+    // Properly stop/destroy any existing children (including GIF-backed objects) before clearing
     while (mapImages.children[0]) { 
+        var ch = mapImages.children[0];
+        try {
+            // If the object exposes a stop() or destroy() method, call it
+            if (typeof ch.stop === 'function') { try { ch.stop(); } catch (e) {} }
+            if (typeof ch.destroy === 'function') { try { ch.destroy({children:true, texture:true, baseTexture:true}); } catch (e) { ch.destroy && ch.destroy(); } }
+            // If we attached a GifPlayer, destroy it
+            try { cleanupDisplayObjectGif(ch); } catch (e) {}
+        } catch (e) {}
         mapImages.removeChild(mapImages.children[0]);
     }
     for (let i = 0; i < activeAreas.length; i++) {
 
-        // Get area image
+        // Get area image and create a PIXI sprite. If the active image is a GIF (for new style
+        // with area.animation === true) we create a canvas-backed texture and update it each frame.
         var area = activeAreas[i];
-        var src = createImageLink(redrawnLayers[activeLayerIndex].name, currentMapStyle, area.ident);
+        var activeImages = getActiveLayerAreaImages();
+        var areaImage = activeImages[i];
 
-        var sprite = new PIXI.Sprite.from(src);
-        
+            var sprite = null;
+            if (currentMapStyle === NEW_STYLE_NAME && area && area.animation && areaImage.src.match(/\.gif$/i)) {
+                sprite = createCanvasGifSprite(areaImage);
+            } else {
+            // Fallback: use the normal texture path (works for PNGs and static GIF fallbacks)
+            var src = createImageLink(redrawnLayers[activeLayerIndex].name, currentMapStyle, area.ident);
+            sprite = new PIXI.Sprite.from(src);
+        }
+
         sprite.name = `AREA: ${redrawnLayers[activeLayerIndex].name} (${currentMapStyle}) - ${area.ident}`;
 
         // Apply offset to new versions (always relative to old versions)
@@ -378,7 +391,7 @@ function RegenerateAreaZones() {
         var area = activeAreas[i];
         var activeImages = getActiveLayerAreaImages();
         var areaImage = activeImages[i];
-        generateAreaZone(area, areaImage);
+        generateAreaZone(area);
     }
 }
 
@@ -473,12 +486,11 @@ function UpdateFill(graphic, areaBox) {
 }
 
 /** Creates PIXI Graphics corresponding to new and old versions of an area. */
-function generateAreaZone (area, areaImage) {
+function generateAreaZone(area) {
     if (!area) { console.error('oopsie, no area'); return }
-    if (!areaImage) { console.error('oopsie, no area image'); return }
     var oldZone = new PIXI.Graphics();
     oldZone.name = `ZONE: ${area.ident} (${OLD_STYLE_NAME})`;
-    var areaBox = getAreaBox(area, areaImage, OLD_STYLE_NAME);
+    var areaBox = getAreaBox(area, OLD_STYLE_NAME);
     UpdateFill(oldZone, areaBox);
     oldZone.alpha = 0;
     area.old_zone = oldZone;
@@ -486,7 +498,7 @@ function generateAreaZone (area, areaImage) {
 
     var newZone = new PIXI.Graphics();
     newZone.name = `ZONE: ${area.ident} (${NEW_STYLE_NAME})`;
-    areaBox = getAreaBox(area, areaImage, NEW_STYLE_NAME);
+    areaBox = getAreaBox(area, NEW_STYLE_NAME);
     UpdateFill(newZone, areaBox);
     newZone.alpha = 0;
     area.new_zone = newZone;
@@ -519,29 +531,21 @@ function updateActiveAreaZone () {
 
 /** Gets the position of an area's box, 
  * with an optional offset applied to 'redrawn' maps to accomodate bleeds and stylistic extensions. 
- * Uses source image for width/height properties.
  * 
  * @param {*} area The struct describing the area.
  * @param {*} areaImage The image used for this area.
  * @param {string} styleOverride Forces the returned box dimensions to be based on a particular style, if defined.
  * */
-function getAreaBox (area, areaImage, styleOverride = "") {
+function getAreaBox (area, styleOverride = "") {
     if (!area) { console.error('oopsie, no area'); return }
 
     // Use current style or override?
     var style = styleOverride === "" ? currentMapStyle : styleOverride;
 
-    if (areaImage.naturalWidth == 0 || areaImage.naturalHeight == 0) {
-        console.error("Area Image has a width and/or height of zero; border will not render correctly.")
-    }
-
-    let width = areaImage.naturalWidth || 96;   // Fallback scale
-    let height = areaImage.naturalHeight || 96;
-    
     if (style === NEW_STYLE_NAME) {
-        return {x: area.point.x + area.offset.x, y: area.point.y + area.offset.y, width: width + area.offset.width, height: height + area.offset.height}
+        return {x: area.point.x + area.offset.x, y: area.point.y + area.offset.y, width: area.point.width + area.offset.width, height: area.point.height + area.offset.height}
     } else {
-        return {x: area.point.x, y: area.point.y, width: width, height: height}
+        return {x: area.point.x, y: area.point.y, width: area.point.width, height: area.point.height}
     }
 }
 
@@ -554,18 +558,18 @@ function getAreaImage(area, styleOverride = "") {
 
 /** Actions peformed on update (each frame). */
 function tick () {
-    viewport.filters = []
+
+    let motion_blur_target = MOTIONBLUR_VIEWPORT ? viewport : map;
+    motion_blur_target.filters = []
+
     if (cameraAnimation.progress >= 1) {
         cameraAnimation.playing = false
         cameraAdjustment.progress = 1;
     }
     if (!cameraAnimation.playing) {
-
-        // Perform zoom adjustments
-        let isZooming = zoomLevel !== currentZoom;
-        if (isZooming) {
+        if (zoomLevel !== currentZoom) {
             if (!blurIsDisabled()) {
-                viewport.filters = [blurFilter]
+                motion_blur_target.filters = [blurFilter]
             }
             currentZoom = lerp(currentZoom, zoomLevel, 0.2)
             if (Math.abs(zoomLevel - currentZoom) < 0.005) { // Floating point rounding
@@ -578,9 +582,6 @@ function tick () {
             blurFilter.strength = .2 * (Math.abs((currentZoom - zoomLevel)) / zoomLevel)
             blurFilter.center = [ zoomMousePos.x, zoomMousePos.y ]
         }
-
-        // Perform momentum operations
-        // Is there active drag velocity? 
         if (!mouseDown && (dragVelocity.x !== 0 || dragVelocity.y !== 0)) {
             if (dragVelocity.x !== 0) {
                 map.x += Math.round(dragVelocity.x)
@@ -594,8 +595,6 @@ function tick () {
             }
             currentZoom.x = zoomCenter.x = map.x
             currentZoom.y = zoomCenter.y = map.y
-        
-        // Is there active zoom positioning?
         } else if (!mouseDown && (currentPos.x !== zoomCenter.x || currentPos.y !== zoomCenter.y)) {
             var newx = lerp(currentPos.x, zoomCenter.x, 0.2)
             var newy = lerp(currentPos.y, zoomCenter.y, 0.2)
@@ -603,13 +602,11 @@ function tick () {
             map.x = currentPos.x
             map.y = currentPos.y
         }
-
-        // Perform continuous motion operations
         if (pinchForTick) {
             instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
             if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
                 if (!blurIsDisabled()) {
-                    viewport.filters = [blurFilter]
+                    motion_blur_target.filters = [blurFilter]
                 }
                 blurFilter.strength = .1
                 blurFilter.center = [ pinchForTick.x, pinchForTick.y ]
@@ -617,11 +614,7 @@ function tick () {
             pinchForTick = null
         }
         checkMapBoundaries()
-
-        if (dragging || isZooming) {
-            checkAutoHighlight();
-        }
-        
+        checkAutoHighlight()
     } else {
 
         // Calculate position and scale changes relative to a camera animation adjustment
@@ -659,6 +652,28 @@ function tick () {
         }
     }
     
+    // Update any GIF-backed sprites by drawing the underlying <img> into their canvas and
+    // notifying PIXI that the base texture needs updating.
+    try {
+        if (mapImages && mapImages.children && mapImages.children.length) {
+            for (let mi = 0; mi < mapImages.children.length; mi++) {
+                let child = mapImages.children[mi];
+                if (!child) continue;
+
+                // If the canvas is animated by GifPlayer, just request PIXI to update its base texture
+                if (child._isGif && child._gifCanvas) {
+                    try {
+                        updateGifSprite(child);
+                    } catch (e) {
+                        // ignore per-frame draw errors
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        // ignore overall GIF update errors to avoid breaking the render loop
+    }
+
     requestAnimationFrame(tick)
 }
 
@@ -1152,7 +1167,7 @@ function checkMapBoundaries () {
 }
 
 function checkAutoHighlight() {
-    if (!autoHighlightEnabled) {
+    if (!autoHighlightEnabled || !dragging) {
         return;
     }
 
@@ -1216,7 +1231,17 @@ function getActiveArea () {
 
 /** Callback occurring when the window is resized. */
 function onResize () {
-    if(app && app.renderer) app.renderer.resize(window.innerWidth, window.innerHeight);
+    if (app && app.renderer) 
+    {
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+
+        // Update map backgroud scope
+        if (background != undefined) 
+        {
+            background.width = window.innerWidth;
+            background.height = window.innerHeight;
+        }
+    }
 }
 
 function changeCameraSpeed (e) {
@@ -1233,25 +1258,95 @@ function changeTourCameraSpeed (e) {
  * 
  * @param {string} layer String name of the layer to change to.
  */
-function changeLayer (layer) {
+function changeLayer(layer) {
 
     // Find and switch layer
-    var layerCount = this.layerCount;
     for (let i=0; i< layerCount; i++) {
-        if (layer === this.redrawnLayers[i].name) {
-            this.activeLayerIndex = i;
-            this.activeAreas = this.redrawnLayers[i].areas;
-            this.canvasDimensions = this.redrawnLayers[i].canvasSize;
+        if (layer === redrawnLayers[i].name) {
+            activeLayerIndex = i;
+            activeAreas = redrawnLayers[i].areas;
+            canvasDimensions = redrawnLayers[i].canvasSize;
             break;
         }
     }
 
     // Adjust tab visibility
     const tabs = document.querySelectorAll('#layers li button')
-    let activeLayerName = this.redrawnLayers[this.activeLayerIndex].name;
+    let activeLayerName = redrawnLayers[activeLayerIndex].name;
     tabs.forEach((x) => { if (!x.classList.contains(activeLayerName)) {x.classList.remove('active')} else {x.classList.add('active')} })
-    this.setupCanvas()
+    setupCanvas()
     
     // Adjust canvas focus
-    this.focusOnArea(this.activeAreas[Math.floor(Math.random() * layerCount)])
+    focusOnArea(activeAreas[Math.floor(Math.random() * layerCount)])
+}
+
+/** Create a PIXI sprite backed by a canvas for the provided HTMLImageElement (GIF fallback).
+ * If GifPlayer is available, it will be used to animate the canvas. Returns the sprite.
+ */
+function createCanvasGifSprite(areaImage) {
+    var canvas = document.createElement('canvas');
+    canvas.width = areaImage.naturalWidth || 1;
+    canvas.height = areaImage.naturalHeight || 1;
+    var ctx = canvas.getContext('2d');
+    try { ctx.drawImage(areaImage, 0, 0); } catch (e) { }
+    var texture = PIXI.Texture.from(canvas);
+    var sprite = new PIXI.Sprite(texture);
+    sprite._isGif = true;
+    sprite._gifCanvas = canvas;
+    sprite._gifCtx = ctx;
+    sprite._gifImg = areaImage;
+    try {
+        if (typeof GifPlayer !== 'undefined' && typeof GifPlayer.create === 'function') {
+            sprite._gifPlayer = GifPlayer.create(areaImage.src, canvas);
+            sprite._gifPlayer.start();
+        }
+    } catch (e) { }
+    return sprite;
+}
+
+/** Safely cleanup any GifPlayer attached to a display object and clear canvas refs. */
+function cleanupDisplayObjectGif(obj) {
+    if (!obj) return;
+    try {
+        if (obj._gifPlayer && typeof obj._gifPlayer.destroy === 'function') {
+            try { obj._gifPlayer.destroy(); } catch (e) {}
+        }
+    } catch (e) {}
+    try {
+        if (obj._gifCanvas) {
+            // attempt to clear the canvas to free memory
+            try { obj._gifCtx && obj._gifCtx.clearRect(0,0,obj._gifCanvas.width, obj._gifCanvas.height); } catch (e) {}
+            try { obj._gifCanvas.width = 0; obj._gifCanvas.height = 0; } catch (e) {}
+            obj._gifCanvas = null;
+            obj._gifCtx = null;
+            obj._gifImg = null;
+        }
+    } catch (e) {}
+}
+
+/** Update a gif-backed sprite each frame: prefer GifPlayer-driven canvases, otherwise draw from image.
+ * Keeps PIXI texture up-to-date.
+ */
+function updateGifSprite(sprite) {
+    if (!sprite || !sprite._gifCanvas) return;
+    // If GifPlayer is animating the canvas, just ask PIXI to update the base texture
+    if (sprite._gifPlayer) {
+        if (sprite.texture && sprite.texture.baseTexture && typeof sprite.texture.baseTexture.update === 'function') {
+            sprite.texture.baseTexture.update();
+        }
+        return;
+    }
+
+    // Fallback: draw current frame from image onto canvas and update texture
+    try {
+        const ctx = sprite._gifCtx;
+        if (!ctx || !sprite._gifImg) return;
+        ctx.clearRect(0, 0, sprite._gifCanvas.width, sprite._gifCanvas.height);
+        try { ctx.drawImage(sprite._gifImg, 0, 0, sprite._gifCanvas.width, sprite._gifCanvas.height); } catch (e) {}
+        if (sprite.texture && sprite.texture.baseTexture && typeof sprite.texture.baseTexture.update === 'function') {
+            sprite.texture.baseTexture.update();
+        }
+    } catch (e) {
+        // swallow errors to avoid breaking tick
+    }
 }

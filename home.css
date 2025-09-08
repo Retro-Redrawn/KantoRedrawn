@@ -231,8 +231,8 @@ a{
     padding:0;
 }
 #layers li button{
-    width:90%;
-    height:40px;
+    width:85%;
+    height:32px;
     position:relative;
     transition: width .2s;
     cursor: pointer;
@@ -253,10 +253,10 @@ a{
     background-image: url('img/website/sevii_button.png');
 }
 #layers li button:hover{
-    width:95%;
+    width:90%;
 }
 #layers li button.active{
-    width:100%;
+    width:95%;
 }
 
 #layers li button span{
