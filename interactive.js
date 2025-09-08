@@ -350,7 +350,7 @@ function buildMap () {
 
             var sprite = null;
             if (currentMapStyle === NEW_STYLE_NAME && area && area.animation && !preferStaticImages && areaImage && areaImage.src && areaImage.src.match(/\.gif$/i)) {
-                sprite = createCanvasGifSprite(areaImage);
+                sprite = createCanvasGifSprite(area, areaImage);
             } else {
             // Fallback: use the normal texture path
             var src = createImageLink(redrawnLayers[activeLayerIndex].name, currentMapStyle, area.ident);
@@ -482,8 +482,7 @@ function setUpAreas () {
         for (let k = 0; k< iconFiles.length; k++) {
             if (iconFiles[k].iconId === materialIcon)
             {
-                iconBlock = 
-                `<img src=${iconFiles[k].path} class="custom-icons">`;
+                iconBlock = `<img src=${iconFiles[k].path} class="custom-icons">`;
                 k = iconFiles.length;
             }
         }
@@ -492,10 +491,7 @@ function setUpAreas () {
         var html = 
         `<li class="area" title="${area.title}" style="background-color:${backgroundColor}" onclick="focusOnArea('${area.title}')">
             <div class="area__header" >
-                ${iconBlock}
-                <span>
-                    ${area.title}
-                </span>
+                ${iconBlock}<span>${area.title}</span>
                 <button class="area__copy" title="Copy link" onclick="event.stopPropagation(); copyAreaLink('${redrawnLayers[activeLayerIndex].name}','${area.ident}')">🔗</button>
             </div>
             <div class="area__info">
@@ -1362,10 +1358,10 @@ function changeLayer(layer) {
 /** Create a PIXI sprite backed by a canvas for the provided HTMLImageElement (GIF fallback).
  * If GifPlayer is available, it will be used to animate the canvas. Returns the sprite.
  */
-function createCanvasGifSprite(areaImage) {
+function createCanvasGifSprite(area, areaImage) {
     var canvas = document.createElement('canvas');
-    canvas.width = areaImage.naturalWidth || 1;
-    canvas.height = areaImage.naturalHeight || 1;
+    canvas.width = area.point.width || 1;
+    canvas.height = area.point.height || 1;
     var ctx = canvas.getContext('2d');
     try { ctx.drawImage(areaImage, 0, 0); } catch (e) { }
     var texture = PIXI.Texture.from(canvas);
