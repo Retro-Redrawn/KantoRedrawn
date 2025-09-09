@@ -68,16 +68,17 @@ for file in "${area_files[@]}"; do
         BEGIN {
             in_area = 0
             in_point = 0
+            skip_wh = 0
             current_ident = ""
         }
-        
+
         # Start of an area object (assumes object starts with "{")
-        /^ *\{/ { 
+        /^ *\{/ {
             in_area = 1
             print
             next
         }
-        
+
         # Capture the ident when we find it
         /ident[[:space:]]*:/ && in_area {
             # extract string between quotes
@@ -89,15 +90,16 @@ for file in "${area_files[@]}"; do
             print
             next
         }
-        
+
         # When we find point: {, prepare to modify
-        /point[[:space:]]*:[[:space:]]*\{/ && in_area { 
-            in_point = 1 
+        /point[[:space:]]*:[[:space:]]*\{/ && in_area {
+            in_point = 1
+            skip_wh = 0
             print
             next
         }
-        
-        # After y coordinate in point block, add width and height
+
+        # After y coordinate in point block, add width and height, and start skipping any old width/height
         /y[[:space:]]*:/ && in_point {
             # Add comma to y line if it doesnt have one
             if ($0 !~ /,$/) {
@@ -116,24 +118,32 @@ for file in "${area_files[@]}"; do
                 printf "      height: 0\n"
             }
             close(cmd)
+            # From now on, skip any existing width/height lines inside this point block
+            skip_wh = 1
             next
         }
-        
+
+        # If skipping is active, drop any existing width/height lines
+        in_point && skip_wh && /^[[:space:]]*width[[:space:]]*:/ { next }
+        in_point && skip_wh && /^[[:space:]]*height[[:space:]]*:/ { next }
+
         # End of point block (assumes closing brace at same indent)
-        /^ *\}/ && in_point { 
+        /^ *\}/ && in_point {
             in_point = 0
+            skip_wh = 0
             print
             next
         }
-        
+
         # End of area object
-        /^ *\},?$/ && in_area { 
+        /^ *\},?$/ && in_area {
             in_area = 0
             in_point = 0
+            skip_wh = 0
             print
             next
         }
-        
+
         # Print all other lines unchanged
         { print }
     ' "$file" > "$temp_file"
