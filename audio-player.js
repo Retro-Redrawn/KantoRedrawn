@@ -49,6 +49,13 @@ function initPlayers() {
             loadTrackForPlayerElement(playerEl, idx, autoplayFlag);
         }
 
+        // If there's only one (or zero) track available, hide the "next" button
+        if ((GLOBAL_AUDIO_TRACKS.length || 0) <= 1) {
+            playerEl.querySelectorAll('.control-btn[data-control="next"]').forEach(function(btn) {
+                btn.style.display = 'none';
+            });
+        }
+
         // bind controls
         playerEl.querySelectorAll('.control-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
