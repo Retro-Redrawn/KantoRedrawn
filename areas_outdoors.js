@@ -226,7 +226,7 @@ var kantoAreas = [
       x: -58,
       y: -385,
       width: 58,
-      height: 380
+      height: 385
     },
     pan: "vertical",
     type: "town",
@@ -516,7 +516,7 @@ var kantoAreas = [
       x: 0,
       y: -32,
       width: 0,
-      height: 32
+      height: 48
     },
     pan: "horizontal",
     type: "route",
@@ -659,7 +659,7 @@ var kantoAreas = [
     offset: {
       x: 32,
       y: 0,
-      width: -48,
+      width: -32,
       height: 0
     },
     pan: "horizontal",
@@ -683,7 +683,7 @@ var kantoAreas = [
     offset: {
       x: 0,
       y: -41,
-      width: 0,
+      width: -48,
       height: 41
     },
     pan: "horizontal",
@@ -1284,7 +1284,7 @@ var kantoAreas = [
       x: 16,
       y: -320,
       width: 0,
-      height: 244
+      height: 224
     },
     pan: "vertical",
     type: "town",

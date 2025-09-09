@@ -30,29 +30,30 @@ for file in "${area_files[@]}"; do
     echo "----"
     echo "Processing $file"
 
-    # Prompt user for image folder for this specific areas file
+    # Prompt user for base folder containing 'new' and 'old' for this specific areas file
     while true; do
-        read -e -p "Enter image folder path for '$file' (or type 'skip' to skip this file): " user_input
-        # allow empty to reprompt
-        if [ -z "$user_input" ]; then
+        read -e -p "Enter images base folder path for '$file' (should contain 'new' and 'old') (or type 'skip' to skip this file): " base_input
+        if [ -z "$base_input" ]; then
             echo "Please provide a path or type 'skip'."
             continue
         fi
-        if [ "$user_input" = "skip" ]; then
+        if [ "$base_input" = "skip" ]; then
             echo "Skipping $file"
             break
         fi
-        IMAGE_PATH=$(convert_path "$user_input")
-        if [ -d "$IMAGE_PATH" ]; then
-            echo "Using image folder: $IMAGE_PATH"
+        BASE_PATH=$(convert_path "$base_input")
+        NEW_IMAGE_PATH="$BASE_PATH/new"
+        OLD_IMAGE_PATH="$BASE_PATH/old"
+        if [ -d "$NEW_IMAGE_PATH" ] && [ -d "$OLD_IMAGE_PATH" ]; then
+            echo "Using NEW image folder: $NEW_IMAGE_PATH"
+            echo "Using OLD image folder: $OLD_IMAGE_PATH"
             break
         else
-            echo "Directory '$IMAGE_PATH' does not exist. Try again or type 'skip'."
+            echo "Either '$NEW_IMAGE_PATH' or '$OLD_IMAGE_PATH' does not exist. Try again or type 'skip'."
         fi
     done
 
-    # If user chose to skip, continue to next file
-    if [ "$user_input" = "skip" ]; then
+    if [ "$base_input" = "skip" ]; then
         continue
     fi
 
@@ -63,16 +64,18 @@ for file in "${area_files[@]}"; do
     # Create temporary file for processing
     temp_file=$(mktemp)
 
-    # First pass: insert width/height after point.y using magick to get dimensions
-    awk -v img_path="$IMAGE_PATH" -v src_file="$file" '
+    # Process file: insert/replace width/height in point and compute offset width/height 
+    awk -v new_img="$NEW_IMAGE_PATH" -v old_img="$OLD_IMAGE_PATH" '
         BEGIN {
             in_area = 0
             in_point = 0
-            skip_wh = 0
+            in_offset = 0
+            skip_point_wh = 0
+            skip_offset_wh = 0
             current_ident = ""
         }
 
-        # Start of an area object (assumes object starts with "{")
+        # Start of an object (area)
         /^ *\{/ {
             in_area = 1
             print
@@ -81,7 +84,6 @@ for file in "${area_files[@]}"; do
 
         # Capture the ident when we find it
         /ident[[:space:]]*:/ && in_area {
-            # extract string between quotes
             if (match($0, /"([^"]+)"/, arr)) {
                 current_ident = arr[1]
             } else {
@@ -91,46 +93,99 @@ for file in "${area_files[@]}"; do
             next
         }
 
-        # When we find point: {, prepare to modify
+        # When we find point: {, enter point block
         /point[[:space:]]*:[[:space:]]*\{/ && in_area {
             in_point = 1
-            skip_wh = 0
+            skip_point_wh = 0
             print
             next
         }
 
-        # After y coordinate in point block, add width and height, and start skipping any old width/height
-        /y[[:space:]]*:/ && in_point {
-            # Add comma to y line if it doesnt have one
-            if ($0 !~ /,$/) {
-                sub(/$/, ",")
-            }
+        # When we find offset: {, enter offset block
+        /offset[[:space:]]*:[[:space:]]*\{/ && in_area {
+            in_offset = 1
+            skip_offset_wh = 0
             print
-            # Get image dimensions using magick; fallback to 0x0 on failure
-            cmd = "magick identify -format \"%wx%h\" \"" img_path "/" current_ident ".png\" 2>/dev/null"
-            dimensions = ""
-            if ((cmd | getline dimensions) > 0) {
-                split(dimensions, dim, "x")
-                printf "      width: %d,\n", (dim[1] + 0)
-                printf "      height: %d\n", (dim[2] + 0)
-            } else {
-                printf "      width: 0,\n"
-                printf "      height: 0\n"
-            }
-            close(cmd)
-            # From now on, skip any existing width/height lines inside this point block
-            skip_wh = 1
             next
         }
 
-        # If skipping is active, drop any existing width/height lines
-        in_point && skip_wh && /^[[:space:]]*width[[:space:]]*:/ { next }
-        in_point && skip_wh && /^[[:space:]]*height[[:space:]]*:/ { next }
+        # After y coordinate in point block, add width and height (from NEW image), and skip existing width/height
+        in_point && /y[[:space:]]*:/ {
+            # Ensure y line ends with a comma
+            if ($0 !~ /,$/) { sub(/$/, ",") }
+            print
+            # Get new image dimensions
+            new_w = 0; new_h = 0; old_w = 0; old_h = 0;
+            if (current_ident != "") {
+                cmd_new = "magick identify -format \"%wx%h\" \"" new_img "/" current_ident ".png\" 2>/dev/null"
+                if ((cmd_new | getline dims_new) > 0) {
+                    split(dims_new, dn, "x"); new_w = (dn[1] + 0); new_h = (dn[2] + 0);
+                }
+                close(cmd_new)
 
-        # End of point block (assumes closing brace at same indent)
+                cmd_old = "magick identify -format \"%wx%h\" \"" old_img "/" current_ident ".png\" 2>/dev/null"
+                if ((cmd_old | getline dims_old) > 0) {
+                    split(dims_old, do_, "x"); old_w = (do_[1] + 0); old_h = (do_[2] + 0);
+                }
+                close(cmd_old)
+            }
+            # Print width/height for point (use new image dims)
+            #            printf "      width: %d,\n", new_w
+            #            printf "      height: %d\n", new_h
+            # Use OLD image dimensions for point
+            printf "      width: %d,\n", old_w
+            printf "      height: %d\n", old_h
+            skip_point_wh = 1
+            next
+        }
+
+        # After y coordinate in offset block, add offset width/height = new - old
+        in_offset && /y[[:space:]]*:/ {
+            if ($0 !~ /,$/) { sub(/$/, ",") }
+            print
+            # Compute differences
+            diff_w = 0; diff_h = 0;
+            if (current_ident != "") {
+                cmd_new = "magick identify -format \"%wx%h\" \"" new_img "/" current_ident ".png\" 2>/dev/null"
+                if ((cmd_new | getline dims_new) > 0) {
+                    split(dims_new, dn2, "x"); new_w = (dn2[1] + 0); new_h = (dn2[2] + 0);
+                } else { new_w=0; new_h=0 }
+                close(cmd_new)
+
+                cmd_old = "magick identify -format \"%wx%h\" \"" old_img "/" current_ident ".png\" 2>/dev/null"
+                if ((cmd_old | getline dims_old2) > 0) {
+                    split(dims_old2, do2, "x"); old_w = (do2[1] + 0); old_h = (do2[2] + 0);
+                } else { old_w=0; old_h=0 }
+                close(cmd_old)
+
+                # Compute offset as (new - old)
+                diff_w = new_w - old_w
+                diff_h = new_h - old_h
+            }
+            printf "      width: %d,\n", diff_w
+            printf "      height: %d\n", diff_h
+            skip_offset_wh = 1
+            next
+        }
+
+        # If skipping is active, drop any existing width/height lines inside point or offset
+        in_point && skip_point_wh && /^[[:space:]]*width[[:space:]]*:/ { next }
+        in_point && skip_point_wh && /^[[:space:]]*height[[:space:]]*:/ { next }
+        in_offset && skip_offset_wh && /^[[:space:]]*width[[:space:]]*:/ { next }
+        in_offset && skip_offset_wh && /^[[:space:]]*height[[:space:]]*:/ { next }
+
+        # End of point block
         /^ *\}/ && in_point {
             in_point = 0
-            skip_wh = 0
+            skip_point_wh = 0
+            print
+            next
+        }
+
+        # End of offset block
+        /^ *\}/ && in_offset {
+            in_offset = 0
+            skip_offset_wh = 0
             print
             next
         }
@@ -139,29 +194,16 @@ for file in "${area_files[@]}"; do
         /^ *\},?$/ && in_area {
             in_area = 0
             in_point = 0
-            skip_wh = 0
+            in_offset = 0
+            skip_point_wh = 0
+            skip_offset_wh = 0
             print
             next
         }
 
-        # Print all other lines unchanged
         { print }
     ' "$file" > "$temp_file"
 
-    mv "$temp_file" "$file"
-
-    # Second pass: keep simple (prior heuristic preserved)
-    temp_file=$(mktemp)
-    awk '
-        BEGIN { in_array=0 }
-        # detect start of top-level array (heuristic: line containing "var " and "[" )
-        /^[[:space:]]*var[[:space:]].*[[:space:]]=\s*\[/ { in_array=1; print; next }
-        # detect end of array
-        /^[[:space:]]*\];/ { in_array=0; print; next }
-        {
-            print
-        }
-    ' "$file" > "$temp_file"
     mv "$temp_file" "$file"
 
     echo "Finished $file (backup at ${file}.backup)"
