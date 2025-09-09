@@ -34,11 +34,13 @@ if (urlFocus&& urlFocus.layer) {
     for (let i=0; i< redrawnLayers.length; i++) {
         if (redrawnLayers[i].name === urlFocus.layer) {
             activeLayerIndex = i;
-            setActiveLayerDOM();
             break;
         }
     }
 }
+setActiveLayerDOM();
+
+
 
 // Map
 const NEW_STYLE_NAME = 'new';
@@ -732,7 +734,11 @@ function tick () {
             pinchForTick = null
         }
         checkMapBoundaries()
-        checkAutoHighlight()
+        checkAutoHighlight()        
+        if (urlFocus && dragging) {
+            clearParamsFromUrl();
+        }
+        
     } else {
 
         // Calculate position and scale changes relative to a camera animation adjustment
@@ -1186,7 +1192,7 @@ function toggleTour () {
 
 function initTour () {
     const button = document.querySelector('#tourButton')
-    button.innerHTML = '<span class="material-icons">stop</span> <span>End Tour</span>'
+    button.innerHTML = '<span class="material-icons">stop</span>'
     button.classList.add('active')
     areasToTour = [...activeAreas]
     tourMode = true
@@ -1199,7 +1205,7 @@ function initTour () {
 
 function endTour () {
     const button = document.querySelector('#tourButton')
-    button.innerHTML = '<span class="material-icons">play_arrow</span> <span>Begin Tour</span>'
+    button.innerHTML = '<span class="material-icons">play_arrow</span>'
     button.classList.remove('active')
     tourMode = false
     tourTransition = false
@@ -1411,9 +1417,26 @@ function changeLayer(layer) {
  */
 function setActiveLayerDOM() {
     // Adjust tab visibility
-    const tabs = document.querySelectorAll('#layers li button')
     let activeLayerName = redrawnLayers[activeLayerIndex].name;
-    tabs.forEach((x) => { if (!x.classList.contains(activeLayerName)) {x.classList.remove('active')} else {x.classList.add('active')} })
+
+    // Populate mobile select (if present)
+    try {
+        const select = document.querySelector('#layers_select');
+        if (select) {
+            // If not populated, fill options
+            if (select.options.length === 0) {
+                for (let i = 0; i < redrawnLayers.length; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = redrawnLayers[i].name;
+                    opt.text = redrawnLayers[i].displayName || redrawnLayers[i].name;
+                    select.appendChild(opt);
+                }
+            }
+            select.value = activeLayerName;
+            // apply class so CSS can show icon background
+            select.className = activeLayerName;
+        }
+    } catch (e) {}
 }
 
 /** Create a PIXI sprite backed by a canvas for the provided HTMLImageElement (GIF fallback).
@@ -1498,6 +1521,18 @@ function parseFocusFromUrl() {
     } catch (e) {
         return null;
     }
+}
+
+/** Clears params from URL */
+function clearParamsFromUrl() {
+    try {
+        if (urlFocus) {
+            const u = new URL(window.location.href);
+            u.searchParams.delete('ident');
+            u.searchParams.delete('layer');
+            window.history.replaceState(null, '', u.pathname + u.search + u.hash);
+        }
+    } catch (e) {}
 }
 
 /** Called when the user toggles the option to prefer static images over animated GIFs. */

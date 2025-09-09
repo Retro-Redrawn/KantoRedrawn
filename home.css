@@ -159,7 +159,7 @@ a{
 .menu__logo{
     text-align: center;
     margin-top:20px;
-
+    padding-bottom:12px; /* extra spacing under logo */
 }
 .rrlogo {
       text-align: center;
@@ -264,42 +264,7 @@ a{
     margin:0;
     padding:0;
 }
-#layers li button{
-    width:85%;
-    height:32px;
-    position:relative;
-    transition: width .2s;
-    cursor: pointer;
-    margin: 2px 0;
-    border: 1px solid #fff;
-    color:#fff;
-    border-bottom-right-radius: 10px;
-    border-top-right-radius: 5px;
-    text-shadow: 1px 0px 3px black, -1px 0px 3px black, 0px 0px 3px black, 0px 0px 3px black, 0px 0px 3px black; 
-}
-#layers li button.kanto{
-    background-image: url('img/website/kanto_button.png');
-}
-#layers li button.interior{
-    background-image: url('img/website/interiors_button.png');
-}
-#layers li button.sevii{
-    background-image: url('img/website/sevii_button.png');
-}
-#layers li button:hover{
-    width:90%;
-}
-#layers li button.active{
-    width:95%;
-}
 
-#layers li button span{
-    position:absolute;
-    right:10px;
-    font-size:1.8em;
-    bottom:0;
-    margin:auto;
-}
 #about {
     font-size: 1em;
     line-height: 1.5em;
@@ -556,4 +521,115 @@ a{
 .copy-toast:not(.copy-toast--hide){
     opacity: 1;
     transform: translate(-50%, -100%);
+}
+
+/* Align map toggle to the left edge */
+.map-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    justify-content:flex-start;
+    padding-left: 4px; /* align to menu inner padding */
+    padding-top: 12px; /* added spacing above the toggle */
+}
+.map-toggle .map-toggle-label{
+    font-size: 0.95rem;
+    color: #ddd;
+    transform: translateY(-2px); /* nudge label slightly up to line with slider */
+}
+/* Ensure the switch aligns vertically within the toggle row */
+.map-toggle .switch{ bottom: 0.3; }
+
+/* Inline tour button: keep at right edge of toggle row */
+.map-toggle .tour{ margin-left: auto; }
+.map-toggle .tour button{ width: 45px; height: 31px; padding: 0; border-radius: 10px; }
+
+
+@media (max-height: 600px) {
+    .map-toggle{ padding-left: 2px; }
+    .menu{
+        /* Keep menu anchored on left but narrower for short screens */
+        width: min(260px, 80vw);
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: 100vh;
+        transform: translateX(calc(-100% - 10px)); /* remain hidden by default */
+        box-shadow: 5px 0 12px rgba(0,0,0,0.6);
+    }
+    .menu.active{
+        transform: translateX(0%);
+    }
+    .menu .menu__button{
+        right: 8px;
+        top: 8px;
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
+    }
+    .menu__logo{ display: none; }
+
+    /* Compact spacing */
+    /* NOTE: keep .menu__inner identical to desktop; do not override here */
+    .menu__actions{ gap: 6px; margin-top:6px; }
+    .menu__tab{ height: 34px; width: 200px; padding: 0 6px; font-size: 0.92rem; }
+
+    /* Panels and scrolling */
+    /* Give the content area the remaining vertical space and make it the scrolling region */
+    .menu__content{ max-height: none; flex: 1 1 auto; overflow-y: auto; min-height: 0; }
+    .menu__content > *{ padding: 6px; box-sizing: border-box; min-height: 0; }
+
+    /* Reduce the visual footprint of the audio player and tour button */
+    .bgm { max-height: 72px; overflow: visible; }
+    .custom-player { padding: 4px 0; }
+    .custom-player .player-controls { height: 44px; }
+}
+
+#layers li button{
+    width:85%;
+    height:32px;
+    position:relative;
+    transition: width .2s;
+    
+    margin: 2px 0;
+    
+    color:#fff;
+    
+}
+
+/* Slight spacing for time display */
+.custom-player .time-display { padding-right: 8px; }
+#layers_select{
+    appearance: menulist-button;
+    -webkit-appearance: menulist-button;
+    -moz-appearance: menulist-button;
+    background-color: #13111e;
+    color: #fff;
+    border: 1px solid #ffffffad;
+    cursor: pointer;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 5px;
+    padding: 6px 10px;
+    height: 42px;
+    border-radius: 6px;
+    font-size: 1rem;
+    text-align: left;
+    text-shadow: 1px 0px 3px black, -1px 0px 3px black, 0px 0px 3px black, 0px 0px 3px black, 0px 0px 3px black; 
+    background-size: 100% 100%;
+    background-position: left;
+    background-repeat: no-repeat; }
+
+/* Show layer icon inside the select when a class is applied */
+#layers_select.kanto {
+    background-image: url('img/website/kanto_button.png');
+}
+#layers_select.interior {
+    background-image: url('img/website/interiors_button.png');
+}
+#layers_select.sevii {
+    background-image: url('img/website/sevii_button.png');
+}
+#layers_select option{
+    background-color: #222034;
+    color: #fff;
 }

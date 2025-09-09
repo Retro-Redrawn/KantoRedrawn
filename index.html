@@ -35,21 +35,12 @@
                         <img src="img/website/kanto_redrawn_logo.png" alt="Kanto Redrawn" draggable="false" />
                     </a>
                 </div>
-                <div style="text-align: center;">
-                    <p>
-                    Redrawn
-                    <label class="switch">
-                        <input type="CheckBox" id="mapSelectRedrawn" onclick="toggleMapStyle()">
-                        <span class="slider"></span>
-                    </label>
-                    Original
-                </div>
 
-                <ul id="layers">
-                    <li><button onclick="changeLayer('kanto')" class="kanto active"><span>Kanto</span></button></li>
-                    <li><button onclick="changeLayer('interior')" class="interior"><span>Interiors</span></button></li>
-                    <li><button onclick="changeLayer('sevii')" class="sevii"><span>Sevii Islands</span></button></li>
-                </ul>
+                <select id="layers_select" onchange="changeLayer(this.value)">
+                    <option value="kanto">Kanto</option>
+                    <option value="interior">Interiors</option>
+                    <option value="sevii">Sevii Islands</option>
+                </select>
                 <div class="menu__actions">
                     <button onclick="changeTab(0)" class="menu__tab active">
                         Area List
@@ -127,15 +118,22 @@
                         <p>Sevii 'original' maps contributed by foofarawr, <a href="https://bsky.app/profile/anima-nel.bsky.social">anima_nel</a> & <a href="https://www.artstation.com/ckelsallpixels">ckelsallpixels</a>.</p>
                         <hr>
                         <p><b>Disclaimer</b></p>
-                        <p>Kanto Redrawn is non-profit gallery for a collaborative fan art project and is in no way affiliated with or authorised by the original rights holders.<p></p>
-                        <hr>
-                        <p><b>Issues?</b></p>
-                        <p>Map requires WebGL compatible browsers - Chrome may require you <a href="https://www.howtogeek.com/412738/how-to-turn-hardware-acceleration-on-and-off-in-chrome/" target="_blank">enable hardware acceleration.</a></p>
+                        <p>Kanto Redrawn is non-profit gallery for a collaborative fan art project and is in no way affiliated with This is a fan art project - it is in no way affiliated with or authorised by the original rights holders and not a functional game map.  <p>Map requires WebGL compatible browsers - Chrome may require you <a href="https://www.howtogeek.com/412738/how-to-turn-hardware-acceleration-on-and-off-in-chrome/" target="_blank">enable hardware acceleration.</a></p>
                         <p><a href="https://github.com/retro-redrawn/KantoRedrawn" target="_blank">Site issues? File a report on GitHub!</a></p>						
-
+                    </div>
+                    <br>
+                </div>
+                <div class="map-toggle">
+                    <span class="map-toggle-label">Redrawn</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mapSelectRedrawn" onclick="toggleMapStyle()">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="map-toggle-label">Original</span>
+                    <div class="tour">
+                        <button id="tourButton" onclick="toggleTour()"><span class="material-icons">play_arrow</span></button>
                     </div>
                 </div>
-                <br>
                 <div class="bgm">
                     <div class="custom-player" data-player-num="0" data-autoplay="true">
                         <div class="player-controls">
@@ -179,22 +177,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="tour">
-                    <button id="tourButton" onclick="toggleTour()"><span class="material-icons">play_arrow</span> <span>Begin Tour</span></button>
-                </div>
-                <div class="menu__disclaimer">
-                    <hr>
-                    <p>
-                        <small>
-                            <b>Disclaimer</b>
-                        </small>
-                    </p>
-                    <p>
-                        <small>
-                            This is a fan art project - it is in no way affiliated with or authorised by the original rights holders and not a functional game map.
-                        </small>
-                    </p>
                 </div>
             </div>
         </div>
