@@ -19,11 +19,16 @@ function loadTrackForPlayerElement(playerEl, trackIndex, autoplay) {
     }
     // update displayed info to main track info (intro not shown separately)
     if (track) updatePlayerTrackInfo(playerEl, track);
+    const playBtn = playerEl.querySelector('.control-btn[data-control="play-pause"]');
     if (autoplay) {
         audio.currentTime = 0;
-        audio.play().catch(()=>{});
-        const playBtn = playerEl.querySelector('.control-btn[data-control="play-pause"]');
-        if (playBtn) playBtn.innerHTML = '<span class="material-icons">pause</span>';
+        audio.play().then(() => {
+            if (playBtn) playBtn.innerHTML = '<span class="material-icons">pause</span>';
+        }).catch(() => {
+            if (playBtn) playBtn.innerHTML = '<span class="material-icons">play_arrow</span>';
+        });
+    } else {
+        if (playBtn) playBtn.innerHTML = '<span class="material-icons">play_arrow</span>';
     }
 }
 
