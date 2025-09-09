@@ -147,7 +147,7 @@ a{
 .menu__inner{
     padding:10px;
     padding-right:20px;
-    padding-bottom: 20px; /* extra bottom padding so menu items aren't obscured by action bars */
+	padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* extra bottom padding + safe area */
     position: relative;
     display: -webkit-box;
     display: -ms-flexbox;
