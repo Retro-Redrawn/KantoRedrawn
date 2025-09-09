@@ -534,3 +534,26 @@ a{
 
 /* Show copy button only when the area is active */
 .area.active .area__header .area__copy{ display: inline-flex; }
+
+/* Copy toast */
+.copy-toast{
+    transform: translate(-150%, -100%);
+    background: #5bd663;
+    color: #00320b;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: opacity .3s ease, transform .3s ease;
+    opacity: 0;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+.copy-toast--hide{
+    opacity: 0;
+    transform: translate(-120%, -100%);
+}
+.copy-toast:not(.copy-toast--hide){
+    opacity: 1;
+    transform: translate(-50%, -100%);
+}

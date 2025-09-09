@@ -74,6 +74,16 @@ var previousTouch = null;
 var previousPinchDistance = 0;
 var pinchForTick = null;
 
+// Track last pointer position so toasts can be shown at cursor location
+var lastPointerPos = { x: 0, y: 0 };
+// Capture pointerdown early so we have coordinates for inline onclick handlers
+document.addEventListener('pointerdown', function (e) {
+    try {
+        lastPointerPos.x = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+        lastPointerPos.y = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
+    } catch (ex) { }
+}, {capture: true, passive: true});
+
 // Tour
 var tourMode = false;
 var tourTransition = false;
@@ -523,8 +533,11 @@ function copyAreaLink(layerName, areaIdent) {
 
     // Use modern Clipboard API when available (requires HTTPS or localhost)
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-        navigator.clipboard.writeText(url)
-        .catch(function(err) {
+        navigator.clipboard.writeText(url).then(function() {
+            // show a small toast at the last pointer position
+            try { showCopyToast('Link copied', lastPointerPos); } catch (e) {}
+        }).catch(function(err) {
+            // fallback to prompt
             CopyLinkPrompt(url);
         });
         return;
@@ -537,7 +550,51 @@ function copyAreaLink(layerName, areaIdent) {
  * Fallback for older browsers: show prompt with URL for manual copy
  */
 function CopyLinkPrompt(url) {
-    try { window.prompt('Copy this URL for a direct focus link!', url); } catch (e) { /* ignore */ }
+
+    try { showCopyToast('Link copied', lastPointerPos); } catch (e) {}
+    //try { window.prompt('Copy this URL for a direct focus link!', url); } catch (e) { /* ignore */ }
+}
+
+/**
+ * Show a small floating toast near the given screen position (client coordinates).
+ * text: string to display
+ * pos: {x,y} client coordinates; if missing, defaults to center top
+ */
+function showCopyToast(text, pos) {
+    try {
+        var existing = document.querySelector('.copy-toast');
+        if (!existing) {
+            existing = document.createElement('div');
+            existing.className = 'copy-toast';
+            existing.style.position = 'fixed';
+            existing.style.pointerEvents = 'none';
+            existing.style.zIndex = 99999;
+            document.body.appendChild(existing);
+        }
+        existing.textContent = text || '';
+        // position
+        var x = (pos && pos.x) ? pos.x : (window.innerWidth / 2);
+        var y = (pos && pos.y) ? pos.y : 40;
+        existing.style.left = x + 'px';
+        existing.style.top = y + 'px';
+        existing.style.opacity = '1';
+        existing.classList.remove('copy-toast--hide');
+        // force reflow then allow hide
+        window.getComputedStyle(existing).opacity;
+
+        const showTime = 1200;
+        const hideTime = 1000;
+        setTimeout(function() {
+            existing.classList.add('copy-toast--hide');
+        }, showTime);
+        // remove after hide transition
+        clearTimeout(existing._copyToastTimeout);
+        existing._copyToastTimeout = setTimeout(function() {
+            try { existing.style.opacity = '0'; } catch (e) {}
+        }, hideTime);
+    } catch (e) {
+        // swallow
+    }
 }
 
 /** Creates a rectangular fill relative to a PIXIjs graphic (effectively its outline) */
