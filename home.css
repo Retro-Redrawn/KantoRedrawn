@@ -585,18 +585,6 @@ a{
     .custom-player .player-controls { height: 44px; }
 }
 
-#layers li button{
-    width:85%;
-    height:32px;
-    position:relative;
-    transition: width .2s;
-    
-    margin: 2px 0;
-    
-    color:#fff;
-    
-}
-
 /* Slight spacing for time display */
 .custom-player .time-display { padding-right: 8px; }
 #layers_select{
