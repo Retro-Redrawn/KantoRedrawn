@@ -534,10 +534,8 @@ function copyAreaLink(layerName, areaIdent) {
     // Use modern Clipboard API when available (requires HTTPS or localhost)
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(url).then(function() {
-            // show a small toast at the last pointer position
-            try { showCopyToast('Link copied', lastPointerPos); } catch (e) {}
+            showCopyToast('Link copied', lastPointerPos);
         }).catch(function(err) {
-            // fallback to prompt
             CopyLinkPrompt(url);
         });
         return;
@@ -550,9 +548,7 @@ function copyAreaLink(layerName, areaIdent) {
  * Fallback for older browsers: show prompt with URL for manual copy
  */
 function CopyLinkPrompt(url) {
-
-    try { showCopyToast('Link copied', lastPointerPos); } catch (e) {}
-    //try { window.prompt('Copy this URL for a direct focus link!', url); } catch (e) { /* ignore */ }
+    try { window.prompt('Copy this URL for a direct focus link!', url); } catch (e) { /* ignore */ }
 }
 
 /**
