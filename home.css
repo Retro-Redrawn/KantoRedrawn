@@ -554,23 +554,19 @@ a{
         top: 0;
         bottom: 0;
         height: 100vh;
-        transform: translateX(calc(-100% - 10px)); /* remain hidden by default */
         box-shadow: 5px 0 12px rgba(0,0,0,0.6);
     }
     .menu.active{
         transform: translateX(0%);
     }
     .menu .menu__button{
-        right: 8px;
         top: 8px;
-        width: 34px;
-        height: 34px;
-        line-height: 34px;
+        height: 48px;
+        line-height: 48px;
     }
     .menu__logo{ display: none; }
 
     /* Compact spacing */
-    /* NOTE: keep .menu__inner identical to desktop; do not override here */
     .menu__actions{ gap: 6px; margin-top:6px; }
     .menu__tab{ height: 34px; width: 200px; padding: 0 6px; font-size: 0.92rem; }
 
