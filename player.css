@@ -135,3 +135,38 @@
         transform: translateX(100%);
     }
 }
+
+/* Compact layout for small screens */
+@media (max-height: 600px) {
+    .custom-player {
+        padding: 3px;
+        margin: 2px 0;
+    }
+    .player-controls {
+        gap: 4px;
+    }
+    .control-btn {
+        padding: 2px;
+    }
+    .control-btn .material-icons {
+        font-size: 16px;
+    }
+    .progress-container {
+        gap: 4px;
+    }
+    .progress-bar {
+        height: 3px;
+    }
+    .time-display {
+        font-size: 11px;
+        min-width: 36px;
+    }
+    .track-info-container {
+        margin-top: 2px;
+        height: 18px;
+    }
+    .track-info {
+        font-size: 11px;
+        padding: 0 8px;
+    }
+}
