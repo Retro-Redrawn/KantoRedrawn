@@ -242,7 +242,7 @@ var interiorAreas = [
   {
     title: "Diglett’s Cave",
     ident: "digletts_cave",
-    artistId: "POKE",
+    artistId: "GONS",
     animation: false,
     point: {
       x: 1184,
