@@ -96,6 +96,7 @@
 
 .track-info {
     position: absolute;
+    left: 0;
     white-space: nowrap;
     height: 100%;
     display: inline-flex;
@@ -108,6 +109,8 @@
 }
 
 .track-info.scrolling {
+    /* allow animation to be paused on hover via JS/CSS and use transform for smoother rendering */
+    -webkit-animation: scroll-text 15s linear infinite;
     animation: scroll-text 15s linear infinite;
 }
 

@@ -160,8 +160,60 @@ function updatePlayerTrackInfo(playerEl, track) {
         const artist = playerEl.querySelector('.track-artist');
         if (title) title.textContent = track.title || '';
         if (artist) artist.textContent = track.artist || '';
+        // After setting the text, ensure scrolling class is applied if needed
+        try {
+            updateTrackInfoScrolling(playerEl);
+        } catch (e) {}
     } catch (e) {}
 }
+
+// Toggle .scrolling on the .track-info element when its content overflows the
+// visible .track-info-scroll container. Uses requestAnimationFrame to measure
+// after layout and adds a small tolerance to avoid flicker.
+function updateTrackInfoScrolling(playerEl) {
+    if (!playerEl) return;
+    const scrollWrap = playerEl.querySelector('.track-info-scroll');
+    const trackInfo = playerEl.querySelector('.track-info');
+    if (!scrollWrap || !trackInfo) return;
+    // remove class first to get an accurate scrollWidth measurement
+    trackInfo.classList.remove('scrolling');
+    // measure on next frame after layout
+    requestAnimationFrame(function() {
+        try {
+            const wrapWidth = scrollWrap.clientWidth || 0;
+            const contentWidth = trackInfo.scrollWidth || 0;
+            // small tolerance to avoid toggling when nearly-equal
+            const needsScroll = contentWidth > wrapWidth + 2;
+            if (needsScroll) trackInfo.classList.add('scrolling');
+            else trackInfo.classList.remove('scrolling');
+        } catch (e) {}
+    });
+}
+
+// Update scrolling for all players (used on resize and font load)
+function updateAllPlayersScrolling() {
+    document.querySelectorAll('.custom-player').forEach(function(playerEl) {
+        updateTrackInfoScrolling(playerEl);
+    });
+}
+
+// Listen for window resize to recompute whether scrolling is needed (debounced)
+;(function() {
+    let resizeTimer = null;
+    window.addEventListener('resize', function() {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            updateAllPlayersScrolling();
+        }, 150);
+    });
+    // If Font Loading API is available, recheck after fonts are ready
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() { updateAllPlayersScrolling(); }).catch(function(){});
+    } else {
+        // fallback: run once on window load
+        window.addEventListener('load', function() { updateAllPlayersScrolling(); });
+    }
+})();
 
 // initialize on DOM ready
 if (document.readyState === 'loading') {
