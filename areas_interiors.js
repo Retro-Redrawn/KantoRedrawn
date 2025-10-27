@@ -2,7 +2,7 @@ var interiorAreas = [
   {
     title: "Player’s House 1F",
     ident: "players_house_1f",
-    artistId: "JUST",
+    artistId: "YOLK",
     animation: false,
     point: {
       x: 832,
@@ -26,7 +26,7 @@ var interiorAreas = [
   {
     title: "Player’s House 2F",
     ident: "players_house_2f",
-    artistId: "JUST",
+    artistId: "YOLK",
     animation: false,
     point: {
       x: 832,
