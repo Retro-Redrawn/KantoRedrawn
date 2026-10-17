@@ -23,6 +23,9 @@ var layersLoaded = 0;
 var zoomLevel = 1; // must be whole number
 var zoomMin = 0.25;
 var zoomMax = 4;
+const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
+const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
+const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA);  // ≈ 0.00198
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
@@ -958,7 +961,8 @@ function onMouseWheel (e) {
     if (e.target.id === 'canvas') {
         zoomMousePos = { x: e.x, y: e.y }
         if (!mouseDown && !cameraAnimation.playing) {
-            var zoomAmount = e.deltaY < 0 ? 2 : .5
+            var deltaPixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1)
+            var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
             if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
                 
                 currentPos = {...zoomCenter}
@@ -987,7 +991,7 @@ function zoom(s,x,y){
     zoomLevel = newScale.x
     checkZoomLimit()
     
-    var newScreenPos = {x: (worldPos.x ) * newScale.x + zoomCenter.x, y: (worldPos.y) * newScale.y + zoomCenter.y};
+    var newScreenPos = {x: (worldPos.x ) * zoomLevel + zoomCenter.x, y: (worldPos.y) * zoomLevel + zoomCenter.y};
 
     zoomCenter.x = zoomCenter.x - (newScreenPos.x-x)
     zoomCenter.y = zoomCenter.y - (newScreenPos.y-y)
