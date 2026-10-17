@@ -1,0 +1,366 @@
+/* Styles for left-hand side menu */
+
+/* Left-hand side menu panel */
+.menu{
+    color:#ddd;
+    background-color: #222034;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:300px;
+    box-shadow: 5px 0px 5px 0px rgba(0,0,0,.6);
+    height:100vh;
+    transition: transform .2s;
+    transform: translateX(calc(-100% - 10px));
+    z-index:1;
+    cursor: pointer;
+}
+
+.menu:hover{
+    transform: translateX(-100%);
+}
+.menu:after{
+    content: '';
+    position:absolute;
+    right:0px;
+    width:10px;
+    top:0;
+    bottom:0;
+    height:100%;
+    background-color: #222034;    
+}
+.menu.active{
+    transform:translateX(0%);
+    cursor: default;
+}
+.menu.active:hover{
+    transform:translateX(0%)!important;
+}
+
+/* Menu button is the ✕ button for sliding to hide the menu */ 
+.menu .menu__button {
+    cursor:pointer;
+    color:#fff;
+    font-size:18px;
+    position:absolute;
+    right:-30px;
+    width:30px;
+    height:150px;
+    background-color: #222034;
+    top:0;
+    bottom:0;
+    display:block;
+    margin:auto;
+    border-top-right-radius: 8px ;
+    border-bottom-right-radius: 8px ;
+    box-shadow: 5px 0px 5px 0px rgba(0,0,0,.6);
+    line-height:150px;
+    text-align: center;
+    transition: width .2s, right .2s;
+}
+.menu .menu__button:before {
+    content: '\2630';
+}
+.menu.active .menu__button:before {
+    content: '\2715';
+}
+.menu.active .menu__button {
+    width:20px;
+    right: -20px;
+    text-align: left;
+}
+
+.menu__inner{
+    padding:10px;
+    padding-right:20px;
+	padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* extra bottom padding + safe area */
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    max-height: calc(100vh - 30px);
+    background-color: #222034;
+}
+
+/* Project-specific Redrawn logo */
+.menu__logo{
+    text-align: center;
+    margin-top:20px;
+    padding-bottom:12px; /* extra spacing under logo */
+}
+
+/* Selector for Overworld - Interiors - Sevii islands */ 
+#layers_select{
+    appearance: menulist-button;
+    -webkit-appearance: menulist-button;
+    -moz-appearance: menulist-button;
+    background-color: #13111e;
+    color: #fff;
+    border: 1px solid #ffffffad;
+    cursor: pointer;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 5px;
+    padding: 6px 10px;
+    height: 42px;
+    border-radius: 6px;
+    font-size: 1rem;
+    text-align: left;
+    text-shadow: 1px 0px 3px black, -1px 0px 3px black, 0px 0px 3px black, 0px 0px 3px black, 0px 0px 3px black; 
+    background-size: 100% 100%;
+    background-position: left;
+    background-repeat: no-repeat; }
+
+/* Show layer icon inside the select when a class is applied */
+#layers_select.kanto {
+    background-image: url('../img/website/kanto_button.png');
+}
+#layers_select.interior {
+    background-image: url('../img/website/interiors_button.png');
+}
+#layers_select.sevii {
+    background-image: url('../img/website/sevii_button.png');
+}
+#layers_select option{
+    background-color: #222034;
+    color: #fff;
+}
+
+/* Row of tabs (see below) */
+.menu__actions{
+    display:flex;
+    margin-top:10px;
+}
+
+/* Area list, Options, About tab buttons */ 
+.menu__tab{
+    cursor: pointer;
+    background-color: #13111e;
+    color:#aaa;
+    display:block;
+    width: 200px;
+    height: 40px;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    border-bottom-left-radius: 0em;
+    border-bottom-right-radius: 0em;
+    border: 0px
+}
+.menu__tab.active{
+    background-color:#3f3f74;
+    color:#ddd;
+    font-weight:bold;
+}
+.menu__tab:hover{
+    background-color:#402b66;
+    color:#ddd;
+}
+/* Area list, Options, About panels under the tabs */ 
+.menu__content{
+    background-color: #222034;
+    overflow-y:auto;
+    max-height: 60vh;
+}
+.menu__content > * {
+    display:none;
+}
+.menu__content > .active {
+    display:block;
+}
+
+/* Scrollbars for Area list, Options, About panels */
+.menu__content, .menu__content > * {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+/* WebKit-based browsers */
+.menu__content::-webkit-scrollbar, .menu__content > *::-webkit-scrollbar {
+    width: 10px;
+}
+.menu__content::-webkit-scrollbar-track, .menu__content > *::-webkit-scrollbar-track {
+    background: transparent;
+}
+.menu__content::-webkit-scrollbar-thumb, .menu__content > *::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.menu__content::-webkit-scrollbar-thumb:hover, .menu__content > *::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.14);
+}
+/* Slightly more prominent when menu is active */
+.menu.active .menu__content > *::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+}
+.menu.active .menu__content > *::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+#areaList, #settings, #about {
+    padding:5px;
+    margin:0;
+    list-style: none;;
+}
+#areas, #layers {
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+#about {
+    font-size: 1em;
+    line-height: 1.5em;
+}
+
+/* Retro Redrawn logo in the about tab */ 
+.rrlogo {
+    text-align: center;
+}
+.rrlogo figure img {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+}
+.rrlogo figure:hover img {
+    -webkit-filter: grayscale(0);
+    filter: grayscale(0);
+}
+
+/* Redrawn - Original switch and slider */
+.switch{
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    bottom: 5px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #111024;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 24px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+  }
+
+    input:checked + .slider {
+    background-color: #7b00b5;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #7b00b5;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(22px);
+    -ms-transform: translateX(22px);
+    transform: translateX(22px);
+  }
+
+/* The green "tour" play (▶) button for automatic random map display */
+.tour{
+    text-align: center;
+}
+.tour button{
+    color:#fff;
+    border:0;
+    display:block;
+    margin:auto;
+    padding:8px 20px;
+    font-size:1.2em;
+    border-radius: 5px;
+    border-bottom:4px solid #222;
+    background-color: rgb(53, 199, 53);
+    cursor:pointer;
+    transition: background-color .2s;
+}
+.tour button:hover{
+    background-color: #222!important;
+}
+.tour button.active{
+    background-color: rgb(218, 88, 55)
+}
+.tour button span{
+    vertical-align: middle;
+}
+
+/* Style for the row controlling the redrawn-original-switch and tour button */ 
+/* Align map toggle to the left edge */
+.map-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    justify-content:flex-start;
+    padding-left: 4px; /* align to menu inner padding */
+    padding-top: 12px; /* added spacing above the toggle */
+}
+.map-toggle .map-toggle-label{
+    font-size: 0.95rem;
+    color: #ddd;
+    transform: translateY(-2px); /* nudge label slightly up to line with slider */
+}
+/* Ensure the switch aligns vertically within the toggle row */
+.map-toggle .switch{ bottom: 0.3; }
+
+/* Inline tour button: keep at right edge of toggle row */
+.map-toggle .tour{ margin-left: auto; }
+.map-toggle .tour button{ width: 45px; height: 31px; padding: 0; border-radius: 10px; }
+
+@media (max-height: 600px) {
+    .map-toggle{ padding-left: 2px; }
+    .menu{
+        /* Keep menu anchored on left but narrower for short screens */
+        width: min(260px, 80vw);
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: 100vh;
+        box-shadow: 5px 0 12px rgba(0,0,0,0.6);
+    }
+    .menu.active{
+        transform: translateX(0%);
+    }
+    .menu .menu__button{
+        top: 8px;
+        height: 48px;
+        line-height: 48px;
+    }
+    .menu__logo{ display: none; }
+
+    /* Compact spacing */
+    .menu__actions{ gap: 6px; margin-top:6px; }
+    .menu__tab{ height: 34px; width: 200px; padding: 0 6px; font-size: 0.92rem; }
+
+    /* Panels and scrolling */
+    /* Give the content area the remaining vertical space and make it the scrolling region */
+    .menu__content{ max-height: none; flex: 1 1 auto; overflow-y: auto; min-height: 0; }
+    .menu__content > *{ padding: 6px; box-sizing: border-box; min-height: 0; }
+}

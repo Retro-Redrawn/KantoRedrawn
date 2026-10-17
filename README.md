@@ -46,7 +46,7 @@ And now, some steps!
     * Not all Redrawn projects use more than one layer, but if you want to include them, reference an applicable project's files and...
     * In index.html's "areaList" div, there are list items for each layer in the project.
         * Change the name provided to the changeLayer function to the name of your layer. Set the class to the same name, and the name in the Span section to the display name.
-    * In home.css, find "#layers li button.__" and replace the name of the layer with your own. Update the background image as well.
+    * In menu.css, find "#layers_select.__" rules and replace the name of the layer with your own. Update the background image as well.
 7. Add areas to the areas.js file (see below)
 8. Remove any remaining project-specific image assets and replace with your own once you are done setting up the project.
     * images are stored in the img folder, where screens can be found in folders defined by the redrawnLayers names 

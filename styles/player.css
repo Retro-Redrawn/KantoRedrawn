@@ -7,6 +7,11 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Slight spacing for time display */
+.custom-player .time-display { 
+    padding-right: 8px; 
+}
+
 .player-controls {
     display: flex;
     align-items: center;
@@ -141,9 +146,15 @@
 
 /* Compact layout for small screens */
 @media (max-height: 600px) {
+    .bgm { 
+        max-height: 72px; overflow: visible; 
+    }
     .custom-player {
         padding: 3px;
         margin: 2px 0;
+    }
+    .custom-player .player-controls { 
+        height: 44px; 
     }
     .player-controls {
         gap: 4px;
