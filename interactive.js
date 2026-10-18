@@ -20,12 +20,25 @@ var loading = true; // Whether data is being loaded (e.g. images)
 var layersLoaded = 0;
 
 // Navigation
+const TOUR_DEFAULT_ZOOM = 4;
 var zoomLevel = 1; // must be whole number
-var zoomMin = 0.25;
-var zoomMax = 4;
+const DISPLAYED_ZOOM_MIN = 0.25;   // Zoom limits as shown on the zoom indicator
+const DISPLAYED_ZOOM_MAX = 5;
+var zoomMin = DISPLAYED_ZOOM_MIN;  // Limits on map.scale (CSS pixels per image pixel); set in applyDisplayDensity
+var zoomMax = DISPLAYED_ZOOM_MAX;
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
+var zoomIndicatorUntil = 0;
+var lastZoomInput = null;   
+var zoomInDevicePixels = true;  
+var displayDensity = 1;         // Physical screen pixels per CSS pixel that the canvas is drawn at
+const ZOOM_SNAP_DELAY_MS = 500;         // How long zooming must have stopped before the zoom is rounded
+const ZOOM_INDICATOR_LINGER_MS = 1000;  // How long the zoom indicator stays after the last zoom input
+const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
+const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
+const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA);  // ≈ 0.00198
+const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
 
 // URL Args
 const urlFocus = parseFocusFromUrl();
@@ -215,13 +228,15 @@ function init () {
     // Construct the PIXI canvas with pixel perfect settings
     try {
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST     // Nearest neighbour scaling
+        applyDisplayDensity()
         app = new PIXI.Application(
             { 
                 width: window.innerWidth, 
                 height: window.innerHeight, 
                 antialias: false, 
                 view: document.querySelector('#canvas'), 
-                autoResize: true 
+                resolution: displayDensity,     // Canvas buffer in physical pixels...
+                autoDensity: true
             });
         globalThis.__PIXI_APP__ = app; 
     } catch (error) {
@@ -724,6 +739,8 @@ function tick () {
         }
         if (pinchForTick) {
             instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
+            noteZoomInput(pinchForTick.x, pinchForTick.y)
+            showZoomIndicator()
             if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
                 if (!blurIsDisabled()) {
                     motion_blur_target.filters = [blurFilter]
@@ -798,7 +815,63 @@ function tick () {
         // ignore overall GIF update errors to avoid breaking the render loop
     }
 
+    snapZoom()
+    updateCanvasRendering()
+    updateZoomIndicator()
     requestAnimationFrame(tick)
+}
+
+/** Upscale the canvas without smoothing at whole-number zoom levels */
+function updateCanvasRendering () {
+    var scale = map.scale.x * app.renderer.resolution
+    var crisp = Number.isInteger(window.devicePixelRatio) && Math.abs(scale - Math.round(scale)) < 0.001
+    var style = crisp ? 'pixelated' : 'auto'
+    if (app.view.style.imageRendering !== style) { app.view.style.imageRendering = style }
+}
+
+/** Keep zoom indicator visible for a moment after zoom input. */
+function showZoomIndicator () {
+    zoomIndicatorUntil = performance.now() + ZOOM_INDICATOR_LINGER_MS
+}
+
+/** Show the scale currently on screen while zooming; fade out once stopped. */
+function updateZoomIndicator () {
+    var indicator = document.querySelector('#zoomIndicator')
+    var visible = performance.now() < zoomIndicatorUntil || currentZoom !== zoomLevel
+    var text = (map.scale.x * displayDensity).toFixed(2) + 'x'
+    if (indicator.textContent !== text) { indicator.textContent = text }
+    indicator.classList.toggle('zoom-indicator--visible', visible)
+}
+
+/** Record when, where the user last zoomed */
+function noteZoomInput (x, y) {
+    lastZoomInput = { time: performance.now(), x: x, y: y }
+}
+
+/** Pixel-perfect zoom closest to `zoom` at which image pixel size and canvas pixel size are equal up to integer multiplier */
+function nearestPixelPerfectZoom (zoom) {
+    var r = app.renderer.resolution         // Canvas pixels per CSS pixel
+    var s = zoom * r                        // Canvas pixels per image pixel
+    var pixelPerfectScale = s >= 1 ? Math.round(s) : 1 / Math.round(1 / s)
+    return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
+}
+
+/** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
+function snapZoom () {
+    if (continuousZoomEnabled() || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) { return }
+    if (dragVelocity.x !== 0 || dragVelocity.y !== 0) { return }
+    if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) { return }
+
+    var target = nearestPixelPerfectZoom(zoomLevel)
+    if (Math.abs(target - zoomLevel) > 1e-9) {
+        currentPos = { ...zoomCenter }      // Animate from the current position, as onMouseWheel does
+        zoom(target / zoomLevel, lastZoomInput.x, lastZoomInput.y)
+        zoomLevel = target
+        var r = app.renderer.resolution     // Land on whole canvas pixels
+        zoomCenter.x = Math.round(zoomCenter.x * r) / r
+        zoomCenter.y = Math.round(zoomCenter.y * r) / r
+    }
+    lastZoomInput = null                    // Round once per zoom gesture
 }
 
 /** Calculate the current position of a camera adjustment. */
@@ -838,6 +911,18 @@ function blurIsDisabled () {
 function onAreaBorderToggled(isHidden) {
     bordersDisabled = isHidden;
     RegenerateAreaZones();
+}
+
+/** Checks DOM if continuous zoom is enabled (no rounding of the zoom once zooming stops). */
+function continuousZoomEnabled () {
+    return document.querySelector('#continuousZoom').checked
+}
+
+/** The zoom chosen under Area Default Zoom, or `areaSpecificZoom` while it is set to Area-specific. */
+function selectedZoom (areaSpecificZoom) {
+    var setting = document.querySelector('#areaDefaultZoom').value
+    var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
+    return Math.min(Math.max(zoom / displayDensity, zoomMin), zoomMax)
 }
 
 /** Callback occurring when a drag action starts. */
@@ -958,13 +1043,16 @@ function onMouseWheel (e) {
     if (e.target.id === 'canvas') {
         zoomMousePos = { x: e.x, y: e.y }
         if (!mouseDown && !cameraAnimation.playing) {
-            var zoomAmount = e.deltaY < 0 ? 2 : .5
+            var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
+            var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
             if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
                 
                 currentPos = {...zoomCenter}
                 dragVelocity = { x: 0, y: 0 }
 
                 zoom(zoomAmount, e.x, e.y)
+                noteZoomInput(e.x, e.y)
+                showZoomIndicator()
             }
         }
     }
@@ -983,11 +1071,10 @@ function zoom(s,x,y){
     }
 
     var worldPos = {x: (x - zoomCenter.x) / zoomLevel, y: (y - zoomCenter.y)/zoomLevel};
-    var newScale = {x: zoomLevel * s, y: zoomLevel * s};
-    zoomLevel = newScale.x
+    zoomLevel *= s 
     checkZoomLimit()
     
-    var newScreenPos = {x: (worldPos.x ) * newScale.x + zoomCenter.x, y: (worldPos.y) * newScale.y + zoomCenter.y};
+    var newScreenPos = {x: (worldPos.x ) * zoomLevel + zoomCenter.x, y: (worldPos.y) * zoomLevel + zoomCenter.y};
 
     zoomCenter.x = zoomCenter.x - (newScreenPos.x-x)
     zoomCenter.y = zoomCenter.y - (newScreenPos.y-y)
@@ -1108,7 +1195,7 @@ function focusOnArea (a) {
     if (isGoodToFocus) {
         var areaImage = getAreaImage(area);
         var box = getAreaBox(area, areaImage);
-        moveCameraTo(box.x + Math.floor(box.width / 2), box.y + Math.floor(box.height / 2), area.zoom, cameraSpeed, true);
+        moveCameraTo(box.x + Math.floor(box.width / 2), box.y + Math.floor(box.height / 2), selectedZoom(area.zoom), cameraSpeed, true);
     }
 }
 
@@ -1221,6 +1308,7 @@ function endTour () {
 }
 
 function newTourArea () {
+    var zoom = selectedZoom(TOUR_DEFAULT_ZOOM)
     var rnd = Math.floor(Math.random() * areasToTour.length)
     var area = areasToTour[rnd]
     var box = getAreaBox(area, getAreaImage(area));
@@ -1241,11 +1329,11 @@ function newTourArea () {
     var endY = centerY
 
     if (area.pan === 'horizontal') {
-        if (box.height * 4 > window.innerHeight) {
-            var range =  ((box.height * 4) - window.innerHeight) / 4
+        if (box.height * zoom > window.innerHeight) {
+            var range =  box.height - window.innerHeight / zoom
             startY = centerY + Math.round((Math.random() * range) - range / 2)
         }
-        var range = ((box.width * 4) - window.innerWidth) / 4
+        var range = box.width - window.innerWidth / zoom
         if (range <= 20) { range = 100 }
         startX = centerX + Math.round((Math.random() * range) - range / 2)
         var loop = 0
@@ -1256,11 +1344,11 @@ function newTourArea () {
         
     }
     if (area.pan === 'vertical') {
-        if (box.width * 4 > window.innerWidth) {
-            var range = ((box.width * 4) - window.innerWidth) / 4
+        if (box.width * zoom > window.innerWidth) {
+            var range = box.width - window.innerWidth / zoom
             startX = centerX + Math.round((Math.random() * range) - range / 2)
         }
-        var range = ((box.height * 4) - window.innerHeight) / 4
+        var range = box.height - window.innerHeight / zoom
         if (range <= 20) { range = 100 }
         startY = centerY + Math.round((Math.random() * range) - range / 2)
         var loop = 0
@@ -1274,8 +1362,8 @@ function newTourArea () {
     if (area.pan === 'horizontal') { endY = startY }
     if (area.pan === 'vertical') { endX = startX }
 
-    snapCameraTo(Math.round(startX), Math.round(startY), 4)
-    moveCameraTo(endX, endY, zoomMax, tourCameraSpeed, false);
+    snapCameraTo(Math.round(startX), Math.round(startY), zoom)
+    moveCameraTo(endX, endY, zoom, tourCameraSpeed, false);
 }
 
 // #endregion
@@ -1306,7 +1394,7 @@ function checkAutoHighlight() {
         return;
     }
 
-    var mapPosition = screenToMapPoint({ x: app.renderer.width / 2, y: app.renderer.height / 2 }, map, currentZoom);
+    var mapPosition = screenToMapPoint({ x: app.screen.width / 2, y: app.screen.height / 2 }, map, currentZoom);
 
     if (isMenuOpen()) {
         let menuWidth = parseInt(window.getComputedStyle(document.getElementById('menu-bar')).width);
@@ -1347,8 +1435,9 @@ function fillWithArrays(array) {
 
 function screenToMap(x, y, zoom) {
     var width = isMenuOpen() ? window.innerWidth + 300 : window.innerWidth 
-    var newX = -((x * zoom) - (width / 2))
-    var newY = -((y * zoom) - (window.innerHeight / 2))
+    var r = app.renderer.resolution  // Canvas pixels per CSS pixel; Used to land on whole canvas pixels
+    var newX = Math.round(-((x * zoom) - (width / 2)) * r) / r
+    var newY = Math.round(-((y * zoom) - (window.innerHeight / 2)) * r) / r
     return { x: newX, y: newY }
 }
 
@@ -1377,6 +1466,34 @@ function onResize () {
             background.height = window.innerHeight;
         }
     }
+}
+
+/** Physical screen pixels per CSS pixel to draw at; 1 when zoom is counted in CSS pixels. */
+function currentDisplayDensity () {
+    return zoomInDevicePixels ? (window.devicePixelRatio || 1) : 1
+}
+
+/** Draws the canvas at the display density and measures zoom in physical screen pixels. */
+function applyDisplayDensity () {
+    displayDensity = currentDisplayDensity()
+    zoomMin = DISPLAYED_ZOOM_MIN / displayDensity
+    zoomMax = DISPLAYED_ZOOM_MAX / displayDensity
+    PIXI.settings.FILTER_RESOLUTION = displayDensity    // Filters made later (setupCanvas) render at full density
+    if (!app || !app.renderer) { return }
+    app.renderer.resolution = displayDensity
+    app.renderer.plugins.interaction.resolution = displayDensity
+    for (let filter of [blurFilter, bulgeFilter, colorFilter]) {
+        if (filter) { filter.resolution = displayDensity }
+    }
+    onResize()                                          // Rebuild the canvas buffer at the new density
+}
+
+/** Re-applies the display density whenever devicePixelRatio changes (other monitor, browser zoom). */
+function watchDevicePixelRatio () {
+    matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener('change', function () {
+        applyDisplayDensity()
+        watchDevicePixelRatio()
+    }, { once: true })
 }
 
 function changeCameraSpeed (e) {
