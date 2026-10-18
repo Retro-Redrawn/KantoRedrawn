@@ -9,7 +9,7 @@
 *
 *   Authors: Jerky, Tyson Moll (vvvvvvv)
 *
-*   Contributors: dodocommando
+*   Contributors: dodocommando, hiddenpowerfire
 *
 *   Created in 2023
 */
@@ -20,7 +20,6 @@ var loading = true; // Whether data is being loaded (e.g. images)
 var layersLoaded = 0;
 
 // Navigation
-const TOUR_DEFAULT_ZOOM = 4;
 var zoomLevel = 1; // must be whole number
 const DISPLAYED_ZOOM_MIN = 0.25;   // Zoom limits as shown on the zoom indicator
 const DISPLAYED_ZOOM_MAX = 5;
@@ -1308,6 +1307,7 @@ function endTour () {
 }
 
 function newTourArea () {
+    const TOUR_DEFAULT_ZOOM = 4;
     var zoom = selectedZoom(TOUR_DEFAULT_ZOOM)
     var rnd = Math.floor(Math.random() * areasToTour.length)
     var area = areasToTour[rnd]
@@ -1468,14 +1468,11 @@ function onResize () {
     }
 }
 
-/** Physical screen pixels per CSS pixel to draw at; 1 when zoom is counted in CSS pixels. */
-function currentDisplayDensity () {
-    return zoomInDevicePixels ? (window.devicePixelRatio || 1) : 1
-}
-
 /** Draws the canvas at the display density and measures zoom in physical screen pixels. */
 function applyDisplayDensity () {
-    displayDensity = currentDisplayDensity()
+    // Physical screen pixels per CSS pixel to draw at; 1 when zoom is counted in CSS pixels.
+    displayDensity = zoomInDevicePixels ? (window.devicePixelRatio || 1) : 1
+    
     zoomMin = DISPLAYED_ZOOM_MIN / displayDensity
     zoomMax = DISPLAYED_ZOOM_MAX / displayDensity
     PIXI.settings.FILTER_RESOLUTION = displayDensity    // Filters made later (setupCanvas) render at full density
