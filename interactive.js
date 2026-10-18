@@ -22,13 +22,17 @@ var layersLoaded = 0;
 // Navigation
 const TOUR_DEFAULT_ZOOM = 4;
 var zoomLevel = 1; // must be whole number
-var zoomMin = 0.25;
-var zoomMax = 5;
+const DISPLAYED_ZOOM_MIN = 0.25;   // Zoom limits as shown on the zoom indicator
+const DISPLAYED_ZOOM_MAX = 5;
+var zoomMin = DISPLAYED_ZOOM_MIN;  // Limits on map.scale (CSS pixels per image pixel); set in applyDisplayDensity
+var zoomMax = DISPLAYED_ZOOM_MAX;
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
 var lastZoomInput = null;   
+var zoomInDevicePixels = true;  
+var displayDensity = 1;         // Physical screen pixels per CSS pixel that the canvas is drawn at
 const ZOOM_SNAP_DELAY_MS = 500;         // How long zooming must have stopped before the zoom is rounded
 const ZOOM_INDICATOR_LINGER_MS = 1000;  // How long the zoom indicator stays after the last zoom input
 const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
@@ -224,13 +228,15 @@ function init () {
     // Construct the PIXI canvas with pixel perfect settings
     try {
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST     // Nearest neighbour scaling
+        applyDisplayDensity()
         app = new PIXI.Application(
             { 
                 width: window.innerWidth, 
                 height: window.innerHeight, 
                 antialias: false, 
                 view: document.querySelector('#canvas'), 
-                autoResize: true 
+                resolution: displayDensity,     // Canvas buffer in physical pixels...
+                autoDensity: true
             });
         globalThis.__PIXI_APP__ = app; 
     } catch (error) {
@@ -832,7 +838,7 @@ function showZoomIndicator () {
 function updateZoomIndicator () {
     var indicator = document.querySelector('#zoomIndicator')
     var visible = performance.now() < zoomIndicatorUntil || currentZoom !== zoomLevel
-    var text = map.scale.x.toFixed(2) + 'x'
+    var text = (map.scale.x * displayDensity).toFixed(2) + 'x'
     if (indicator.textContent !== text) { indicator.textContent = text }
     indicator.classList.toggle('zoom-indicator--visible', visible)
 }
@@ -916,7 +922,7 @@ function continuousZoomEnabled () {
 function selectedZoom (areaSpecificZoom) {
     var setting = document.querySelector('#areaDefaultZoom').value
     var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
-    return Math.min(Math.max(zoom, zoomMin), zoomMax)
+    return Math.min(Math.max(zoom / displayDensity, zoomMin), zoomMax)
 }
 
 /** Callback occurring when a drag action starts. */
@@ -1388,7 +1394,7 @@ function checkAutoHighlight() {
         return;
     }
 
-    var mapPosition = screenToMapPoint({ x: app.renderer.width / 2, y: app.renderer.height / 2 }, map, currentZoom);
+    var mapPosition = screenToMapPoint({ x: app.screen.width / 2, y: app.screen.height / 2 }, map, currentZoom);
 
     if (isMenuOpen()) {
         let menuWidth = parseInt(window.getComputedStyle(document.getElementById('menu-bar')).width);
@@ -1460,6 +1466,34 @@ function onResize () {
             background.height = window.innerHeight;
         }
     }
+}
+
+/** Physical screen pixels per CSS pixel to draw at; 1 when zoom is counted in CSS pixels. */
+function currentDisplayDensity () {
+    return zoomInDevicePixels ? (window.devicePixelRatio || 1) : 1
+}
+
+/** Draws the canvas at the display density and measures zoom in physical screen pixels. */
+function applyDisplayDensity () {
+    displayDensity = currentDisplayDensity()
+    zoomMin = DISPLAYED_ZOOM_MIN / displayDensity
+    zoomMax = DISPLAYED_ZOOM_MAX / displayDensity
+    PIXI.settings.FILTER_RESOLUTION = displayDensity    // Filters made later (setupCanvas) render at full density
+    if (!app || !app.renderer) { return }
+    app.renderer.resolution = displayDensity
+    app.renderer.plugins.interaction.resolution = displayDensity
+    for (let filter of [blurFilter, bulgeFilter, colorFilter]) {
+        if (filter) { filter.resolution = displayDensity }
+    }
+    onResize()                                          // Rebuild the canvas buffer at the new density
+}
+
+/** Re-applies the display density whenever devicePixelRatio changes (other monitor, browser zoom). */
+function watchDevicePixelRatio () {
+    matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener('change', function () {
+        applyDisplayDensity()
+        watchDevicePixelRatio()
+    }, { once: true })
 }
 
 function changeCameraSpeed (e) {
