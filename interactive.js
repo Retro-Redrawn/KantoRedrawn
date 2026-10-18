@@ -23,12 +23,13 @@ var layersLoaded = 0;
 var zoomLevel = 1; // must be whole number
 var zoomMin = 0.25;
 var zoomMax = 4;
-const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
-const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
-const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA);  // ≈ 0.00198
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
+const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
+const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
+const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA);  // ≈ 0.00198
+const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
 
 // URL Args
 const urlFocus = parseFocusFromUrl();
@@ -961,7 +962,7 @@ function onMouseWheel (e) {
     if (e.target.id === 'canvas') {
         zoomMousePos = { x: e.x, y: e.y }
         if (!mouseDown && !cameraAnimation.playing) {
-            var deltaPixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1)
+            var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
             var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
             if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
                 
@@ -987,8 +988,7 @@ function zoom(s,x,y){
     }
 
     var worldPos = {x: (x - zoomCenter.x) / zoomLevel, y: (y - zoomCenter.y)/zoomLevel};
-    var newScale = {x: zoomLevel * s, y: zoomLevel * s};
-    zoomLevel = newScale.x
+    zoomLevel *= s 
     checkZoomLimit()
     
     var newScreenPos = {x: (worldPos.x ) * zoomLevel + zoomCenter.x, y: (worldPos.y) * zoomLevel + zoomCenter.y};
