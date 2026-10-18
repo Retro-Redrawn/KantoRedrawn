@@ -779,13 +779,6 @@ function tick () {
             // map.alpha += .01
         }
     }
-    /** Upscale the canvas without smoothing at whole-number zoom levels */
-    function updateCanvasRendering () {
-        var scale = map.scale.x * app.renderer.resolution
-        var crisp = Number.isInteger(window.devicePixelRatio) && Math.abs(scale - Math.round(scale)) < 0.001
-        var style = crisp ? 'pixelated' : 'auto'
-        if (app.view.style.imageRendering !== style) { app.view.style.imageRendering = style }
-    }
     
     // Update any GIF-backed sprites by drawing the underlying <img> into their canvas and
     // notifying PIXI that the base texture needs updating.
@@ -811,6 +804,14 @@ function tick () {
 
     updateCanvasRendering()
     requestAnimationFrame(tick)
+}
+
+/** Upscale the canvas without smoothing at whole-number zoom levels */
+function updateCanvasRendering () {
+    var scale = map.scale.x * app.renderer.resolution
+    var crisp = Number.isInteger(window.devicePixelRatio) && Math.abs(scale - Math.round(scale)) < 0.001
+    var style = crisp ? 'pixelated' : 'auto'
+    if (app.view.style.imageRendering !== style) { app.view.style.imageRendering = style }
 }
 
 /** Calculate the current position of a camera adjustment. */
