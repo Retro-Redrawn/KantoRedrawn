@@ -832,7 +832,7 @@ function showZoomIndicator () {
 function updateZoomIndicator () {
     var indicator = document.querySelector('#zoomIndicator')
     var visible = performance.now() < zoomIndicatorUntil || currentZoom !== zoomLevel
-    var text = map.scale.x.toFixed(1) + 'x'
+    var text = map.scale.x.toFixed(2) + 'x'
     if (indicator.textContent !== text) { indicator.textContent = text }
     indicator.classList.toggle('zoom-indicator--visible', visible)
 }
