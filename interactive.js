@@ -26,6 +26,8 @@ var zoomMax = 4;
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
+var zoomIndicatorUntil = 0;
+const ZOOM_INDICATOR_LINGER_MS = 1000;  // How long the zoom indicator stays after the last zoom input
 const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
 const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
 const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA);  // ≈ 0.00198
@@ -728,6 +730,7 @@ function tick () {
         }
         if (pinchForTick) {
             instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
+            showZoomIndicator()
             if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
                 if (!blurIsDisabled()) {
                     motion_blur_target.filters = [blurFilter]
@@ -803,6 +806,7 @@ function tick () {
     }
 
     updateCanvasRendering()
+    updateZoomIndicator()
     requestAnimationFrame(tick)
 }
 
@@ -812,6 +816,20 @@ function updateCanvasRendering () {
     var crisp = Number.isInteger(window.devicePixelRatio) && Math.abs(scale - Math.round(scale)) < 0.001
     var style = crisp ? 'pixelated' : 'auto'
     if (app.view.style.imageRendering !== style) { app.view.style.imageRendering = style }
+}
+
+/** Keep zoom indicator visible for a moment after zoom input. */
+function showZoomIndicator () {
+    zoomIndicatorUntil = performance.now() + ZOOM_INDICATOR_LINGER_MS
+}
+
+/** Show the scale currently on screen while zooming; fade out once stopped. */
+function updateZoomIndicator () {
+    var indicator = document.querySelector('#zoomIndicator')
+    var visible = performance.now() < zoomIndicatorUntil || currentZoom !== zoomLevel
+    var text = map.scale.x.toFixed(1) + 'x'
+    if (indicator.textContent !== text) { indicator.textContent = text }
+    indicator.classList.toggle('zoom-indicator--visible', visible)
 }
 
 /** Calculate the current position of a camera adjustment. */
@@ -979,6 +997,7 @@ function onMouseWheel (e) {
                 dragVelocity = { x: 0, y: 0 }
 
                 zoom(zoomAmount, e.x, e.y)
+                showZoomIndicator()
             }
         }
     }

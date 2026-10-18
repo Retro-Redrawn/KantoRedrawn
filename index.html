@@ -29,10 +29,12 @@
     <link rel="stylesheet" href="styles/menu.css">
     <link rel="stylesheet" href="styles/player.css">
     <link rel="stylesheet" href="styles/options.css">
+    <link rel="stylesheet" href="styles/zoom_indicator.css">
 </head>
 <body class="content">
     <div id="app">
         <canvas id="canvas"></canvas>
+        <div id="zoomIndicator" class="zoom-indicator" aria-hidden="true"></div>
         <div id="error"></div>
         <div class="menu active" id="menu-bar">
             <div class="menu__button" onclick="toggleMenu()"></div>
