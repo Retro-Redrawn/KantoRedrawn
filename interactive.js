@@ -27,6 +27,9 @@ var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
+var zoomSnapEnabled = true;             // Round the zoom once zooming stops (toggle from the console for now)
+var lastZoomInput = null;   
+const ZOOM_SNAP_DELAY_MS = 500;         // How long zooming must have stopped before the zoom is rounded
 const ZOOM_INDICATOR_LINGER_MS = 1000;  // How long the zoom indicator stays after the last zoom input
 const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
 const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
@@ -730,6 +733,7 @@ function tick () {
         }
         if (pinchForTick) {
             instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
+            noteZoomInput(pinchForTick.x, pinchForTick.y)
             showZoomIndicator()
             if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
                 if (!blurIsDisabled()) {
@@ -805,6 +809,7 @@ function tick () {
         // ignore overall GIF update errors to avoid breaking the render loop
     }
 
+    snapZoom()
     updateCanvasRendering()
     updateZoomIndicator()
     requestAnimationFrame(tick)
@@ -830,6 +835,37 @@ function updateZoomIndicator () {
     var text = map.scale.x.toFixed(1) + 'x'
     if (indicator.textContent !== text) { indicator.textContent = text }
     indicator.classList.toggle('zoom-indicator--visible', visible)
+}
+
+/** Record when, where the user last zoomed */
+function noteZoomInput (x, y) {
+    lastZoomInput = { time: performance.now(), x: x, y: y }
+}
+
+/** Pixel-perfect zoom closest to `zoom` at which image pixel size and canvas pixel size are equal up to integer multiplier */
+function nearestPixelPerfectZoom (zoom) {
+    var r = app.renderer.resolution         // Canvas pixels per CSS pixel
+    var s = zoom * r                        // Canvas pixels per image pixel
+    var pixelPerfectScale = s >= 1 ? Math.round(s) : 1 / Math.round(1 / s)
+    return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
+}
+
+/** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
+function snapZoom () {
+    if (!zoomSnapEnabled || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) { return }
+    if (dragVelocity.x !== 0 || dragVelocity.y !== 0) { return }
+    if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) { return }
+
+    var target = nearestPixelPerfectZoom(zoomLevel)
+    if (Math.abs(target - zoomLevel) > 1e-9) {
+        currentPos = { ...zoomCenter }      // Animate from the current position, as onMouseWheel does
+        zoom(target / zoomLevel, lastZoomInput.x, lastZoomInput.y)
+        zoomLevel = target
+        var r = app.renderer.resolution     // Land on whole canvas pixels
+        zoomCenter.x = Math.round(zoomCenter.x * r) / r
+        zoomCenter.y = Math.round(zoomCenter.y * r) / r
+    }
+    lastZoomInput = null                    // Round once per zoom gesture
 }
 
 /** Calculate the current position of a camera adjustment. */
@@ -997,6 +1033,7 @@ function onMouseWheel (e) {
                 dragVelocity = { x: 0, y: 0 }
 
                 zoom(zoomAmount, e.x, e.y)
+                noteZoomInput(e.x, e.y)
                 showZoomIndicator()
             }
         }
