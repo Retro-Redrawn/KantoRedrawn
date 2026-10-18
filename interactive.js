@@ -20,7 +20,7 @@ var loading = true; // Whether data is being loaded (e.g. images)
 var layersLoaded = 0;
 
 // Navigation
-const TOUR_ZOOM = 4;
+const TOUR_DEFAULT_ZOOM = 4;
 var zoomLevel = 1; // must be whole number
 var zoomMin = 0.25;
 var zoomMax = 5;
@@ -1302,7 +1302,7 @@ function endTour () {
 }
 
 function newTourArea () {
-    var zoom = selectedZoom(TOUR_ZOOM)
+    var zoom = selectedZoom(TOUR_DEFAULT_ZOOM)
     var rnd = Math.floor(Math.random() * areasToTour.length)
     var area = areasToTour[rnd]
     var box = getAreaBox(area, getAreaImage(area));
