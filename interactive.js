@@ -1351,8 +1351,9 @@ function fillWithArrays(array) {
 
 function screenToMap(x, y, zoom) {
     var width = isMenuOpen() ? window.innerWidth + 300 : window.innerWidth 
-    var newX = -((x * zoom) - (width / 2))
-    var newY = -((y * zoom) - (window.innerHeight / 2))
+    var r = app.renderer.resolution  // Canvas pixels per CSS pixel; Used to land on whole canvas pixels
+    var newX = Math.round(-((x * zoom) - (width / 2)) * r) / r
+    var newY = Math.round(-((y * zoom) - (window.innerHeight / 2)) * r) / r
     return { x: newX, y: newY }
 }
 
