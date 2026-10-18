@@ -20,14 +20,14 @@ var loading = true; // Whether data is being loaded (e.g. images)
 var layersLoaded = 0;
 
 // Navigation
+const TOUR_ZOOM = 4;
 var zoomLevel = 1; // must be whole number
 var zoomMin = 0.25;
-var zoomMax = 4;
+var zoomMax = 5;
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
-var zoomSnapEnabled = true;             // Round the zoom once zooming stops (toggle from the console for now)
 var lastZoomInput = null;   
 const ZOOM_SNAP_DELAY_MS = 500;         // How long zooming must have stopped before the zoom is rounded
 const ZOOM_INDICATOR_LINGER_MS = 1000;  // How long the zoom indicator stays after the last zoom input
@@ -852,7 +852,7 @@ function nearestPixelPerfectZoom (zoom) {
 
 /** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
-    if (!zoomSnapEnabled || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) { return }
+    if (continuousZoomEnabled() || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) { return }
     if (dragVelocity.x !== 0 || dragVelocity.y !== 0) { return }
     if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) { return }
 
@@ -905,6 +905,18 @@ function blurIsDisabled () {
 function onAreaBorderToggled(isHidden) {
     bordersDisabled = isHidden;
     RegenerateAreaZones();
+}
+
+/** Checks DOM if continuous zoom is enabled (no rounding of the zoom once zooming stops). */
+function continuousZoomEnabled () {
+    return document.querySelector('#continuousZoom').checked
+}
+
+/** The zoom chosen under Area Default Zoom, or `areaSpecificZoom` while it is set to Area-specific. */
+function selectedZoom (areaSpecificZoom) {
+    var setting = document.querySelector('#areaDefaultZoom').value
+    var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
+    return Math.min(Math.max(zoom, zoomMin), zoomMax)
 }
 
 /** Callback occurring when a drag action starts. */
@@ -1177,7 +1189,7 @@ function focusOnArea (a) {
     if (isGoodToFocus) {
         var areaImage = getAreaImage(area);
         var box = getAreaBox(area, areaImage);
-        moveCameraTo(box.x + Math.floor(box.width / 2), box.y + Math.floor(box.height / 2), area.zoom, cameraSpeed, true);
+        moveCameraTo(box.x + Math.floor(box.width / 2), box.y + Math.floor(box.height / 2), selectedZoom(area.zoom), cameraSpeed, true);
     }
 }
 
@@ -1290,6 +1302,7 @@ function endTour () {
 }
 
 function newTourArea () {
+    var zoom = selectedZoom(TOUR_ZOOM)
     var rnd = Math.floor(Math.random() * areasToTour.length)
     var area = areasToTour[rnd]
     var box = getAreaBox(area, getAreaImage(area));
@@ -1310,11 +1323,11 @@ function newTourArea () {
     var endY = centerY
 
     if (area.pan === 'horizontal') {
-        if (box.height * 4 > window.innerHeight) {
-            var range =  ((box.height * 4) - window.innerHeight) / 4
+        if (box.height * zoom > window.innerHeight) {
+            var range =  box.height - window.innerHeight / zoom
             startY = centerY + Math.round((Math.random() * range) - range / 2)
         }
-        var range = ((box.width * 4) - window.innerWidth) / 4
+        var range = box.width - window.innerWidth / zoom
         if (range <= 20) { range = 100 }
         startX = centerX + Math.round((Math.random() * range) - range / 2)
         var loop = 0
@@ -1325,11 +1338,11 @@ function newTourArea () {
         
     }
     if (area.pan === 'vertical') {
-        if (box.width * 4 > window.innerWidth) {
-            var range = ((box.width * 4) - window.innerWidth) / 4
+        if (box.width * zoom > window.innerWidth) {
+            var range = box.width - window.innerWidth / zoom
             startX = centerX + Math.round((Math.random() * range) - range / 2)
         }
-        var range = ((box.height * 4) - window.innerHeight) / 4
+        var range = box.height - window.innerHeight / zoom
         if (range <= 20) { range = 100 }
         startY = centerY + Math.round((Math.random() * range) - range / 2)
         var loop = 0
@@ -1343,8 +1356,8 @@ function newTourArea () {
     if (area.pan === 'horizontal') { endY = startY }
     if (area.pan === 'vertical') { endX = startX }
 
-    snapCameraTo(Math.round(startX), Math.round(startY), 4)
-    moveCameraTo(endX, endY, zoomMax, tourCameraSpeed, false);
+    snapCameraTo(Math.round(startX), Math.round(startY), zoom)
+    moveCameraTo(endX, endY, zoom, tourCameraSpeed, false);
 }
 
 // #endregion

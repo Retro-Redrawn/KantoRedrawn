@@ -75,6 +75,19 @@
                                 </div>
                             </div>
                             <div class="option-row">
+                                <label class="option-label" for="areaDefaultZoom">Area Default Zoom</label>
+                                <div class="option-control">
+                                    <select class="option-select" id="areaDefaultZoom">
+                                        <option value="area" selected>Area-specific</option>
+                                        <option value="1">1x</option>
+                                        <option value="2">2x</option>
+                                        <option value="3">3x</option>
+                                        <option value="4">4x</option>
+                                        <option value="5">5x</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="option-row">
                                 <label class="option-label" for="areaBorderToggle">Hide Area Border</label>
                                 <div class="option-control">
                                     <input class="option-checkbox" type="checkbox" id="areaBorderToggle" oninput="onAreaBorderToggled(this.checked)">
@@ -91,6 +104,12 @@
                         </div>
                         <div class="options-section">
                             <h3>Camera Controls</h3>
+                            <div class="option-row">
+                                <label class="option-label" for="continuousZoom">Continuous Zoom</label>
+                                <div class="option-control">
+                                    <input class="option-checkbox" type="checkbox" id="continuousZoom">
+                                </div>
+                            </div>
                             <div class="option-row">
                                 <label class="option-label" for="cameraSpeed">Camera Speed</label>
                                 <div class="option-control">
