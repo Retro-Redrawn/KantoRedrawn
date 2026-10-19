@@ -20,25 +20,18 @@ var loading = true; // Whether data is being loaded (e.g. images)
 var layersLoaded = 0;
 
 // Navigation
-const TOUR_DEFAULT_ZOOM = 4;
-var zoomLevel = 1; // must be whole number
-const DISPLAYED_ZOOM_MIN = 0.25;   // Zoom limits as shown on the zoom indicator
+const DISPLAYED_ZOOM_MIN = 0.25; // Zoom limits as shown on the zoom indicator
 const DISPLAYED_ZOOM_MAX = 5;
-var zoomMin = DISPLAYED_ZOOM_MIN;  // Limits on map.scale (CSS pixels per image pixel); set in applyDisplayDensity
+var zoomMin = DISPLAYED_ZOOM_MIN; // Limits on map.scale (CSS pixels per image pixel); set in applyDisplayDensity
 var zoomMax = DISPLAYED_ZOOM_MAX;
+var zoomLevel = 1; // must be whole number
 var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
 var lastZoomInput = null;   
 var zoomInDevicePixels = true;  
-var displayDensity = 1;         // Physical screen pixels per CSS pixel that the canvas is drawn at
-const ZOOM_SNAP_DELAY_MS = 500;         // How long zooming must have stopped before the zoom is rounded
-const ZOOM_INDICATOR_LINGER_MS = 1000;  // How long the zoom indicator stays after the last zoom input
-const WHEEL_DELTA = 100;   // px per mouse-wheel notch; typical 
-const NOTCHES_PER_2X = 3.5;  // notches to zoom by 2x
-const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA);  // ≈ 0.00198
-const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
+var displayDensity = 1; // Physical screen pixels per CSS pixel that the canvas is drawn at
 
 // URL Args
 const urlFocus = parseFocusFromUrl();
@@ -821,28 +814,93 @@ function tick () {
     requestAnimationFrame(tick)
 }
 
-/** Upscale the canvas without smoothing at whole-number zoom levels */
-function updateCanvasRendering () {
-    var scale = map.scale.x * app.renderer.resolution
-    var crisp = Number.isInteger(window.devicePixelRatio) && Math.abs(scale - Math.round(scale)) < 0.001
-    var style = crisp ? 'pixelated' : 'auto'
-    if (app.view.style.imageRendering !== style) { app.view.style.imageRendering = style }
+// #region Zoom
+
+// Limits
+/** Caps the zoom level to the zoom extents. */
+function checkZoomLimit () {
+    if (zoomLevel <= zoomMin) { zoomLevel = zoomMin }
+    if (zoomLevel >= zoomMax) { zoomLevel = zoomMax }
 }
 
-/** Keep zoom indicator visible for a moment after zoom input. */
-function showZoomIndicator () {
-    zoomIndicatorUntil = performance.now() + ZOOM_INDICATOR_LINGER_MS
+// Wheel input
+/** Callback occurring when the mousewheel is rotated.
+ * (TODO: would like to support this functionality on the trackpad, too, if it doesn't already)
+ * 
+ * @param {*} e Event data relating to the mouse wheel action.
+ */
+function onMouseWheel (e) {
+    const WHEEL_DELTA = 100; // px per mouse-wheel notch; typical 
+    const NOTCHES_PER_2X = 3.5; // notches to zoom by 2x
+    const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA); // ≈ 0.00198
+    const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
+    if (e.target.id === 'canvas') {
+        zoomMousePos = { x: e.x, y: e.y }
+        if (!mouseDown && !cameraAnimation.playing) {
+            var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
+            var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
+            if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
+                
+                currentPos = {...zoomCenter}
+                dragVelocity = { x: 0, y: 0 }
+
+                zoom(zoomAmount, e.x, e.y)
+                noteZoomInput(e.x, e.y)
+                showZoomIndicator()
+            }
+        }
+    }
 }
 
-/** Show the scale currently on screen while zooming; fade out once stopped. */
-function updateZoomIndicator () {
-    var indicator = document.querySelector('#zoomIndicator')
-    var visible = performance.now() < zoomIndicatorUntil || currentZoom !== zoomLevel
-    var text = (map.scale.x * displayDensity).toFixed(2) + 'x'
-    if (indicator.textContent !== text) { indicator.textContent = text }
-    indicator.classList.toggle('zoom-indicator--visible', visible)
+// Zooming
+/** Prepare to zoom to a particular scale focused around a point. */
+function zoom(s,x,y){
+
+    if (currentZoom !== zoomLevel) { 
+        map.scale.set(zoomLevel); 
+        currentZoom = zoomLevel 
+        if (zoomCenter.x || zoomCenter.y) {
+            map.x = zoomCenter.x; map.y = zoomCenter.y; 
+        }
+        
+    }
+
+    var worldPos = {x: (x - zoomCenter.x) / zoomLevel, y: (y - zoomCenter.y)/zoomLevel};
+    zoomLevel *= s 
+    checkZoomLimit()
+    
+    var newScreenPos = {x: (worldPos.x ) * zoomLevel + zoomCenter.x, y: (worldPos.y) * zoomLevel + zoomCenter.y};
+
+    zoomCenter.x = zoomCenter.x - (newScreenPos.x-x)
+    zoomCenter.y = zoomCenter.y - (newScreenPos.y-y)
 }
 
+/** 
+ * Immediately zoom to a particular scale focused around a point. 
+ */
+function instantZoom(s,x,y){
+
+    // Perform the requested zoom
+
+    var lastZoomLevel = zoomLevel;
+    zoom(s,x,y);
+
+    // Don't bother continuing the operation if the zoom level didn't change
+    if (lastZoomLevel != zoomLevel) 
+    {
+        // Immediately lock in the target zoom values
+        map.scale.set(zoomLevel)
+        currentZoom = zoomLevel
+        currentPos = {... zoomCenter}
+
+        map.x = zoomCenter.x
+        map.y = zoomCenter.y
+
+        checkMapBoundaries()
+    }
+}
+
+// Snapping to pixel-perfect zoom
 /** Record when, where the user last zoomed */
 function noteZoomInput (x, y) {
     lastZoomInput = { time: performance.now(), x: x, y: y }
@@ -858,21 +916,87 @@ function nearestPixelPerfectZoom (zoom) {
 
 /** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
-    if (continuousZoomEnabled() || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) { return }
-    if (dragVelocity.x !== 0 || dragVelocity.y !== 0) { return }
-    if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) { return }
+    const ZOOM_SNAP_DELAY_MS = 500; // How long zooming must have stopped before rounding
+    if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) {
+        return
+    }
+    if (dragVelocity.x !== 0 || dragVelocity.y !== 0) {
+        return
+    }
+    if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) {
+        return
+    }
 
     var target = nearestPixelPerfectZoom(zoomLevel)
     if (Math.abs(target - zoomLevel) > 1e-9) {
-        currentPos = { ...zoomCenter }      // Animate from the current position, as onMouseWheel does
+        currentPos = { ...zoomCenter } // Animate from the current position, as onMouseWheel does
         zoom(target / zoomLevel, lastZoomInput.x, lastZoomInput.y)
         zoomLevel = target
-        var r = app.renderer.resolution     // Land on whole canvas pixels
+        var r = app.renderer.resolution // Land on whole canvas pixels
         zoomCenter.x = Math.round(zoomCenter.x * r) / r
         zoomCenter.y = Math.round(zoomCenter.y * r) / r
     }
-    lastZoomInput = null                    // Round once per zoom gesture
+    lastZoomInput = null // Round once per zoom gesture
 }
+
+// Zoom options
+/** The zoom chosen under Area Default Zoom, or `areaSpecificZoom` while it is set to Area-specific. */
+function selectedZoom (areaSpecificZoom) {
+    var setting = document.querySelector('#areaDefaultZoom').value
+    var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
+    return Math.min(Math.max(zoom / displayDensity, zoomMin), zoomMax)
+}
+
+// Display density 
+/** Draws the canvas at the display density and measures zoom in physical screen pixels. */
+function applyDisplayDensity () {
+    displayDensity = zoomInDevicePixels ? (window.devicePixelRatio || 1) : 1 // 1 when zoom is counted in CSS pixels
+    zoomMin = DISPLAYED_ZOOM_MIN / displayDensity
+    zoomMax = DISPLAYED_ZOOM_MAX / displayDensity
+    PIXI.settings.FILTER_RESOLUTION = displayDensity    // Filters made later (setupCanvas) render at full density
+    if (!app || !app.renderer) { return }
+    app.renderer.resolution = displayDensity
+    app.renderer.plugins.interaction.resolution = displayDensity
+    for (let filter of [blurFilter, bulgeFilter, colorFilter]) {
+        if (filter) { filter.resolution = displayDensity }
+    }
+    onResize()                                          // Rebuild the canvas buffer at the new density
+}
+
+/** Re-applies the display density whenever devicePixelRatio changes (other monitor, browser zoom). */
+function watchDevicePixelRatio () {
+    matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener('change', function () {
+        applyDisplayDensity()
+        watchDevicePixelRatio()
+    }, { once: true })
+}
+
+// Rendering
+/** Upscale the canvas without smoothing at whole-number zoom levels */
+function updateCanvasRendering () {
+    var scale = map.scale.x * app.renderer.resolution
+    var crisp = Number.isInteger(window.devicePixelRatio) && Math.abs(scale - Math.round(scale)) < 0.001
+    var style = crisp ? 'pixelated' : 'auto'
+    if (app.view.style.imageRendering !== style) { app.view.style.imageRendering = style }
+}
+
+// Zoom indicator
+/** Keep zoom indicator visible for a moment after zoom input. */
+function showZoomIndicator () {
+    const ZOOM_INDICATOR_LINGER_MS = 1000; // How long the zoom indicator stays after the last zoom input
+    zoomIndicatorUntil = performance.now() + ZOOM_INDICATOR_LINGER_MS
+}
+
+/** Show the scale currently on screen while zooming; fade out once stopped. */
+function updateZoomIndicator () {
+    var indicator = document.querySelector('#zoomIndicator')
+    var visible = performance.now() < zoomIndicatorUntil || currentZoom !== zoomLevel
+    var text = (map.scale.x * displayDensity).toFixed(2) + 'x'
+    if (indicator.textContent !== text) { indicator.textContent = text }
+    indicator.classList.toggle('zoom-indicator--visible', visible)
+}
+
+// #endregion
 
 /** Calculate the current position of a camera adjustment. */
 function cameraAdjustment(start, end) {
@@ -911,18 +1035,6 @@ function blurIsDisabled () {
 function onAreaBorderToggled(isHidden) {
     bordersDisabled = isHidden;
     RegenerateAreaZones();
-}
-
-/** Checks DOM if continuous zoom is enabled (no rounding of the zoom once zooming stops). */
-function continuousZoomEnabled () {
-    return document.querySelector('#continuousZoom').checked
-}
-
-/** The zoom chosen under Area Default Zoom, or `areaSpecificZoom` while it is set to Area-specific. */
-function selectedZoom (areaSpecificZoom) {
-    var setting = document.querySelector('#areaDefaultZoom').value
-    var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
-    return Math.min(Math.max(zoom / displayDensity, zoomMin), zoomMax)
 }
 
 /** Callback occurring when a drag action starts. */
@@ -1028,79 +1140,6 @@ function onDragMove (e) {
         zoomCenter = { x: map.x, y: map.y }
         currentPos = zoomCenter
         
-        checkMapBoundaries()
-    }
-}
-
-
-/** Callback occurring when the mousewheel is rotated.
- * (TODO: would like to support this functionality on the trackpad, too, if it doesn't already)
- * 
- * @param {*} e Event data relating to the mouse wheel action.
- */
-function onMouseWheel (e) {
-
-    if (e.target.id === 'canvas') {
-        zoomMousePos = { x: e.x, y: e.y }
-        if (!mouseDown && !cameraAnimation.playing) {
-            var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
-            var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
-            if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
-                
-                currentPos = {...zoomCenter}
-                dragVelocity = { x: 0, y: 0 }
-
-                zoom(zoomAmount, e.x, e.y)
-                noteZoomInput(e.x, e.y)
-                showZoomIndicator()
-            }
-        }
-    }
-}
-
-/** Prepare to zoom to a particular scale focused around a point. */
-function zoom(s,x,y){
-
-    if (currentZoom !== zoomLevel) { 
-        map.scale.set(zoomLevel); 
-        currentZoom = zoomLevel 
-        if (zoomCenter.x || zoomCenter.y) {
-            map.x = zoomCenter.x; map.y = zoomCenter.y; 
-        }
-        
-    }
-
-    var worldPos = {x: (x - zoomCenter.x) / zoomLevel, y: (y - zoomCenter.y)/zoomLevel};
-    zoomLevel *= s 
-    checkZoomLimit()
-    
-    var newScreenPos = {x: (worldPos.x ) * zoomLevel + zoomCenter.x, y: (worldPos.y) * zoomLevel + zoomCenter.y};
-
-    zoomCenter.x = zoomCenter.x - (newScreenPos.x-x)
-    zoomCenter.y = zoomCenter.y - (newScreenPos.y-y)
-}
-
-/** 
- * Immediately zoom to a particular scale focused around a point. 
- */
-function instantZoom(s,x,y){
-
-    // Perform the requested zoom
-
-    var lastZoomLevel = zoomLevel;
-    zoom(s,x,y);
-
-    // Don't bother continuing the operation if the zoom level didn't change
-    if (lastZoomLevel != zoomLevel) 
-    {
-        // Immediately lock in the target zoom values
-        map.scale.set(zoomLevel)
-        currentZoom = zoomLevel
-        currentPos = {... zoomCenter}
-
-        map.x = zoomCenter.x
-        map.y = zoomCenter.y
-
         checkMapBoundaries()
     }
 }
@@ -1308,6 +1347,7 @@ function endTour () {
 }
 
 function newTourArea () {
+    const TOUR_DEFAULT_ZOOM = 4;
     var zoom = selectedZoom(TOUR_DEFAULT_ZOOM)
     var rnd = Math.floor(Math.random() * areasToTour.length)
     var area = areasToTour[rnd]
@@ -1367,19 +1407,6 @@ function newTourArea () {
 }
 
 // #endregion
-
-/** Applies the closest pixel-perfect zoom level relative to the current zoom. */
-function checkZoom () {
-    checkZoomLimit();
-    if (zoomLevel > 0.5 && zoomLevel < 1) { zoomLevel = 1 }
-    if (zoomLevel < 0.5 && zoomLevel > zoomMin) { zoomLevel = 0.5 }
-}
-
-/** Caps the zoom level to the zoom extents. */
-function checkZoomLimit () {
-    if (zoomLevel <= zoomMin) { zoomLevel = zoomMin }
-    if (zoomLevel >= zoomMax) { zoomLevel = zoomMax }
-}
 
 /** Caps map position to the window inner extents. */
 function checkMapBoundaries () {
@@ -1466,34 +1493,6 @@ function onResize () {
             background.height = window.innerHeight;
         }
     }
-}
-
-/** Physical screen pixels per CSS pixel to draw at; 1 when zoom is counted in CSS pixels. */
-function currentDisplayDensity () {
-    return zoomInDevicePixels ? (window.devicePixelRatio || 1) : 1
-}
-
-/** Draws the canvas at the display density and measures zoom in physical screen pixels. */
-function applyDisplayDensity () {
-    displayDensity = currentDisplayDensity()
-    zoomMin = DISPLAYED_ZOOM_MIN / displayDensity
-    zoomMax = DISPLAYED_ZOOM_MAX / displayDensity
-    PIXI.settings.FILTER_RESOLUTION = displayDensity    // Filters made later (setupCanvas) render at full density
-    if (!app || !app.renderer) { return }
-    app.renderer.resolution = displayDensity
-    app.renderer.plugins.interaction.resolution = displayDensity
-    for (let filter of [blurFilter, bulgeFilter, colorFilter]) {
-        if (filter) { filter.resolution = displayDensity }
-    }
-    onResize()                                          // Rebuild the canvas buffer at the new density
-}
-
-/** Re-applies the display density whenever devicePixelRatio changes (other monitor, browser zoom). */
-function watchDevicePixelRatio () {
-    matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener('change', function () {
-        applyDisplayDensity()
-        watchDevicePixelRatio()
-    }, { once: true })
 }
 
 function changeCameraSpeed (e) {
