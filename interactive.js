@@ -9,7 +9,7 @@
 *
 *   Authors: Jerky, Tyson Moll (vvvvvvv)
 *
-*   Contributors: dodocommando
+*   Contributors: dodocommando, hiddenpowerfire
 *
 *   Created in 2023
 */
