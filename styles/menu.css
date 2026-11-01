@@ -331,7 +331,15 @@
 
 /* Inline tour button: keep at right edge of toggle row */
 .map-toggle .tour{ margin-left: auto; }
-.map-toggle .tour button{ width: 45px; height: 31px; padding: 0; border-radius: 10px; }
+.map-toggle .tour button{
+    width: 45px;
+    height: 31px;
+    padding: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 @media (max-height: 600px) {
     .map-toggle{ padding-left: 2px; }
