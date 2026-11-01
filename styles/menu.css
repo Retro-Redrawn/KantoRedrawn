@@ -325,10 +325,9 @@
 .map-toggle .map-toggle-label{
     font-size: 0.95rem;
     color: #ddd;
-    transform: translateY(-2px); /* nudge label slightly up to line with slider */
 }
 /* Ensure the switch aligns vertically within the toggle row */
-.map-toggle .switch{ bottom: 0.3; }
+.map-toggle .switch{ bottom: 0; }
 
 /* Inline tour button: keep at right edge of toggle row */
 .map-toggle .tour{ margin-left: auto; }
