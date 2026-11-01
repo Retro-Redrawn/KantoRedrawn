@@ -163,7 +163,7 @@
 .menu__content{
     background-color: #222034;
     overflow-y:auto;
-    max-height: 60vh;
+    height: 60vh;
 }
 .menu__content > * {
     display:none;
