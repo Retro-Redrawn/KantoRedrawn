@@ -2,6 +2,7 @@
     padding: 15px;
     border-radius: 8px;
     margin: 10px 0;
+    color: #ddd;
 }
 
 .options-section {
@@ -12,7 +13,7 @@
     color: #ddd;
     margin-bottom: 10px;
     font-size: 1.2em;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 5px;
 }
 
@@ -21,9 +22,9 @@
     align-items: center;
     margin-bottom: 12px;
     padding: 8px;
-    background-color: #fff;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .option-label {
@@ -38,10 +39,10 @@
 select.option-select {
     width: 100%;
     padding: 6px 10px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 4px;
-    background-color: #fff;
-    color: #333;
+    background-color: #13111e;
+    color: #ddd;
     font-size: 0.9em;
 }
 
@@ -54,21 +55,5 @@ select.option-select:focus {
     width: 18px;
     height: 18px;
     margin-right: 8px;
-}
-
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-    .options-container {
-        color: #ddd;
-    }
-    
-    .option-row {
-        background-color: #333;
-    }
-    
-    select.option-select {
-        background-color: #333;
-        border-color: #444;
-        color: #ddd;
-    }
+    accent-color: rgb(53, 199, 53);
 }
