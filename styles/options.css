@@ -34,6 +34,50 @@
 
 .option-control {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Sliders drawn like the audio player's progress bar: thin translucent track, white handle */
+.option-control input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    min-width: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.option-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.option-control input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.option-control input[type="range"]::-moz-range-progress {
+    height: 4px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+.option-control small {
+    color: #aaa;
+    min-width: 3em;
+    text-align: right;
 }
 
 select.option-select {
