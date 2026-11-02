@@ -28,6 +28,10 @@
     height: auto;
 }
 
+.area__header .material-icons{
+    margin-right:5px;
+}
+
 .area__info {
     overflow:hidden;
     max-height:0;

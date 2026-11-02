@@ -20,6 +20,7 @@
 .option-row {
     display: flex;
     align-items: center;
+    gap: 8px;
     margin-bottom: 12px;
     padding: 8px;
     background: rgba(0, 0, 0, 0.3);
@@ -34,6 +35,7 @@
 
 .option-control {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 8px;
