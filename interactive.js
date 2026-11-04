@@ -78,8 +78,7 @@ var mouseDown = false;
 var dragging = false;
 var dragVelocity = { x: 0, y: 0 };
 var zoomMousePos = { x: 0, y: 0 };
-var previousTouch = null;
-var previousPinchDistance = 0;
+var previousAnchor = null; // Last touch anchor (see touchAnchor)
 var pinchForTick = null;
 
 // Track last pointer position so toasts can be shown at cursor location
@@ -738,7 +737,7 @@ function tick () {
                 if (!blurIsDisabled()) {
                     motion_blur_target.filters = [blurFilter]
                 }
-                blurFilter.strength = .1
+                blurFilter.strength = Math.abs(pinchForTick.factor - 1) // Same blur per zoom speed as the wheel animation
                 blurFilter.center = [ pinchForTick.x, pinchForTick.y ]
             }
             pinchForTick = null
@@ -916,7 +915,7 @@ function nearestPixelPerfectZoom (zoom) {
 
 /** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
-    const ZOOM_SNAP_DELAY_MS = 500; // How long zooming must have stopped before rounding
+    const ZOOM_SNAP_DELAY_MS = 250; // How long zooming must have stopped before rounding
     if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) {
         return
     }
@@ -1039,16 +1038,19 @@ function onAreaBorderToggled(isHidden) {
 
 /** Callback occurring when a drag action starts. */
 function onDragStart () {
-    previousTouch = null
+    previousAnchor = null
     previousPinchDistance = 0
     mouseDown = true
     dragVelocity = { x: 0, y: 0 }
 }
 
 /** Callback occurring when a drag action ends. */
-function onDragEnd () {
-    previousTouch = null
-    previousPinchDistance = 0
+function onDragEnd (e) {
+    previousAnchor = null
+    var remainingTouches = e.data.originalEvent.targetTouches
+    if (remainingTouches && remainingTouches.length > 0) { // A finger is still down; keep dragging with it
+        return
+    }
     mouseDown = false
     dragging = false
 }
@@ -1090,57 +1092,49 @@ function onClick (e) {
 /** Callback occurring when a drag move occurs */
 function onDragMove (e) {
     if (mouseDown && !cameraAnimation.playing) {
-        if (e.data.originalEvent.type === 'touchmove' && e.data.originalEvent.touches && e.data.originalEvent.touches.length === 2) {
-            var touches = e.data.originalEvent.touches
-            var pinchX = touches[0].pageX - touches[1].pageX
-            var pinchY = touches[0].pageY - touches[1].pageY
-            var currentPinchDistance = Math.sqrt((pinchX * pinchX) + (pinchY * pinchY))
-            // console.log(currentPinchDistance, currentPinchDistance > previousPinchDistance ? 'Zoom In' : 'Zoom Out')
-            
-            if (previousPinchDistance) {
-                var diff = Math.abs(currentPinchDistance - previousPinchDistance)
-                if (diff > 1) {
-                    // Set x and y positions relative to pinch middle
-                    if (currentPinchDistance > previousPinchDistance) { // Zoom / Pinch outwards
-                        pinchForTick = {
-                            factor: 1.06,
-                            x: touches[0].pageX - (pinchX / 2),
-                            y: touches[0].pageY - (pinchY / 2),
-                        }
-                    }
-                    if (currentPinchDistance < previousPinchDistance) { // Zoom / Pinch inwards
-                        pinchForTick = {
-                            factor: .94,
-                            x: touches[0].pageX - (pinchX / 2),
-                            y: touches[0].pageY - (pinchY / 2),
-                        }
-                    }
-                }
-                
-            }
-            previousPinchDistance = currentPinchDistance
-        } 
         dragging = true
         var velocityX = 0
         var velocityY = 0
+        var pinching = false
         if (e.data.originalEvent.type === 'touchmove') {
-            var touch = e.data.originalEvent.touches[0]
-            if (previousTouch && touch) {
-                velocityX = touch.pageX - previousTouch.pageX
-                velocityY = touch.pageY - previousTouch.pageY
+            // One finger pans; two fingers pan with their midpoint and zoom by how far apart they spread
+            var anchor = touchAnchor(e.data.originalEvent.touches)
+            if (previousAnchor && previousAnchor.fingers === anchor.fingers) {
+                velocityX = anchor.x - previousAnchor.x
+                velocityY = anchor.y - previousAnchor.y
+                pinching = anchor.fingers === 2
+                if (pinching && previousAnchor.spread > 0) {
+                    pinchForTick = {
+                        factor: (pinchForTick ? pinchForTick.factor : 1) * anchor.spread / previousAnchor.spread,
+                        x: anchor.x,
+                        y: anchor.y,
+                    }
+                }
             }
-            previousTouch = touch || null
+            previousAnchor = anchor
         } else {
             velocityX = e.data.originalEvent.movementX
             velocityY = e.data.originalEvent.movementY
         }
-        dragVelocity = { x: velocityX, y: velocityY }
-        map.x += dragVelocity.x
-        map.y += dragVelocity.y
+        dragVelocity = pinching ? { x: 0, y: 0 } : { x: velocityX, y: velocityY } // No coasting after a pinch
+        map.x += velocityX
+        map.y += velocityY
         zoomCenter = { x: map.x, y: map.y }
         currentPos = zoomCenter
         
         checkMapBoundaries()
+    }
+}
+
+/** Point a touch drag follows: the finger, or the midpoint of the first two fingers and their spread. */
+function touchAnchor (touches) {
+    var first = touches[0]
+    var second = touches[1] || touches[0]
+    return {
+        x: (first.pageX + second.pageX) / 2,
+        y: (first.pageY + second.pageY) / 2,
+        spread: Math.hypot(first.pageX - second.pageX, first.pageY - second.pageY),
+        fingers: Math.min(touches.length, 2),
     }
 }
 
