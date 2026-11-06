@@ -37,6 +37,17 @@
 .menu.active:hover{
     transform:translateX(0%)!important;
 }
+@media (hover: none) {
+    /* Invisible extension: the tap target reaches past the visible tab */
+    .menu:not(.active) .menu__button::after{
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: -24px;
+    }
+}
 
 /* Menu button is the ✕ button for sliding to hide the menu */ 
 .menu .menu__button {
