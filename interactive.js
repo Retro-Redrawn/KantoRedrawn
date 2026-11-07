@@ -29,7 +29,8 @@ var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
-var lastZoomInput = null;   
+var lastZoomInput = null;  
+var snapAnimation = null; // Running snap to a pixel-perfect zoom (see snapZoom) 
 var zoomInDevicePixels = true;  
 var displayDensity = 1; // Physical screen pixels per CSS pixel that the canvas is drawn at
 
@@ -913,9 +914,15 @@ function nearestPixelPerfectZoom (zoom) {
     return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
 }
 
-/** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
+/** Once zooming has stopped, ease to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
     const ZOOM_SNAP_DELAY_MS = 250; // How long zooming must have stopped before rounding
+    const SNAP_BASE_MS = 150;           // Duration of the shortest snap
+    const SNAP_MS_PER_LOG_ZOOM = 1000;   // Extra duration per unit of |ln(target / zoom)|
+    if (snapAnimation) {
+        stepSnapAnimation()
+        return
+    }
     if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) {
         return
     }
@@ -928,14 +935,42 @@ function snapZoom () {
 
     var target = nearestPixelPerfectZoom(zoomLevel)
     if (Math.abs(target - zoomLevel) > 1e-9) {
-        currentPos = { ...zoomCenter } // Animate from the current position, as onMouseWheel does
-        zoom(target / zoomLevel, lastZoomInput.x, lastZoomInput.y)
-        zoomLevel = target
-        var r = app.renderer.resolution // Land on whole canvas pixels
-        zoomCenter.x = Math.round(zoomCenter.x * r) / r
-        zoomCenter.y = Math.round(zoomCenter.y * r) / r
+        var distance = Math.abs(Math.log(target / zoomLevel)) // Snap distance in log zoom
+        snapAnimation = {
+            from: zoomLevel,
+            to: target,
+            x: lastZoomInput.x,
+            y: lastZoomInput.y,
+            start: performance.now(),
+            duration: SNAP_BASE_MS + SNAP_MS_PER_LOG_ZOOM * distance,
+            last: zoomLevel,        // Zoom the snap last set; any other change cancels the snap
+        }
     }
     lastZoomInput = null // Round once per zoom gesture
+}
+
+/** Advance a running snap: log zoom follows a smoothstep from `from` to `to` around the snap point. */
+function stepSnapAnimation () {
+    if (cameraAnimation.playing || zoomLevel !== snapAnimation.last) { // Interrupted by another zoom or camera move
+        snapAnimation = null
+        return
+    }
+    var u = Math.min((performance.now() - snapAnimation.start) / snapAnimation.duration, 1)
+    var eased = u * u * (3 - 2 * u) // Smoothstep: zero speed at start and end
+    var zoomNow = snapAnimation.from * Math.pow(snapAnimation.to / snapAnimation.from, eased)
+    instantZoom(zoomNow / zoomLevel, snapAnimation.x, snapAnimation.y)
+    showZoomIndicator()
+    if (u === 1) {
+        var r = app.renderer.resolution // Land exactly on the target and on whole canvas pixels
+        zoomLevel = currentZoom = snapAnimation.to
+        map.scale.set(zoomLevel)
+        map.x = zoomCenter.x = Math.round(zoomCenter.x * r) / r
+        map.y = zoomCenter.y = Math.round(zoomCenter.y * r) / r
+        currentPos = { ...zoomCenter }
+        snapAnimation = null
+        return
+    }
+    snapAnimation.last = zoomLevel
 }
 
 // Zoom options
