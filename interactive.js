@@ -720,8 +720,8 @@ function tick () {
                 dragVelocity.y = dragVelocity.y * .9
                 if (Math.abs(dragVelocity.y) < 1) { dragVelocity.y = 0 }
             }
-            currentZoom.x = zoomCenter.x = map.x
-            currentZoom.y = zoomCenter.y = map.y
+            currentPos.x = zoomCenter.x = map.x
+            currentPos.y = zoomCenter.y = map.y
         } else if (!mouseDown && (currentPos.x !== zoomCenter.x || currentPos.y !== zoomCenter.y)) {
             var newx = lerp(currentPos.x, zoomCenter.x, 0.2)
             var newy = lerp(currentPos.y, zoomCenter.y, 0.2)
@@ -1116,7 +1116,7 @@ function onDragMove (e) {
             velocityX = e.data.originalEvent.movementX
             velocityY = e.data.originalEvent.movementY
         }
-        dragVelocity = pinching ? { x: 0, y: 0 } : { x: velocityX, y: velocityY } // No coasting after a pinch
+        dragVelocity = pinching ? { x: 0, y: 0 } : { x: velocityX, y: velocityY } // No inertia after a pinch
         map.x += velocityX
         map.y += velocityY
         zoomCenter = { x: map.x, y: map.y }
