@@ -850,6 +850,7 @@ function zoom(s,x,y){
         currentZoom = zoomLevel 
         if (zoomCenter.x || zoomCenter.y) {
             map.x = zoomCenter.x; map.y = zoomCenter.y; 
+            checkMapBoundaries()
         }
         
     }
@@ -955,6 +956,7 @@ function stepSnapAnimation () {
         map.scale.set(zoomLevel)
         map.x = zoomCenter.x = Math.round(zoomCenter.x * r) / r
         map.y = zoomCenter.y = Math.round(zoomCenter.y * r) / r
+        checkMapBoundaries()
         currentPos = { ...zoomCenter }
         snapAnimation = null
         return
