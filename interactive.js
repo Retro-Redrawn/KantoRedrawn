@@ -85,6 +85,12 @@ var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (s
 var pinchZoomHistory = [];      // Recent { time, logZoom } samples while pinching, for the release velocity
 var pinchEndTime = -Infinity;   // When the fingers last stopped pinching (see onDragEnd)
 var touchpadPinching = false;   // A touchpad pinch is in progress (see onMouseWheel, snapZoom)
+var displayedZoomVelocity = 0;  // d ln(zoom)/dt of the displayed zoom over the last frame, per ms (see tick)
+var lastTickTime = 0;
+var lastTickZoom = 1;
+var wheelZoomHistory = [];      // Recent { time, logZoom } of the wheel's target zoom, for the scroll velocity
+var scrollRun = null;           // Run of same-direction scroll events that don't grow (see systemGlideStarted)
+var swallowedGlide = null;      // System glide taken over by a landing; its remaining events are ignored
 
 // Track last pointer position so toasts can be shown at cursor location
 var lastPointerPos = { x: 0, y: 0 };
@@ -690,6 +696,10 @@ function getAreaImage(area, styleOverride = "") {
 
 /** Actions peformed on update (each frame). */
 function tick () {
+    var frameMs = performance.now() - lastTickTime
+    lastTickTime = performance.now()
+    displayedZoomVelocity = Math.log(currentZoom / lastTickZoom) / frameMs // Includes zoom changes made by input handlers
+    lastTickZoom = currentZoom
 
     let motion_blur_target = MOTIONBLUR_VIEWPORT ? viewport : map;
     motion_blur_target.filters = []
@@ -834,6 +844,9 @@ function onMouseWheel (e) {
             var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
             var speedup = e.ctrlKey ? TOUCHPAD_PINCH_SPEEDUP : 1
             var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * speedup * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
+            if (!e.ctrlKey && isSwallowedGlide(deltaPixels)) { // The rest of a system glide that a landing has taken over
+                return
+            }
             if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
                 
                 currentPos = {...zoomCenter}
@@ -848,9 +861,14 @@ function onMouseWheel (e) {
                     pinchZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
                 } else {
                     zoom(zoomAmount, e.x, e.y)
+                    wheelZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
+                    wheelZoomHistory = wheelZoomHistory.filter(function (sample) { return performance.now() - sample.time < 300 })
                 }
                 noteZoomInput(e.x, e.y, -Math.sign(deltaPixels))
                 showZoomIndicator()
+                if (!e.ctrlKey && systemGlideStarted(deltaPixels)) {
+                    startScrollLanding(deltaPixels)
+                }
             }
         }
     }
@@ -935,7 +953,7 @@ function nextPixelPerfectZoom (zoom, direction) {
 /** Advance a running snap or landing; otherwise, once zooming has stopped, 
  * start easing to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
-    const ZOOM_SNAP_DELAY_MS = 250; // How long zooming must have stopped before rounding
+    const ZOOM_SNAP_DELAY_MS = 80; // How long zooming must have stopped before landing
     const TOUCHPAD_PINCH_END_MS = 35; // A touchpad pinch has ended once its events pause this long (about two frames)
     if (touchpadPinching && performance.now() - (lastZoomInput ? lastZoomInput.time : 0) > TOUCHPAD_PINCH_END_MS) {
         touchpadPinching = false
@@ -951,7 +969,7 @@ function snapZoom () {
     if (dragVelocity.x !== 0 || dragVelocity.y !== 0) {
         return
     }
-    if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) {
+    if (performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) {
         return
     }
 
@@ -959,19 +977,13 @@ function snapZoom () {
     if (lastZoomInput.direction * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the last zoom direction: snap to the next one ahead
         target = nextPixelPerfectZoom(zoomLevel, lastZoomInput.direction)
     }
-    if (Math.abs(target - zoomLevel) > 1e-9) {
-        var distance = Math.abs(Math.log(target / zoomLevel)) // Snap distance in log zoom
-        snapAnimation = {
-            from: zoomLevel,
-            to: target,
-            x: lastZoomInput.x,
-            y: lastZoomInput.y,
-            start: performance.now(),
-            velocity: 0,            // Relative zoom rate at the start: d ln(zoom)/dt, per ms
-            duration: snapDuration(distance),
-            last: zoomLevel,        // Zoom the snap last set; any other change cancels the snap
-        }
+    var velocity = 0
+    if (currentZoom !== zoomLevel) {                 // Still easing: take over from what is on screen, at its speed
+        velocity = displayedZoomVelocity
+        zoomLevel = currentZoom
+        zoomCenter = { ...currentPos }
     }
+    startLanding(velocity, target, lastZoomInput.x, lastZoomInput.y)
     lastZoomInput = null // Round once per zoom gesture
 }
 
@@ -989,7 +1001,6 @@ function snapDuration (distance) {
 function startPinchLanding () {
     const GLIDE_MS = 150;                // Glide duration: zoom carries on at the release velocity for this duration
     const VELOCITY_WINDOW_MS = 100;      // Time window over which velocity is averaged to give the release velocity
-    const LANDING_MIN_MS = 100;
     pinchEndTime = -Infinity             // One landing per release
     pinchAnchor = smoothedPinchAnchor = null
     var samples = pinchZoomHistory
@@ -1013,24 +1024,107 @@ function startPinchLanding () {
     if (velocity * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
         target = nextPixelPerfectZoom(zoomLevel, velocity)
     }
+    startLanding(velocity, target, lastZoomInput.x, lastZoomInput.y)
+    lastZoomInput = null
+}
+
+/**
+ * Start a landing from the current zoom, at `velocity` (d ln(zoom)/dt, per ms), onto `target`, around the
+ * screen point (x, y). Ahead of the motion it decelerates onto the target; behind it, or from rest, it takes
+ * as long as a snap.
+ */
+function startLanding (velocity, target, x, y) {
+    const LANDING_MIN_MS = 100;                         // Shortest landing
     var distance = Math.log(target / zoomLevel)
-    var duration = snapDuration(distance)               // Behind, or at rest: as a snap
-    if (velocity * distance > 0) {                      // Ahead: decelerate onto it, but never slower than a snap
+    var duration = snapDuration(distance)
+    if (velocity * distance > 0) {
         duration = Math.max(Math.min(3 * distance / velocity, duration), LANDING_MIN_MS)
     }
     if (distance !== 0 || velocity !== 0) {
         snapAnimation = {
             from: zoomLevel,
             to: target,
-            x: lastZoomInput.x,
-            y: lastZoomInput.y,
+            x: x,
+            y: y,
             start: performance.now(),
             velocity: velocity,
             duration: duration,
-            last: zoomLevel,
+            last: zoomLevel,                            // Zoom the snap last set; any other change cancels the snap
         }
     }
+}
+
+/**
+ * Whether the system's glide has taken over a touchpad scroll: a run of same-direction scroll events that don't
+ * grow, starting from a large enough event, that has dropped by GLIDE_DROP. Fingers on the touchpad give
+ * fluctuating amounts; the system glide gives smoothly shrinking ones.
+ */
+function systemGlideStarted (deltaPixels) {
+    const GLIDE_DROP = 0.25;            // How much the run must have dropped from its first event
+    const GLIDE_MIN_EVENTS = 4;         // Shortest run, first event included
+    const GLIDE_MIN_START_PX = 5;       // Runs starting smaller are too slow to tell apart from fingers
+    const GLIDE_EVENT_GAP_MS = 100;     // A system glide sends an event every frame; a longer gap starts a new run
+    var size = Math.abs(deltaPixels)
+    var sign = Math.sign(deltaPixels)
+    var now = performance.now()
+    if (scrollRun && sign === scrollRun.sign && size <= scrollRun.size && now - scrollRun.time < GLIDE_EVENT_GAP_MS) {
+        scrollRun.size = size
+        scrollRun.count++
+        scrollRun.time = now
+    } else {
+        scrollRun = { sign: sign, startSize: size, size: size, count: 1, startTime: now, time: now }
+    }
+    return scrollRun.count >= GLIDE_MIN_EVENTS && scrollRun.startSize >= GLIDE_MIN_START_PX
+        && scrollRun.size <= (1 - GLIDE_DROP) * scrollRun.startSize
+}
+
+/**
+ * Take over a touchpad scroll once the system's glide has started: land from the displayed zoom at its current
+ * speed, in the scroll's direction, on the level nearest where the scroll velocity would carry the scroll's
+ * target zoom, and ignore the rest of the system glide.
+ */
+function startScrollLanding (deltaPixels) {
+    const SCROLL_GLIDE_MS = 200;        // Projection time: about the system glide's own time constant
+    const VELOCITY_WINDOW_MS = 100;     // Time window before the glide over which the scroll velocity is averaged
+    var glideStart = scrollRun.startTime
+    var samples = wheelZoomHistory.filter(function (sample) { return sample.time <= glideStart && glideStart - sample.time <= VELOCITY_WINDOW_MS })
+    var scrollVelocity = 0 // d ln(zoom)/dt of the scroll's target zoom, per ms
+    if (samples.length >= 2 && samples[samples.length - 1].time > samples[0].time) {
+        scrollVelocity = (samples[samples.length - 1].logZoom - samples[0].logZoom) / (samples[samples.length - 1].time - samples[0].time)
+    }
+    var direction = -Math.sign(deltaPixels)
+    var projected = zoomLevel * Math.exp(scrollVelocity * SCROLL_GLIDE_MS)
+    var target = document.querySelector('#continuousZoom').checked
+        ? Math.min(Math.max(projected, zoomMin), zoomMax)
+        : nearestPixelPerfectZoom(projected)
+    if (direction * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
+        target = nextPixelPerfectZoom(zoomLevel, direction)
+    }
+    var velocity = currentZoom !== zoomLevel ? displayedZoomVelocity : 0
+    zoomLevel = currentZoom                             // Land from what is on screen
+    zoomCenter = { ...currentPos }
+    startLanding(velocity, target, lastZoomInput.x, lastZoomInput.y)
+    swallowedGlide = { sign: Math.sign(deltaPixels), size: Math.abs(deltaPixels), time: performance.now() }
+    scrollRun = null
+    wheelZoomHistory = []
     lastZoomInput = null
+}
+
+/** Whether a scroll event is the rest of a system glide that a landing has taken over: same direction, not growing. */
+function isSwallowedGlide (deltaPixels) {
+    const GLIDE_EVENT_GAP_MS = 100;     // A system glide sends an event every frame; a longer gap ends it
+    if (!swallowedGlide) {
+        return false
+    }
+    var size = Math.abs(deltaPixels)
+    var now = performance.now()
+    if (Math.sign(deltaPixels) === swallowedGlide.sign && size <= swallowedGlide.size && now - swallowedGlide.time < GLIDE_EVENT_GAP_MS) {
+        swallowedGlide.size = size
+        swallowedGlide.time = now
+        return true
+    }
+    swallowedGlide = null               // A new gesture
+    return false
 }
 
 /**
