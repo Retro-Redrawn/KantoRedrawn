@@ -80,7 +80,8 @@ var dragging = false;
 var dragVelocity = { x: 0, y: 0 };
 var zoomMousePos = { x: 0, y: 0 };
 var previousAnchor = null; // Last touch anchor (see touchAnchor)
-var pinchForTick = null;
+var pinchAnchor = null;         // Latest two-finger anchor from the fingers
+var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (see smoothPinch)
 
 // Track last pointer position so toasts can be shown at cursor location
 var lastPointerPos = { x: 0, y: 0 };
@@ -730,19 +731,7 @@ function tick () {
             map.x = currentPos.x
             map.y = currentPos.y
         }
-        if (pinchForTick) {
-            instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
-            noteZoomInput(pinchForTick.x, pinchForTick.y)
-            showZoomIndicator()
-            if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
-                if (!blurIsDisabled()) {
-                    motion_blur_target.filters = [blurFilter]
-                }
-                blurFilter.strength = Math.abs(pinchForTick.factor - 1) // Same blur per zoom speed as the wheel animation
-                blurFilter.center = [ pinchForTick.x, pinchForTick.y ]
-            }
-            pinchForTick = null
-        }
+        smoothPinch(motion_blur_target)
         checkMapBoundaries()
         checkAutoHighlight()        
         if (urlFocus && dragging) {
@@ -923,7 +912,7 @@ function snapZoom () {
         stepSnapAnimation()
         return
     }
-    if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) {
+    if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing || pinchAnchor) {
         return
     }
     if (dragVelocity.x !== 0 || dragVelocity.y !== 0) {
@@ -1130,34 +1119,70 @@ function onDragMove (e) {
         dragging = true
         var velocityX = 0
         var velocityY = 0
-        var pinching = false
         if (e.data.originalEvent.type === 'touchmove') {
-            // One finger pans; two fingers pan with their midpoint and zoom by how far apart they spread
+            // One finger pans directly; two fingers are followed by smoothPinch on each frame
             var anchor = touchAnchor(e.data.originalEvent.touches)
-            if (previousAnchor && previousAnchor.fingers === anchor.fingers) {
+            if (anchor.fingers === 2 && anchor.spread > 0) {
+                if (!previousAnchor || previousAnchor.fingers !== 2) { // A pinch starts where the fingers are
+                    smoothedPinchAnchor = { x: anchor.x, y: anchor.y, spread: anchor.spread, time: performance.now() }
+                }
+                pinchAnchor = anchor
+            } else if (anchor.fingers === 1 && previousAnchor && previousAnchor.fingers === 1) {
                 velocityX = anchor.x - previousAnchor.x
                 velocityY = anchor.y - previousAnchor.y
-                pinching = anchor.fingers === 2
-                if (pinching && previousAnchor.spread > 0) {
-                    pinchForTick = {
-                        factor: (pinchForTick ? pinchForTick.factor : 1) * anchor.spread / previousAnchor.spread,
-                        x: anchor.x,
-                        y: anchor.y,
-                    }
-                }
             }
             previousAnchor = anchor
         } else {
             velocityX = e.data.originalEvent.movementX
             velocityY = e.data.originalEvent.movementY
         }
-        dragVelocity = pinching ? { x: 0, y: 0 } : { x: velocityX, y: velocityY } // No inertia after a pinch
+        dragVelocity = { x: velocityX, y: velocityY } // Zero while pinching: no inertia after a pinch
         map.x += velocityX
         map.y += velocityY
         zoomCenter = { x: map.x, y: map.y }
         currentPos = zoomCenter
         
         checkMapBoundaries()
+    }
+}
+
+/**
+ * Move the smoothed pinch anchor part of the way to the fingers' anchor, then pan the map by its midpoint change
+ * and zoom by its spread change around it. After the fingers stop pinching, it finishes catching up.
+ */
+function smoothPinch (motion_blur_target) {
+    const PINCH_SMOOTHING_MS = 30; // Time constant: the map trails the fingers by about this much; 0 follows them exactly
+    if (!pinchAnchor) {
+        return
+    }
+    var logSpreadGap = Math.log(pinchAnchor.spread / smoothedPinchAnchor.spread)
+    var caughtUp = Math.hypot(pinchAnchor.x - smoothedPinchAnchor.x, pinchAnchor.y - smoothedPinchAnchor.y) < 0.5 && Math.abs(logSpreadGap) < 0.001
+    var smoothingFactor = (caughtUp || PINCH_SMOOTHING_MS <= 0) ? 1 : 1 - Math.exp(-(performance.now() - smoothedPinchAnchor.time) / PINCH_SMOOTHING_MS)
+    var smoothedX = smoothedPinchAnchor.x + smoothingFactor*(pinchAnchor.x - smoothedPinchAnchor.x)
+    var smoothedY = smoothedPinchAnchor.y + smoothingFactor*(pinchAnchor.y - smoothedPinchAnchor.y)
+    var zoomFactor = Math.exp(smoothingFactor * logSpreadGap) // Spread eases in log scale, like zoom
+
+    map.x += smoothedX - smoothedPinchAnchor.x
+    map.y += smoothedY - smoothedPinchAnchor.y
+    zoomCenter = { x: map.x, y: map.y }
+    currentPos = zoomCenter
+    if (zoomFactor !== 1) {
+        instantZoom(zoomFactor, smoothedX, smoothedY)
+        noteZoomInput(smoothedX, smoothedY)
+        showZoomIndicator()
+        if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
+            if (!blurIsDisabled()) {
+                motion_blur_target.filters = [blurFilter]
+            }
+            blurFilter.strength = Math.abs(zoomFactor - 1) // Same blur per zoom speed as the wheel animation
+            blurFilter.center = [ smoothedX, smoothedY ]
+        }
+    }
+    smoothedPinchAnchor = { x: smoothedX, y: smoothedY, spread: smoothedPinchAnchor.spread * zoomFactor, time: performance.now() }
+
+    var stillPinching = mouseDown && previousAnchor && previousAnchor.fingers === 2
+    if (smoothingFactor === 1 && !stillPinching) {
+        pinchAnchor = smoothedPinchAnchor = null
     }
 }
 
