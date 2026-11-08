@@ -30,7 +30,7 @@ var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
 var lastZoomInput = null;  
-var snapAnimation = null; // Running snap to a pixel-perfect zoom (see snapZoom) 
+var snapAnimation = null; // Snap or pinch landing in progress (see snapZoom, startPinchLanding) 
 var zoomInDevicePixels = true;  
 var displayDensity = 1; // Physical screen pixels per CSS pixel that the canvas is drawn at
 
@@ -82,6 +82,8 @@ var zoomMousePos = { x: 0, y: 0 };
 var previousAnchor = null; // Last touch anchor (see touchAnchor)
 var pinchAnchor = null;         // Latest two-finger anchor from the fingers
 var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (see smoothPinch)
+var pinchZoomHistory = [];      // Recent { time, logZoom } samples while pinching, for the release velocity
+var pinchEndTime = -Infinity;   // When the fingers last stopped pinching (see onDragEnd)
 
 // Track last pointer position so toasts can be shown at cursor location
 var lastPointerPos = { x: 0, y: 0 };
@@ -904,11 +906,10 @@ function nearestPixelPerfectZoom (zoom) {
     return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
 }
 
-/** Once zooming has stopped, ease to the nearest pixel-perfect zoom around the last zoom point. */
+/** Advance a running snap or landing; otherwise, once zooming has stopped, 
+ * start easing to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
     const ZOOM_SNAP_DELAY_MS = 250; // How long zooming must have stopped before rounding
-    const SNAP_BASE_MS = 150;           // Duration of the shortest snap
-    const SNAP_MS_PER_LOG_ZOOM = 1000;   // Extra duration per unit of |ln(target / zoom)|
     if (snapAnimation) {
         stepSnapAnimation()
         return
@@ -932,22 +933,84 @@ function snapZoom () {
             x: lastZoomInput.x,
             y: lastZoomInput.y,
             start: performance.now(),
-            duration: SNAP_BASE_MS + SNAP_MS_PER_LOG_ZOOM * distance,
+            velocity: 0,            // Relative zoom rate at the start: d ln(zoom)/dt, per ms
+            duration: snapDuration(distance),
             last: zoomLevel,        // Zoom the snap last set; any other change cancels the snap
         }
     }
     lastZoomInput = null // Round once per zoom gesture
 }
 
-/** Advance a running snap: log zoom follows a smoothstep from `from` to `to` around the snap point. */
+/** Duration of a snap from rest across a log-zoom distance of `distance`. */
+function snapDuration (distance) {
+    const SNAP_BASE_MS = 150;           // Duration of the shortest snap
+    const SNAP_MS_PER_LOG_ZOOM = 1000;  // Extra duration per unit of |ln(target / zoom)|
+    return SNAP_BASE_MS + SNAP_MS_PER_LOG_ZOOM * Math.abs(distance)
+}
+
+/**
+ * On releasing a pinch, glide on at the release velocity and come to rest where the glide would end:
+ * on the nearest pixel-perfect zoom, or exactly there with continuous zoom.
+ */
+function startPinchLanding () {
+    const GLIDE_MS = 150;                // Glide duration: zoom carries on at the release velocity for this duration
+    const VELOCITY_WINDOW_MS = 100;      // Time window over which velocity is averaged to give the release velocity
+    const LANDING_MIN_MS = 100;
+    pinchEndTime = -Infinity             // One landing per release
+    pinchAnchor = smoothedPinchAnchor = null
+    var samples = pinchZoomHistory
+    pinchZoomHistory = []
+    if (!lastZoomInput) {                // The pinch never changed the zoom
+        return
+    }
+
+    var velocity = 0 // d ln(zoom)/dt, per ms
+    if (samples.length >= 2) {
+        var last = samples[samples.length - 1]
+        var first = samples.find(function (sample) { return last.time - sample.time <= VELOCITY_WINDOW_MS })
+        if (last.time > first.time) {
+            velocity = (last.logZoom - first.logZoom) / (last.time - first.time)
+        }
+    }
+    var projected = zoomLevel * Math.exp(velocity * GLIDE_MS)
+    var target = document.querySelector('#continuousZoom').checked
+        ? Math.min(Math.max(projected, zoomMin), zoomMax)
+        : nearestPixelPerfectZoom(projected)
+    var distance = Math.log(target / zoomLevel)
+    var duration = snapDuration(distance)               // Behind, or at rest: as a snap
+    if (velocity * distance > 0) {                      // Ahead: decelerate onto it, but never slower than a snap
+        duration = Math.max(Math.min(3 * distance / velocity, duration), LANDING_MIN_MS)
+    }
+    if (distance !== 0 || velocity !== 0) {
+        snapAnimation = {
+            from: zoomLevel,
+            to: target,
+            x: lastZoomInput.x,
+            y: lastZoomInput.y,
+            start: performance.now(),
+            velocity: velocity,
+            duration: duration,
+            last: zoomLevel,
+        }
+    }
+    lastZoomInput = null
+}
+
+/**
+ * Advance a running snap: log zoom follows a cubic Hermite curve around the snap point, 
+ * from `snapAnimation.from` with the starting velocity to `snapAnimation.to` at rest. 
+ * With zero starting velocity this is a smoothstep.
+ */
 function stepSnapAnimation () {
     if (cameraAnimation.playing || zoomLevel !== snapAnimation.last) { // Interrupted by another zoom or camera move
         snapAnimation = null
         return
     }
     var u = Math.min((performance.now() - snapAnimation.start) / snapAnimation.duration, 1)
-    var eased = u * u * (3 - 2 * u) // Smoothstep: zero speed at start and end
-    var zoomNow = snapAnimation.from * Math.pow(snapAnimation.to / snapAnimation.from, eased)
+    var distance = Math.log(snapAnimation.to / snapAnimation.from)
+    var logOffset = distance * u * u * (3 - 2 * u)                                       // Smoothstep: from rest to rest
+        + snapAnimation.velocity * snapAnimation.duration * u * (1 - u) * (1 - u)        // Starting velocity, fading out
+    var zoomNow = snapAnimation.from * Math.exp(logOffset)
     instantZoom(zoomNow / zoomLevel, snapAnimation.x, snapAnimation.y)
     showZoomIndicator()
     if (u === 1) {
@@ -1070,8 +1133,12 @@ function onDragStart () {
     dragVelocity = { x: 0, y: 0 }
 }
 
-/** Callback occurring when a drag action ends. */
+/** Callback occurring when a drag action ends. A release that ends a pinch starts its landing. */
 function onDragEnd (e) {
+    const PINCH_RELEASE_MS = 150; // Fingers lifted within this of each other count as releasing the pinch
+    if (previousAnchor && previousAnchor.fingers === 2) {
+        pinchEndTime = performance.now()
+    }
     previousAnchor = null
     var remainingTouches = e.data.originalEvent.targetTouches
     if (remainingTouches && remainingTouches.length > 0) { // A finger is still down; keep dragging with it
@@ -1079,6 +1146,9 @@ function onDragEnd (e) {
     }
     mouseDown = false
     dragging = false
+    if (performance.now() - pinchEndTime < PINCH_RELEASE_MS) {
+        startPinchLanding()
+    }
 }
 
 /** Changes a menu tab. */
@@ -1127,6 +1197,7 @@ function onDragMove (e) {
             if (anchor.fingers === 2 && anchor.spread > 0) {
                 if (!previousAnchor || previousAnchor.fingers !== 2) { // A pinch starts where the fingers are
                     smoothedPinchAnchor = { x: anchor.x, y: anchor.y, spread: anchor.spread, time: performance.now() }
+                    pinchZoomHistory = []
                 }
                 pinchAnchor = anchor
             } else if (anchor.fingers === 1 && previousAnchor && previousAnchor.fingers === 1) {
@@ -1149,8 +1220,9 @@ function onDragMove (e) {
 }
 
 /**
- * Move the smoothed pinch anchor part of the way to the fingers' anchor, then pan the map by its midpoint change
- * and zoom by its spread change around it. After the fingers stop pinching, it finishes catching up.
+ * Move the smoothed pinch anchor part of the way to the fingers' anchor, then pan 
+ * the map by its midpoint change and zoom by its spread change around it. 
+ * When one finger lifts, it finishes catching up; when both lift, startPinchLanding takes over.
  */
 function smoothPinch (motion_blur_target) {
     const PINCH_SMOOTHING_MS = 30; // Time constant: the map trails the fingers by about this much; 0 follows them exactly
@@ -1183,6 +1255,9 @@ function smoothPinch (motion_blur_target) {
     smoothedPinchAnchor = { x: smoothedX, y: smoothedY, spread: smoothedPinchAnchor.spread * zoomFactor, time: performance.now() }
 
     var stillPinching = mouseDown && previousAnchor && previousAnchor.fingers === 2
+    if (stillPinching) {
+        pinchZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
+    }
     if (smoothingFactor === 1 && !stillPinching) {
         pinchAnchor = smoothedPinchAnchor = null
     }
