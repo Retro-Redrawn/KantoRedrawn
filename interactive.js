@@ -123,7 +123,7 @@ var redrawsCount = redrawImages.length;    // Total number of redraw layers
 
 // Start up
 loadImages()
-window.addEventListener('wheel', onMouseWheel);
+window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
 window.addEventListener('keydown', onKeyDown);
 
@@ -835,6 +835,7 @@ function onMouseWheel (e) {
     const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA); // ≈ 0.00198
     const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
     if (e.target.id === 'canvas') {
+        e.preventDefault() // Over the map, the map zooms: no page scroll, and no browser zoom from a touchpad pinch
         zoomMousePos = { x: e.x, y: e.y }
         if (!mouseDown && !cameraAnimation.playing) {
             var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
