@@ -84,6 +84,7 @@ var pinchAnchor = null;         // Latest two-finger anchor from the fingers
 var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (see smoothPinch)
 var pinchZoomHistory = [];      // Recent { time, logZoom } samples while pinching, for the release velocity
 var pinchEndTime = -Infinity;   // When the fingers last stopped pinching (see onDragEnd)
+var touchpadPinching = false;   // A touchpad pinch is in progress (see onMouseWheel, snapZoom)
 
 // Track last pointer position so toasts can be shown at cursor location
 var lastPointerPos = { x: 0, y: 0 };
@@ -838,7 +839,16 @@ function onMouseWheel (e) {
                 currentPos = {...zoomCenter}
                 dragVelocity = { x: 0, y: 0 }
 
-                zoom(zoomAmount, e.x, e.y)
+                if (e.ctrlKey) { // Touchpad pinch: follow it directly, like a touchscreen pinch, and land when it ends (see snapZoom)
+                    if (!touchpadPinching) {
+                        pinchZoomHistory = []
+                        touchpadPinching = true
+                    }
+                    instantZoom(zoomAmount, e.x, e.y)
+                    pinchZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
+                } else {
+                    zoom(zoomAmount, e.x, e.y)
+                }
                 noteZoomInput(e.x, e.y, -Math.sign(deltaPixels))
                 showZoomIndicator()
             }
@@ -926,6 +936,11 @@ function nextPixelPerfectZoom (zoom, direction) {
  * start easing to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
     const ZOOM_SNAP_DELAY_MS = 250; // How long zooming must have stopped before rounding
+    const TOUCHPAD_PINCH_END_MS = 35; // A touchpad pinch has ended once its events pause this long (about two frames)
+    if (touchpadPinching && performance.now() - (lastZoomInput ? lastZoomInput.time : 0) > TOUCHPAD_PINCH_END_MS) {
+        touchpadPinching = false
+        startPinchLanding()
+    }
     if (snapAnimation) {
         stepSnapAnimation()
         return
