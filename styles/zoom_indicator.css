@@ -1,7 +1,7 @@
 .zoom-indicator{
     position: fixed;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    top: calc(16px + env(safe-area-inset-top, 0px));
+    right: calc(16px + env(safe-area-inset-right, 0px));
     width: 64px;
     height: 64px;
     border-radius: 50%;
