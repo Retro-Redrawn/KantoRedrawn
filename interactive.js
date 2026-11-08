@@ -836,7 +836,7 @@ function onMouseWheel (e) {
                 dragVelocity = { x: 0, y: 0 }
 
                 zoom(zoomAmount, e.x, e.y)
-                noteZoomInput(e.x, e.y)
+                noteZoomInput(e.x, e.y, -Math.sign(deltaPixels))
                 showZoomIndicator()
             }
         }
@@ -893,9 +893,9 @@ function instantZoom(s,x,y){
 }
 
 // Snapping to pixel-perfect zoom
-/** Record when, where the user last zoomed */
-function noteZoomInput (x, y) {
-    lastZoomInput = { time: performance.now(), x: x, y: y }
+/** Record when, where and in which direction (positive: in, negative: out) the user last zoomed */
+function noteZoomInput (x, y, direction) {
+    lastZoomInput = { time: performance.now(), x: x, y: y, direction: direction }
 }
 
 /** Pixel-perfect zoom closest to `zoom` at which image pixel size and canvas pixel size are equal up to integer multiplier */
@@ -904,6 +904,19 @@ function nearestPixelPerfectZoom (zoom) {
     var s = zoom * r                        // Canvas pixels per image pixel
     var pixelPerfectScale = s >= 1 ? Math.round(s) : 1 / Math.round(1 / s)
     return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
+}
+
+/** Pixel-perfect zoom next after `zoom` in the direction of `direction` (positive: in, negative: out), within the zoom limits */
+function nextPixelPerfectZoom (zoom, direction) {
+    var r = app.renderer.resolution         // Canvas pixels per CSS pixel
+    var s = zoom * r                        // Canvas pixels per image pixel
+    var next
+    if (direction > 0) {
+        next = s >= 1 ? Math.floor(s) + 1 : 1 / (Math.ceil(1 / s) - 1)
+    } else {
+        next = s > 1 ? Math.ceil(s) - 1 : 1 / (Math.floor(1 / s) + 1)
+    }
+    return Math.min(Math.max(next / r, zoomMin), zoomMax)
 }
 
 /** Advance a running snap or landing; otherwise, once zooming has stopped, 
@@ -925,6 +938,9 @@ function snapZoom () {
     }
 
     var target = nearestPixelPerfectZoom(zoomLevel)
+    if (lastZoomInput.direction * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the last zoom direction: snap to the next one ahead
+        target = nextPixelPerfectZoom(zoomLevel, lastZoomInput.direction)
+    }
     if (Math.abs(target - zoomLevel) > 1e-9) {
         var distance = Math.abs(Math.log(target / zoomLevel)) // Snap distance in log zoom
         snapAnimation = {
@@ -976,6 +992,9 @@ function startPinchLanding () {
     var target = document.querySelector('#continuousZoom').checked
         ? Math.min(Math.max(projected, zoomMin), zoomMax)
         : nearestPixelPerfectZoom(projected)
+    if (velocity * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
+        target = nextPixelPerfectZoom(zoomLevel, velocity)
+    }
     var distance = Math.log(target / zoomLevel)
     var duration = snapDuration(distance)               // Behind, or at rest: as a snap
     if (velocity * distance > 0) {                      // Ahead: decelerate onto it, but never slower than a snap
@@ -1242,7 +1261,7 @@ function smoothPinch (motion_blur_target) {
     currentPos = zoomCenter
     if (zoomFactor !== 1) {
         instantZoom(zoomFactor, smoothedX, smoothedY)
-        noteZoomInput(smoothedX, smoothedY)
+        noteZoomInput(smoothedX, smoothedY, Math.sign(zoomFactor - 1))
         showZoomIndicator()
         if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
             if (!blurIsDisabled()) {
