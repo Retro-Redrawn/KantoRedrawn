@@ -2,7 +2,7 @@
 
 Repository for the Pokemon Redrawn project.
 
-Developed and refactored by Tyson Moll (https://tysonmoll.ca/). The base code was originally programmed by Jerky (@Hyperjerk) for the Retro Redrawn Kanto and Johto projects.
+Developed and refactored by Tyson Moll (https://tysonmoll.ca/) with contributions by HiddenPowerFire and other community members. The base code was originally programmed by Jerky (@Hyperjerk) for the Retro Redrawn Kanto and Johto projects.
 
 Artists are credited for their work in the project website (as denoted in the areas.js file).
 
