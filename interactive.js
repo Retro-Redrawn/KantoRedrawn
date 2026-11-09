@@ -85,6 +85,7 @@ var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (s
 var pinchZoomHistory = [];      // Recent { time, logZoom } samples while pinching, for the release velocity
 var pinchEndTime = -Infinity;   // When the fingers last stopped pinching (see onDragEnd)
 var touchpadPinching = false;   // A touchpad pinch is in progress (see onMouseWheel, snapZoom)
+var ctrlHeld = false;           // The physical Ctrl key is down (a touchpad pinch sets e.ctrlKey without pressing it)
 var displayedZoomVelocity = 0;  // d ln(zoom)/dt of the displayed zoom over the last frame, per ms (see tick)
 var lastTickTime = 0;
 var lastTickZoom = 1;
@@ -136,6 +137,9 @@ loadImages()
 window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
 window.addEventListener('keydown', onKeyDown);
+window.addEventListener('keydown', function (e) { if (e.key === 'Control') { ctrlHeld = true } })
+window.addEventListener('keyup', function (e) { if (e.key === 'Control') { ctrlHeld = false } })
+window.addEventListener('blur', function () { ctrlHeld = false }) // Ctrl may be released in another window
 
 /** Loads new & old images pertaining to a single layer.
  * 
@@ -842,9 +846,10 @@ function onMouseWheel (e) {
         zoomMousePos = { x: e.x, y: e.y }
         if (!mouseDown && !cameraAnimation.playing) {
             var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
-            var speedup = e.ctrlKey ? TOUCHPAD_PINCH_SPEEDUP : 1
+            var touchpadPinch = e.ctrlKey && !ctrlHeld // Browsers report a touchpad pinch as ctrl + wheel; with the key held, it's a real Ctrl + scroll
+            var speedup = touchpadPinch ? TOUCHPAD_PINCH_SPEEDUP : 1
             var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * speedup * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
-            if (!e.ctrlKey && isSwallowedGlide(deltaPixels)) { // The rest of a system glide that a landing has taken over
+            if (!touchpadPinch && isSwallowedGlide(deltaPixels)) { // The rest of a system glide that a landing has taken over
                 return
             }
             if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
@@ -852,7 +857,7 @@ function onMouseWheel (e) {
                 currentPos = {...zoomCenter}
                 dragVelocity = { x: 0, y: 0 }
 
-                if (e.ctrlKey) { // Touchpad pinch: follow it directly, like a touchscreen pinch, and land when it ends (see snapZoom)
+                if (touchpadPinch) { // Touchpad pinch: follow it directly, like a touchscreen pinch, and land when it ends (see snapZoom)
                     if (!touchpadPinching) {
                         pinchZoomHistory = []
                         touchpadPinching = true
@@ -866,7 +871,7 @@ function onMouseWheel (e) {
                 }
                 noteZoomInput(e.x, e.y, -Math.sign(deltaPixels))
                 showZoomIndicator()
-                if (!e.ctrlKey && systemGlideStarted(deltaPixels)) {
+                if (!touchpadPinch && systemGlideStarted(deltaPixels)) {
                     startScrollLanding(deltaPixels)
                 }
             }
