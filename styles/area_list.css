@@ -168,11 +168,6 @@
     display:inline-block;
     font-size:1.3em;
 }
-.area__info__artists-separator {
-    font-size:1.3em;
-    font-weight:bold;
-    color:#fff;
-}
 .area__info__artists:hover .area__info__artists-track {
     animation-play-state:paused;
 }

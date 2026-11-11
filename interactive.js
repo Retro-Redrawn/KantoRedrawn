@@ -566,7 +566,7 @@ function getArtistNamesHTML(artists) {
                 ? `<a class="area__info__artist" href="${artist.url}" target="_blank" title="${artist.name}"${tabIndex}>${artist.name}</a>`
                 : `<a class="area__info__artist"${tabIndex}>${artist.name}</a>`;
             return artistLink;
-        }).join('<span class="area__info__artists-separator">,&nbsp;</span>');
+        }).join(',&nbsp;');
     }
 
     if (artists.length > 1) {
