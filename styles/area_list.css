@@ -121,9 +121,52 @@
     width:16px;
     height:16px;
 }
-.area__info__name--multiple .area__info__artist {
-    font-size:1em;
-    line-height:1.2;
+.area__info__name--multiple {
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+}
+.area__info__artists {
+    display:block;
+    width:100%;
+    overflow:hidden;
+    white-space:nowrap;
+}
+.area__info__artists-track {
+    display:flex;
+    width:max-content;
+    animation:area-artists-scroll 16s linear infinite;
+}
+.area__info__artists-group {
+    display:flex;
+    flex:none;
+    align-items:center;
+    padding-right:3rem;
+    white-space:nowrap;
+}
+.area__info__artists-group a {
+    display:inline-block;
+    font-size:1.3em;
+}
+.area__info__artists-separator {
+    font-size:1.3em;
+    font-weight:bold;
+    color:#fff;
+}
+.area__info__artists:hover .area__info__artists-track {
+    animation-play-state:paused;
+}
+.artist_mobile.artist_mobile--multiple {
+    width:min(420px, calc(100vw - 32px));
+    box-sizing:border-box;
+}
+.area__info__artists-group[aria-hidden="true"] a {
+    pointer-events:none;
+}
+@keyframes area-artists-scroll {
+    to {
+        transform:translateX(-50%);
+    }
 }
 .area__info__name .area__info__post {
     font-weight:normal;
@@ -152,6 +195,18 @@
 .artist_mobile .area__info__name {
     padding-left: 20px;
     padding-right: 20px;
+}
+.artist_mobile--multiple .area__info__name {
+    flex:1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .area__info__artists-track {
+        animation:none;
+    }
+    .area__info__artists {
+        overflow-x:auto;
+    }
 }
 
 /* Copy-link button in the area header, shown only on the active area */

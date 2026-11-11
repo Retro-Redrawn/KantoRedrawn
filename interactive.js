@@ -559,6 +559,25 @@ function getArtistImagesHTML(artists) {
 }
 
 function getArtistNamesHTML(artists) {
+    function renderArtistLinks(isDuplicate) {
+        return artists.map(function (artist) {
+            var tabIndex = isDuplicate ? ' tabindex="-1"' : '';
+            var artistLink = artist.url
+                ? `<a class="area__info__artist" href="${artist.url}" target="_blank" title="${artist.name}"${tabIndex}>${artist.name}</a>`
+                : `<a class="area__info__artist"${tabIndex}>${artist.name}</a>`;
+            return artistLink;
+        }).join('<span class="area__info__artists-separator">,&nbsp;</span>');
+    }
+
+    if (artists.length > 1) {
+        return `<span class="area__info__artists">
+            <span class="area__info__artists-track">
+                <span class="area__info__artists-group">${renderArtistLinks(false)}</span>
+                <span class="area__info__artists-group" aria-hidden="true">${renderArtistLinks(true)}</span>
+            </span>
+        </span>`;
+    }
+
     return artists.map(function (artist) {
         return artist.url
             ? `<a class="area__info__artist" href="${artist.url}" target="_blank" title="${artist.name}">${artist.name}</a>`
@@ -1315,6 +1334,7 @@ function updateMobileArtist(area) {
         ? `area__info__img--multiple area__info__img--count-${artists.length}`
         : '';
     var artistContainer = document.querySelector('.artist_mobile');
+    artistContainer.classList.toggle('artist_mobile--multiple', artists.length > 1);
     artistContainer.style.display = !hasArtistName || isMenuOpen() ? 'none' : '';
 
     var containerName = document.querySelector('.artist_mobile .area__info__name');
