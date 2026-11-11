@@ -1531,6 +1531,16 @@ function changeLayer(layer) {
     focusOnArea(activeAreas[Math.floor(Math.random() * activeAreas.length)])
 }
 
+/** Dismisses the layers dropdown notification for the rest of this page session. */
+function dismissLayersNotification() {
+    if (!layersNotificationActive) {
+        return;
+    }
+
+    layersNotificationActive = false;
+    document.querySelector('.layers-select-container').classList.remove('notification-active');
+}
+
 /**
  * Adjusts the visibly selected tab.
  */

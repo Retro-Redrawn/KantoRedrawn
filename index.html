@@ -45,11 +45,14 @@
                     </a>
                 </div>
 
-                <select id="layers_select" onchange="changeLayer(this.value)">
-                    <option value="kanto">Overworld</option>
-                    <option value="interior">Interiors</option>
-                    <option value="sevii">Sevii Islands</option>
-                </select>
+                <div class="layers-select-container notification-active">
+                    <select id="layers_select" onclick="dismissLayersNotification()" onchange="changeLayer(this.value)">
+                        <option value="kanto">Overworld</option>
+                        <option value="interior">Interiors</option>
+                        <option value="sevii">Sevii Islands</option>
+                    </select>
+                    <img class="layers-notification" src="img/website/badge-exclamation-mark.png" alt="" aria-hidden="true">
+                </div>
                 <div class="menu__actions">
                     <button onclick="changeTab(0)" class="menu__tab active">
                         Area List
