@@ -136,6 +136,7 @@ var redrawsCount = redrawImages.length;    // Total number of redraw layers
 loadImages()
 window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
+window.addEventListener('resize', updateMobileArtistTicker);
 window.addEventListener('keydown', onKeyDown);
 window.addEventListener('keydown', function (evt) { if (evt.key === 'Control') { ctrlHeld = true } })
 window.addEventListener('keyup', function (evt) { if (evt.key === 'Control') { ctrlHeld = false } })
@@ -497,17 +498,12 @@ function setUpAreas () {
             }
         }
 
-        // Prep artist image HTML
-        var artistData = GetArtistData(area.artistId);
-        var artistName = artistData.name;
-        var artistUrl = artistData.url;
-        var artistImgPath = GetArtistImagePath(artistData);
-        var artistImageHTML = '';
-    
-        if (!(artistImgPath === '')) {
-            artistImageHTML = artistUrl ? `<a href="${artistUrl}" target="_blank" title="${artistName}">
-                <img src="${artistImgPath}" alt="${artistName}" /></a>` : `<img src="${artistImgPath}" alt="${artistName}" />`;
-        }
+        var areaArtists = getAreaArtists(area);
+        var artistImageHTML = getArtistImagesHTML(areaArtists);
+        var artistNamesHTML = getArtistNamesHTML(areaArtists);
+        var artistImageClass = areaArtists.length > 1
+            ? `area__info__img--multiple area__info__img--count-${areaArtists.length}`
+            : '';
 
         var iconBlock = 
             `<span class="material-icons">
@@ -531,18 +527,77 @@ function setUpAreas () {
             </div>
             <div class="area__info">
                 <div class="area__info__inner">
-                    <div class="area__info__img">
+                    <div class="area__info__img ${artistImageClass}">
                         ${artistImageHTML}
                     </div>
-                    <div class="area__info__name">
-                        ${artistUrl ? `<a href="${artistUrl}" target="_blank" title="${artistName}">${artistName}</a>` : `<a>${artistName}</a>`}
-                        ${area.post_url ? `<a href="${area.post_url}" target="_blank" title="View Post">[View Post]</a>` : ''}
+                    <div class="area__info__name${areaArtists.length > 1 ? ' area__info__name--multiple' : ''}">
+                        ${artistNamesHTML}
+                        ${area.post_url ? `<a class="area__info__post" href="${area.post_url}" target="_blank" title="View Post">[View Post]</a>` : ''}
                     </div>
                 </div>
             </div>
         </li>`
         areaList.innerHTML += html
     }
+}
+
+function getAreaArtists(area) {
+    var artistIds = [];
+    var collaborators = Array.isArray(area.collaborators) ? area.collaborators : [];
+    var candidateIds = [area.artistId].concat(collaborators.map(function (collaborator) {
+        return typeof collaborator === 'string' ? collaborator : collaborator && collaborator.artistId;
+    }));
+
+    candidateIds.forEach(function (artistId) {
+        if (artistId && artistIds.indexOf(artistId) === -1) {
+            artistIds.push(artistId);
+        }
+    });
+
+    return artistIds.map(function (artistId) {
+        return GetArtistData(artistId);
+    });
+}
+
+function getArtistImagesHTML(artists) {
+    return artists.map(function (artist) {
+        var imagePath = GetArtistImagePath(artist);
+        if (!imagePath) {
+            return '';
+        }
+
+        var image = `<img src="${imagePath}" alt="${artist.name}" />`;
+        return artist.url
+            ? `<a href="${artist.url}" target="_blank" title="${artist.name}">${image}</a>`
+            : image;
+    }).join('');
+}
+
+function getArtistNamesHTML(artists) {
+    function renderArtistLinks(isDuplicate) {
+        return artists.map(function (artist) {
+            var tabIndex = isDuplicate ? ' tabindex="-1"' : '';
+            var artistLink = artist.url
+                ? `<a class="area__info__artist" href="${artist.url}" target="_blank" title="${artist.name}"${tabIndex}>${artist.name}</a>`
+                : `<a class="area__info__artist"${tabIndex}>${artist.name}</a>`;
+            return artistLink;
+        }).join(',&nbsp;');
+    }
+
+    if (artists.length > 1) {
+        return `<span class="area__info__artists">
+            <span class="area__info__artists-track">
+                <span class="area__info__artists-group">${renderArtistLinks(false)}</span>
+                <span class="area__info__artists-group" aria-hidden="true">${renderArtistLinks(true)}</span>
+            </span>
+        </span>`;
+    }
+
+    return artists.map(function (artist) {
+        return artist.url
+            ? `<a class="area__info__artist" href="${artist.url}" target="_blank" title="${artist.name}">${artist.name}</a>`
+            : `<a class="area__info__artist">${artist.name}</a>`;
+    }).join('');
 }
 
 // Copy area link to clipboard (uses current path + query params)
@@ -1534,33 +1589,68 @@ function openAreaInDOM (a) {
  * @param {object} area 
  */
 function updateMobileArtist(area) {
-    
-    var artistData = GetArtistData(area.artistId);
-    var artistImgPath = GetArtistImagePath(artistData);
-    var areaArtist = artistData.name;
-    var areaArtistUrl = artistData.url;
-    document.querySelector('.artist_mobile').style.display = areaArtist === '' ? 'none' : isMenuOpen() ? 'none' : '';
+    var artists = getAreaArtists(area);
+    var artistNamesHTML = getArtistNamesHTML(artists);
+    var artistNames = artists.map(function (artist) { return artist.name; });
+    var hasArtistName = artistNames.some(Boolean);
+    var artistImageClass = artists.length > 1
+        ? `area__info__img--multiple area__info__img--count-${artists.length}`
+        : '';
+    var artistContainer = document.querySelector('.artist_mobile');
+    artistContainer.classList.toggle('artist_mobile--multiple', artists.length > 1);
+    artistContainer.style.display = !hasArtistName || isMenuOpen() ? 'none' : '';
 
     var containerName = document.querySelector('.artist_mobile .area__info__name');
+    containerName.className = `area__info__name${artists.length > 1 ? ' area__info__name--multiple' : ''}`;
     containerName.innerHTML = `
-        ${areaArtistUrl ? `<a href="${areaArtistUrl}" target="_blank" title="${areaArtist}">${areaArtist}</a>` : `<a>${areaArtist}</a>`}
-        ${area.post_url ? `<a href="${area.post_url}" target="_blank" title="View Post">[View Post]</a>` : ''}
+        ${artistNamesHTML}
+        ${area.post_url ? `<a class="area__info__post" href="${area.post_url}" target="_blank" title="View Post">[View Post]</a>` : ''}
     `;
     var containerImage = document.querySelector('.artist_mobile .area__info__img');
-    var a = document.querySelector('.artist_mobile .area__info__img');
-    a.innerHTML = `
-        ${areaArtistUrl ? `<a href="${areaArtistUrl}" target="_blank" title="${areaArtist}">
-                <img src="${artistImgPath}" alt="${areaArtist}" /></a>` : `<img src="${artistImgPath}" alt="${areaArtist}" />`}
-    `;
-    var image = document.querySelector('.artist_mobile .area__info__img img');
-
+    containerImage.className = `area__info__img ${artistImageClass}`;
+    containerImage.innerHTML = getArtistImagesHTML(artists);
     containerImage.style.display = 'none';
-    image.onload = function(){
-        containerImage.style.display = '';
+    var images = containerImage.querySelectorAll('img');
+    images.forEach(function (image) {
+        image.onload = function () {
+            containerImage.style.display = '';
+            updateMobileArtistTicker();
+        };
+        image.onerror = function () {
+            image.style.display = 'none';
+            updateMobileArtistTicker();
+        };
+        if (image.complete && image.naturalWidth > 0) {
+            containerImage.style.display = '';
+        }
+    });
+    updateMobileArtistTicker();
+}
+
+function updateMobileArtistTicker() {
+    var artistContainer = document.querySelector('.artist_mobile');
+    var ticker = artistContainer.querySelector('.area__info__artists');
+    var artistGroup = ticker && ticker.querySelector('.area__info__artists-group:not([aria-hidden="true"])');
+
+    if (!artistGroup || !artistContainer.classList.contains('artist_mobile--multiple')) {
+        artistContainer.classList.remove('artist_mobile--scrolling');
+        return;
     }
-    image.onerror = function(){
-        containerImage.style.display = 'none';
-    };
+
+    var wasHidden = artistContainer.style.display === 'none';
+    if (wasHidden) {
+        artistContainer.style.display = '';
+    }
+
+    var groupStyle = window.getComputedStyle(artistGroup);
+    var trailingPadding = parseFloat(groupStyle.paddingRight) || 0;
+    var textWidth = artistGroup.scrollWidth - trailingPadding;
+    var needsScrolling = ticker.clientWidth > 0 && textWidth > ticker.clientWidth + 1;
+    artistContainer.classList.toggle('artist_mobile--scrolling', needsScrolling);
+
+    if (wasHidden) {
+        artistContainer.style.display = 'none';
+    }
 }
 
 /** Event occurring when a keyboard key is pressed. */
