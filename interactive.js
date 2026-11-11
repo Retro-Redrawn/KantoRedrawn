@@ -85,7 +85,7 @@ var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (s
 var pinchZoomHistory = [];      // Recent { time, logZoom } samples while pinching, for the release velocity
 var pinchEndTime = -Infinity;   // When the fingers last stopped pinching (see onDragEnd)
 var touchpadPinching = false;   // A touchpad pinch is in progress (see onMouseWheel, snapZoom)
-var ctrlHeld = false;           // The physical Ctrl key is down (a touchpad pinch sets e.ctrlKey without pressing it)
+var ctrlHeld = false;           // The physical Ctrl key is down (a touchpad pinch sets evt.ctrlKey without pressing it)
 var displayedZoomVelocity = 0;  // d ln(zoom)/dt of the displayed zoom over the last frame, per ms (see tick)
 var lastTickTime = 0;
 var lastTickZoom = 1;
@@ -96,11 +96,11 @@ var swallowedGlide = null;      // System glide taken over by a landing; its rem
 // Track last pointer position so toasts can be shown at cursor location
 var lastPointerPos = { x: 0, y: 0 };
 // Capture pointerdown early so we have coordinates for inline onclick handlers
-document.addEventListener('pointerdown', function (e) {
+document.addEventListener('pointerdown', function (evt) {
     try {
-        lastPointerPos.x = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
-        lastPointerPos.y = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
-    } catch (ex) { }
+        lastPointerPos.x = evt.clientX || (evt.touches && evt.touches[0] && evt.touches[0].clientX) || 0;
+        lastPointerPos.y = evt.clientY || (evt.touches && evt.touches[0] && evt.touches[0].clientY) || 0;
+    } catch (e) { }
 }, {capture: true, passive: true});
 
 // Tour
@@ -137,8 +137,8 @@ loadImages()
 window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
 window.addEventListener('keydown', onKeyDown);
-window.addEventListener('keydown', function (e) { if (e.key === 'Control') { ctrlHeld = true } })
-window.addEventListener('keyup', function (e) { if (e.key === 'Control') { ctrlHeld = false } })
+window.addEventListener('keydown', function (evt) { if (evt.key === 'Control') { ctrlHeld = true } })
+window.addEventListener('keyup', function (evt) { if (evt.key === 'Control') { ctrlHeld = false } })
 window.addEventListener('blur', function () { ctrlHeld = false }) // Ctrl may be released in another window
 
 /** Loads new & old images pertaining to a single layer.
@@ -246,7 +246,7 @@ function init () {
                 autoDensity: true
             });
         globalThis.__PIXI_APP__ = app; 
-    } catch (error) {
+    } catch (e) {
         // alert('Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.')
         // document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p><a>View full image</a>'
         document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p>'
@@ -559,7 +559,7 @@ function copyAreaLink(layerName, areaIdent) {
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(url).then(function() {
             showCopyToast('Link copied', lastPointerPos);
-        }).catch(function(err) {
+        }).catch(function(e) {
             CopyLinkPrompt(url);
         });
         return;
@@ -825,34 +825,32 @@ function tick () {
 // Limits
 /** Caps the zoom level to the zoom extents. */
 function checkZoomLimit () {
-    if (zoomLevel <= zoomMin) { zoomLevel = zoomMin }
-    if (zoomLevel >= zoomMax) { zoomLevel = zoomMax }
+    zoomLevel = clamp(zoomLevel, zoomMin, zoomMax)
 }
 
 // Wheel input
 /** Callback occurring when the mousewheel is rotated.
- * (TODO: would like to support this functionality on the trackpad, too, if it doesn't already)
  * 
- * @param {*} e Event data relating to the mouse wheel action.
+ * @param {*} evt Event data relating to the mouse wheel action.
  */
-function onMouseWheel (e) {
+function onMouseWheel (evt) {
     const WHEEL_DELTA = 100; // px per mouse-wheel notch; typical 
     const NOTCHES_PER_2X = 3.5; // notches to zoom by 2x
     const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA); // ≈ 0.00198
     const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
     const TOUCHPAD_PINCH_SPEEDUP = 4; // A touchpad pinch (ctrl + wheel) zooms this many times faster than scrolling
-    if (e.target.id === 'canvas') {
-        e.preventDefault() // Over the map, the map zooms: no page scroll, and no browser zoom from a touchpad pinch
-        zoomMousePos = { x: e.x, y: e.y }
+    if (evt.target.id === 'canvas') {
+        evt.preventDefault() // Over the map, the map zooms: no page scroll, and no browser zoom from a touchpad pinch
+        zoomMousePos = { x: evt.x, y: evt.y }
         if (!mouseDown && !cameraAnimation.playing) {
-            var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
-            var touchpadPinch = e.ctrlKey && !ctrlHeld // Browsers report a touchpad pinch as ctrl + wheel; with the key held, it's a real Ctrl + scroll
+            var deltaPixels = evt.deltaY * (evt.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : evt.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
+            var touchpadPinch = evt.ctrlKey && !ctrlHeld // Browsers report a touchpad pinch as ctrl + wheel; with the key held, it's a real Ctrl + scroll
             var speedup = touchpadPinch ? TOUCHPAD_PINCH_SPEEDUP : 1
             var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * speedup * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
             if (!touchpadPinch && isSwallowedGlide(deltaPixels)) { // The rest of a system glide that a landing has taken over
                 return
             }
-            if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
+            if ((zoomLevel > zoomMin && evt.deltaY > 0) || (zoomLevel < zoomMax && evt.deltaY < 0)) {
                 
                 currentPos = {...zoomCenter}
                 dragVelocity = { x: 0, y: 0 }
@@ -862,14 +860,14 @@ function onMouseWheel (e) {
                         pinchZoomHistory = []
                         touchpadPinching = true
                     }
-                    instantZoom(zoomAmount, e.x, e.y)
+                    instantZoom(zoomAmount, evt.x, evt.y)
                     pinchZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
                 } else {
-                    zoom(zoomAmount, e.x, e.y)
+                    zoom(zoomAmount, evt.x, evt.y)
                     wheelZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
                     wheelZoomHistory = wheelZoomHistory.filter(function (sample) { return performance.now() - sample.time < 300 })
                 }
-                noteZoomInput(e.x, e.y, -Math.sign(deltaPixels))
+                noteZoomInput(evt.x, evt.y, -Math.sign(deltaPixels))
                 showZoomIndicator()
                 if (!touchpadPinch && systemGlideStarted(deltaPixels)) {
                     startScrollLanding(deltaPixels)
@@ -1270,13 +1268,13 @@ function onDragStart () {
 }
 
 /** Callback occurring when a drag action ends. A release that ends a pinch starts its landing. */
-function onDragEnd (e) {
+function onDragEnd (evt) {
     const PINCH_RELEASE_MS = 150; // Fingers lifted within this of each other count as releasing the pinch
     if (previousAnchor && previousAnchor.fingers === 2) {
         pinchEndTime = performance.now()
     }
     previousAnchor = null
-    var remainingTouches = e.data.originalEvent.targetTouches
+    var remainingTouches = evt.data.originalEvent.targetTouches
     if (remainingTouches && remainingTouches.length > 0) { // A finger is still down; keep dragging with it
         return
     }
@@ -1312,24 +1310,24 @@ function changeTab (n) {
     }
 }
 
-function onClick (e) {
+function onClick (evt) {
     if (!dragging && !cameraAnimation.playing) {
-        zoomCenter = { x: Math.round(-(e.data.global.x - map.x) + window.innerWidth / 2), 
-                        y: Math.round(-(e.data.global.y - map.y) + window.innerHeight / 2) }
+        zoomCenter = { x: Math.round(-(evt.data.global.x - map.x) + window.innerWidth / 2), 
+                        y: Math.round(-(evt.data.global.y - map.y) + window.innerHeight / 2) }
         currentPos = { x: map.x, y: map.y }
         dragVelocity = { x: 0, y: 0 }
     }
 }
 
 /** Callback occurring when a drag move occurs */
-function onDragMove (e) {
+function onDragMove (evt) {
     if (mouseDown && !cameraAnimation.playing) {
         dragging = true
         var velocityX = 0
         var velocityY = 0
-        if (e.data.originalEvent.type === 'touchmove') {
+        if (evt.data.originalEvent.type === 'touchmove') {
             // One finger pans directly; two fingers are followed by smoothPinch on each frame
-            var anchor = touchAnchor(e.data.originalEvent.touches)
+            var anchor = touchAnchor(evt.data.originalEvent.touches)
             if (anchor.fingers === 2 && anchor.spread > 0) {
                 if (!previousAnchor || previousAnchor.fingers !== 2) { // A pinch starts where the fingers are
                     smoothedPinchAnchor = { x: anchor.x, y: anchor.y, spread: anchor.spread, time: performance.now() }
@@ -1342,8 +1340,8 @@ function onDragMove (e) {
             }
             previousAnchor = anchor
         } else {
-            velocityX = e.data.originalEvent.movementX
-            velocityY = e.data.originalEvent.movementY
+            velocityX = evt.data.originalEvent.movementX
+            velocityY = evt.data.originalEvent.movementY
         }
         dragVelocity = { x: velocityX, y: velocityY } // Zero while pinching: no inertia after a pinch
         map.x += velocityX
@@ -1762,14 +1760,14 @@ function onResize () {
     }
 }
 
-function changeCameraSpeed (e) {
-    cameraSpeed = _defaultCameraSpeed * parseFloat(e)
-    document.querySelector('#cameraSpeed + small').textContent = `${e}x`
+function changeCameraSpeed (v) {
+    cameraSpeed = _defaultCameraSpeed * parseFloat(v)
+    document.querySelector('#cameraSpeed + small').textContent = `${v}x`
 }
 
-function changeTourCameraSpeed (e) {
-    tourCameraSpeed = _defaultTourCameraSpeed * parseFloat(e)
-    document.querySelector('#tourCameraSpeed + small').textContent = `${e}x`
+function changeTourCameraSpeed (v) {
+    tourCameraSpeed = _defaultTourCameraSpeed * parseFloat(v)
+    document.querySelector('#tourCameraSpeed + small').textContent = `${v}x`
 }
 
 /** Changes the currently active layer.
