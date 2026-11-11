@@ -105,8 +105,39 @@
     padding-bottom:12px; /* extra spacing under logo */
 }
 
-/* Selector for Overworld - Interiors - Sevii islands */ 
+/* Layer selector */ 
+.layers-select-container{
+    position:relative;
+}
+.layers-select-container.notification-active .layers-notification{
+    display:block;
+}
+.layers-notification{
+    display:none;
+    position:absolute;
+    top:-14px;
+    right:-7px;
+    width:24px;
+    height:24px;
+    pointer-events:none;
+    z-index:1;
+}
+.layers-select-container.notification-active .layers-notification{
+    animation:layers-notification-bounce 8s ease-in-out infinite;
+}
+@keyframes layers-notification-bounce{
+    0%, 91%, 98%, 100%{ transform:translateY(0); }
+    92%{ transform:translateY(-8px); }
+    94%{ transform:translateY(0); }
+    96%{ transform:translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce){
+    .layers-select-container.notification-active .layers-notification{
+        animation:none;
+    }
+}
 #layers_select{
+    width:100%;
     appearance: menulist-button;
     -webkit-appearance: menulist-button;
     -moz-appearance: menulist-button;
