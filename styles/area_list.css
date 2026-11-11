@@ -163,6 +163,7 @@
     align-items:center;
     padding-right:3rem;
     white-space:nowrap;
+    color:#fff;
 }
 .area__info__artists-group a {
     display:inline-block;
