@@ -187,10 +187,26 @@
 .artist_mobile--multiple .area__info__artists-group[aria-hidden="true"] {
     display:none;
 }
+.artist_mobile--multiple .area__info__artists-group {
+    padding-right:0;
+}
 .artist_mobile--multiple .area__info__artists {
     width:max-content;
     max-width:100%;
     overflow-x:auto;
+}
+.artist_mobile--multiple.artist_mobile--scrolling .area__info__artists {
+    width:100%;
+    overflow:hidden;
+}
+.artist_mobile--multiple.artist_mobile--scrolling .area__info__artists-track {
+    animation:area-artists-scroll 16s linear infinite;
+}
+.artist_mobile--multiple.artist_mobile--scrolling .area__info__artists-group[aria-hidden="true"] {
+    display:flex;
+}
+.artist_mobile--multiple.artist_mobile--scrolling .area__info__artists-group {
+    padding-right:3rem;
 }
 .area__info__artists-group[aria-hidden="true"] a {
     pointer-events:none;
@@ -234,6 +250,15 @@
     }
     .area__info__artists {
         overflow-x:auto;
+    }
+    .artist_mobile--multiple.artist_mobile--scrolling .area__info__artists {
+        overflow-x:auto;
+    }
+    .artist_mobile--multiple.artist_mobile--scrolling .area__info__artists-group {
+        padding-right:0;
+    }
+    .artist_mobile--multiple.artist_mobile--scrolling .area__info__artists-group[aria-hidden="true"] {
+        display:none;
     }
 }
 

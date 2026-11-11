@@ -125,6 +125,7 @@ var redrawsCount = redrawImages.length;    // Total number of redraw layers
 loadImages()
 window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
+window.addEventListener('resize', updateMobileArtistTicker);
 window.addEventListener('keydown', onKeyDown);
 
 /** Loads new & old images pertaining to a single layer.
@@ -1351,14 +1352,43 @@ function updateMobileArtist(area) {
     images.forEach(function (image) {
         image.onload = function () {
             containerImage.style.display = '';
+            updateMobileArtistTicker();
         };
         image.onerror = function () {
             image.style.display = 'none';
+            updateMobileArtistTicker();
         };
         if (image.complete && image.naturalWidth > 0) {
             containerImage.style.display = '';
         }
     });
+    updateMobileArtistTicker();
+}
+
+function updateMobileArtistTicker() {
+    var artistContainer = document.querySelector('.artist_mobile');
+    var ticker = artistContainer.querySelector('.area__info__artists');
+    var artistGroup = ticker && ticker.querySelector('.area__info__artists-group:not([aria-hidden="true"])');
+
+    if (!artistGroup || !artistContainer.classList.contains('artist_mobile--multiple')) {
+        artistContainer.classList.remove('artist_mobile--scrolling');
+        return;
+    }
+
+    var wasHidden = artistContainer.style.display === 'none';
+    if (wasHidden) {
+        artistContainer.style.display = '';
+    }
+
+    var groupStyle = window.getComputedStyle(artistGroup);
+    var trailingPadding = parseFloat(groupStyle.paddingRight) || 0;
+    var textWidth = artistGroup.scrollWidth - trailingPadding;
+    var needsScrolling = ticker.clientWidth > 0 && textWidth > ticker.clientWidth + 1;
+    artistContainer.classList.toggle('artist_mobile--scrolling', needsScrolling);
+
+    if (wasHidden) {
+        artistContainer.style.display = 'none';
+    }
 }
 
 /** Event occurring when a keyboard key is pressed. */
