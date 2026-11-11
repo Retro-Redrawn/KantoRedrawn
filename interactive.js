@@ -937,7 +937,7 @@ function nearestPixelPerfectZoom (zoom) {
     var r = app.renderer.resolution         // Canvas pixels per CSS pixel
     var s = zoom * r                        // Canvas pixels per image pixel
     var pixelPerfectScale = s >= 1 ? Math.round(s) : 1 / Math.round(1 / s)
-    return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
+    return clamp(pixelPerfectScale / r, zoomMin, zoomMax)
 }
 
 /** Pixel-perfect zoom next after `zoom` in the direction of `direction` (positive: in, negative: out), within the zoom limits */
@@ -950,7 +950,7 @@ function nextPixelPerfectZoom (zoom, direction) {
     } else {
         next = s > 1 ? Math.ceil(s) - 1 : 1 / (Math.floor(1 / s) + 1)
     }
-    return Math.min(Math.max(next / r, zoomMin), zoomMax)
+    return clamp(next / r, zoomMin, zoomMax)
 }
 
 /** Advance a running snap or landing; otherwise, once zooming has stopped, 
@@ -1022,7 +1022,7 @@ function startPinchLanding () {
     }
     var projected = zoomLevel * Math.exp(velocity * GLIDE_MS)
     var target = document.querySelector('#continuousZoom').checked
-        ? Math.min(Math.max(projected, zoomMin), zoomMax)
+        ? clamp(projected, zoomMin, zoomMax)
         : nearestPixelPerfectZoom(projected)
     if (velocity * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
         target = nextPixelPerfectZoom(zoomLevel, velocity)
@@ -1041,7 +1041,7 @@ function startLanding (velocity, target, x, y) {
     var distance = Math.log(target / zoomLevel)
     var duration = snapDuration(distance)
     if (velocity * distance > 0) {
-        duration = Math.max(Math.min(3 * distance / velocity, duration), LANDING_MIN_MS)
+        duration = clamp(3 * distance / velocity, LANDING_MIN_MS, duration)
     }
     if (distance !== 0 || velocity !== 0) {
         snapAnimation = {
@@ -1098,7 +1098,7 @@ function startScrollLanding (deltaPixels) {
     var direction = -Math.sign(deltaPixels)
     var projected = zoomLevel * Math.exp(scrollVelocity * SCROLL_GLIDE_MS)
     var target = document.querySelector('#continuousZoom').checked
-        ? Math.min(Math.max(projected, zoomMin), zoomMax)
+        ? clamp(projected, zoomMin, zoomMax)
         : nearestPixelPerfectZoom(projected)
     if (direction * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
         target = nextPixelPerfectZoom(zoomLevel, direction)
@@ -1166,7 +1166,7 @@ function stepSnapAnimation () {
 function selectedZoom (areaSpecificZoom) {
     var setting = document.querySelector('#areaDefaultZoom').value
     var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
-    return Math.min(Math.max(zoom / displayDensity, zoomMin), zoomMax)
+    return clamp(zoom / displayDensity, zoomMin, zoomMax)
 }
 
 // Display density 
@@ -1705,6 +1705,10 @@ function checkAutoHighlight() {
 }
 
 //#region Math
+/** Limits a value to the range [min, max]. */
+function clamp (value, min, max) {
+    return Math.min(Math.max(value, min), max)
+}
 
 /** Basic LERP function. */
 function lerp (start, end, amt){
