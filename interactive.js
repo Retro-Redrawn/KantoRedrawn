@@ -29,7 +29,8 @@ var currentZoom = 1; //lerp
 var zoomCenter = {x: 0, y: 0}; // must be whole numbers
 var currentPos = {x: 0, y: 0}; //lerp
 var zoomIndicatorUntil = 0;
-var lastZoomInput = null;   
+var lastZoomInput = null;  
+var snapAnimation = null; // Snap or pinch landing in progress (see snapZoom, startPinchLanding) 
 var zoomInDevicePixels = true;  
 var displayDensity = 1; // Physical screen pixels per CSS pixel that the canvas is drawn at
 
@@ -78,18 +79,28 @@ var mouseDown = false;
 var dragging = false;
 var dragVelocity = { x: 0, y: 0 };
 var zoomMousePos = { x: 0, y: 0 };
-var previousTouch = null;
-var previousPinchDistance = 0;
-var pinchForTick = null;
+var previousAnchor = null; // Last touch anchor (see touchAnchor)
+var pinchAnchor = null;         // Latest two-finger anchor from the fingers
+var smoothedPinchAnchor = null; // Anchor the map follows; chases pinchAnchor (see smoothPinch)
+var pinchZoomHistory = [];      // Recent { time, logZoom } samples while pinching, for the release velocity
+var pinchEndTime = -Infinity;   // When the fingers last stopped pinching (see onDragEnd)
+var touchpadPinching = false;   // A touchpad pinch is in progress (see onMouseWheel, snapZoom)
+var ctrlHeld = false;           // The physical Ctrl key is down (a touchpad pinch sets evt.ctrlKey without pressing it)
+var displayedZoomVelocity = 0;  // d ln(zoom)/dt of the displayed zoom over the last frame, per ms (see tick)
+var lastTickTime = 0;
+var lastTickZoom = 1;
+var wheelZoomHistory = [];      // Recent { time, logZoom } of the wheel's target zoom, for the scroll velocity
+var scrollRun = null;           // Run of same-direction scroll events that don't grow (see systemGlideStarted)
+var swallowedGlide = null;      // System glide taken over by a landing; its remaining events are ignored
 
 // Track last pointer position so toasts can be shown at cursor location
 var lastPointerPos = { x: 0, y: 0 };
 // Capture pointerdown early so we have coordinates for inline onclick handlers
-document.addEventListener('pointerdown', function (e) {
+document.addEventListener('pointerdown', function (evt) {
     try {
-        lastPointerPos.x = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
-        lastPointerPos.y = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
-    } catch (ex) { }
+        lastPointerPos.x = evt.clientX || (evt.touches && evt.touches[0] && evt.touches[0].clientX) || 0;
+        lastPointerPos.y = evt.clientY || (evt.touches && evt.touches[0] && evt.touches[0].clientY) || 0;
+    } catch (e) { }
 }, {capture: true, passive: true});
 
 // Tour
@@ -126,6 +137,9 @@ loadImages()
 window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
 window.addEventListener('keydown', onKeyDown);
+window.addEventListener('keydown', function (evt) { if (evt.key === 'Control') { ctrlHeld = true } })
+window.addEventListener('keyup', function (evt) { if (evt.key === 'Control') { ctrlHeld = false } })
+window.addEventListener('blur', function () { ctrlHeld = false }) // Ctrl may be released in another window
 
 /** Loads new & old images pertaining to a single layer.
  * 
@@ -232,7 +246,7 @@ function init () {
                 autoDensity: true
             });
         globalThis.__PIXI_APP__ = app; 
-    } catch (error) {
+    } catch (e) {
         // alert('Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.')
         // document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p><a>View full image</a>'
         document.querySelector('#error').innerHTML =  '<p>Application cannot start - Please ensure Hardware Acceleration is enabled on your web browser.</p>'
@@ -545,7 +559,7 @@ function copyAreaLink(layerName, areaIdent) {
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(url).then(function() {
             showCopyToast('Link copied', lastPointerPos);
-        }).catch(function(err) {
+        }).catch(function(e) {
             CopyLinkPrompt(url);
         });
         return;
@@ -686,6 +700,10 @@ function getAreaImage(area, styleOverride = "") {
 
 /** Actions peformed on update (each frame). */
 function tick () {
+    var frameMs = performance.now() - lastTickTime
+    lastTickTime = performance.now()
+    displayedZoomVelocity = Math.log(currentZoom / lastTickZoom) / frameMs // Includes zoom changes made by input handlers
+    lastTickZoom = currentZoom
 
     let motion_blur_target = MOTIONBLUR_VIEWPORT ? viewport : map;
     motion_blur_target.filters = []
@@ -721,8 +739,8 @@ function tick () {
                 dragVelocity.y = dragVelocity.y * .9
                 if (Math.abs(dragVelocity.y) < 1) { dragVelocity.y = 0 }
             }
-            currentZoom.x = zoomCenter.x = map.x
-            currentZoom.y = zoomCenter.y = map.y
+            currentPos.x = zoomCenter.x = map.x
+            currentPos.y = zoomCenter.y = map.y
         } else if (!mouseDown && (currentPos.x !== zoomCenter.x || currentPos.y !== zoomCenter.y)) {
             var newx = lerp(currentPos.x, zoomCenter.x, 0.2)
             var newy = lerp(currentPos.y, zoomCenter.y, 0.2)
@@ -730,19 +748,7 @@ function tick () {
             map.x = currentPos.x
             map.y = currentPos.y
         }
-        if (pinchForTick) {
-            instantZoom(pinchForTick.factor, pinchForTick.x, pinchForTick.y)
-            noteZoomInput(pinchForTick.x, pinchForTick.y)
-            showZoomIndicator()
-            if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
-                if (!blurIsDisabled()) {
-                    motion_blur_target.filters = [blurFilter]
-                }
-                blurFilter.strength = .1
-                blurFilter.center = [ pinchForTick.x, pinchForTick.y ]
-            }
-            pinchForTick = null
-        }
+        smoothPinch(motion_blur_target)
         checkMapBoundaries()
         checkAutoHighlight()        
         if (urlFocus && dragging) {
@@ -819,37 +825,53 @@ function tick () {
 // Limits
 /** Caps the zoom level to the zoom extents. */
 function checkZoomLimit () {
-    if (zoomLevel <= zoomMin) { zoomLevel = zoomMin }
-    if (zoomLevel >= zoomMax) { zoomLevel = zoomMax }
+    zoomLevel = clamp(zoomLevel, zoomMin, zoomMax)
 }
 
 // Wheel input
 /** Callback occurring when the mousewheel is rotated.
- * (TODO: would like to support this functionality on the trackpad, too, if it doesn't already)
  * 
- * @param {*} e Event data relating to the mouse wheel action.
+ * @param {*} evt Event data relating to the mouse wheel action.
  */
-function onMouseWheel (e) {
+function onMouseWheel (evt) {
     const WHEEL_DELTA = 100; // px per mouse-wheel notch; typical 
     const NOTCHES_PER_2X = 3.5; // notches to zoom by 2x
     const WHEEL_ZOOM_SENSITIVITY = Math.LN2 / (NOTCHES_PER_2X * WHEEL_DELTA); // ≈ 0.00198
     const PIXELS_PER_LINE = WHEEL_DELTA / 3;  // a notch is typically 3 lines
     const TOUCHPAD_PINCH_SPEEDUP = 4; // A touchpad pinch (ctrl + wheel) zooms this many times faster than scrolling
-    if (e.target.id === 'canvas') {
-        e.preventDefault() // Over the map, the map zooms: no page scroll, and no browser zoom from a touchpad pinch
-        zoomMousePos = { x: e.x, y: e.y }
+    if (evt.target.id === 'canvas') {
+        evt.preventDefault() // Over the map, the map zooms: no page scroll, and no browser zoom from a touchpad pinch
+        zoomMousePos = { x: evt.x, y: evt.y }
         if (!mouseDown && !cameraAnimation.playing) {
-            var deltaPixels = e.deltaY * (e.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
-            var speedup = e.ctrlKey ? TOUCHPAD_PINCH_SPEEDUP : 1
+            var deltaPixels = evt.deltaY * (evt.deltaMode === WheelEvent.DOM_DELTA_LINE ? PIXELS_PER_LINE : evt.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1)
+            var touchpadPinch = evt.ctrlKey && !ctrlHeld // Browsers report a touchpad pinch as ctrl + wheel; with the key held, it's a real Ctrl + scroll
+            var speedup = touchpadPinch ? TOUCHPAD_PINCH_SPEEDUP : 1
             var zoomAmount = Math.exp(-(cameraSpeed/_defaultCameraSpeed) * speedup * WHEEL_ZOOM_SENSITIVITY * deltaPixels) 
-            if ((zoomLevel > zoomMin && e.deltaY > 0) || (zoomLevel < zoomMax && e.deltaY < 0)) {
+            if (!touchpadPinch && isSwallowedGlide(deltaPixels)) { // The rest of a system glide that a landing has taken over
+                return
+            }
+            if ((zoomLevel > zoomMin && evt.deltaY > 0) || (zoomLevel < zoomMax && evt.deltaY < 0)) {
                 
                 currentPos = {...zoomCenter}
                 dragVelocity = { x: 0, y: 0 }
 
-                zoom(zoomAmount, e.x, e.y)
-                noteZoomInput(e.x, e.y)
+                if (touchpadPinch) { // Touchpad pinch: follow it directly, like a touchscreen pinch, and land when it ends (see snapZoom)
+                    if (!touchpadPinching) {
+                        pinchZoomHistory = []
+                        touchpadPinching = true
+                    }
+                    instantZoom(zoomAmount, evt.x, evt.y)
+                    pinchZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
+                } else {
+                    zoom(zoomAmount, evt.x, evt.y)
+                    wheelZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
+                    wheelZoomHistory = wheelZoomHistory.filter(function (sample) { return performance.now() - sample.time < 300 })
+                }
+                noteZoomInput(evt.x, evt.y, -Math.sign(deltaPixels))
                 showZoomIndicator()
+                if (!touchpadPinch && systemGlideStarted(deltaPixels)) {
+                    startScrollLanding(deltaPixels)
+                }
             }
         }
     }
@@ -864,6 +886,7 @@ function zoom(s,x,y){
         currentZoom = zoomLevel 
         if (zoomCenter.x || zoomCenter.y) {
             map.x = zoomCenter.x; map.y = zoomCenter.y; 
+            checkMapBoundaries()
         }
         
     }
@@ -904,9 +927,9 @@ function instantZoom(s,x,y){
 }
 
 // Snapping to pixel-perfect zoom
-/** Record when, where the user last zoomed */
-function noteZoomInput (x, y) {
-    lastZoomInput = { time: performance.now(), x: x, y: y }
+/** Record when, where and in which direction (positive: in, negative: out) the user last zoomed */
+function noteZoomInput (x, y, direction) {
+    lastZoomInput = { time: performance.now(), x: x, y: y, direction: direction }
 }
 
 /** Pixel-perfect zoom closest to `zoom` at which image pixel size and canvas pixel size are equal up to integer multiplier */
@@ -914,32 +937,228 @@ function nearestPixelPerfectZoom (zoom) {
     var r = app.renderer.resolution         // Canvas pixels per CSS pixel
     var s = zoom * r                        // Canvas pixels per image pixel
     var pixelPerfectScale = s >= 1 ? Math.round(s) : 1 / Math.round(1 / s)
-    return Math.min(Math.max(pixelPerfectScale / r, zoomMin), zoomMax)
+    return clamp(pixelPerfectScale / r, zoomMin, zoomMax)
 }
 
-/** Once zooming has stopped, lerp to the nearest pixel-perfect zoom around the last zoom point. */
+/** Pixel-perfect zoom next after `zoom` in the direction of `direction` (positive: in, negative: out), within the zoom limits */
+function nextPixelPerfectZoom (zoom, direction) {
+    var r = app.renderer.resolution         // Canvas pixels per CSS pixel
+    var s = zoom * r                        // Canvas pixels per image pixel
+    var next
+    if (direction > 0) {
+        next = s >= 1 ? Math.floor(s) + 1 : 1 / (Math.ceil(1 / s) - 1)
+    } else {
+        next = s > 1 ? Math.ceil(s) - 1 : 1 / (Math.floor(1 / s) + 1)
+    }
+    return clamp(next / r, zoomMin, zoomMax)
+}
+
+/** Advance a running snap or landing; otherwise, once zooming has stopped, 
+ * start easing to the nearest pixel-perfect zoom around the last zoom point. */
 function snapZoom () {
-    const ZOOM_SNAP_DELAY_MS = 500; // How long zooming must have stopped before rounding
-    if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing) {
+    const ZOOM_SNAP_DELAY_MS = 80; // How long zooming must have stopped before landing
+    const TOUCHPAD_PINCH_END_MS = 35; // A touchpad pinch has ended once its events pause this long (about two frames)
+    if (touchpadPinching && performance.now() - (lastZoomInput ? lastZoomInput.time : 0) > TOUCHPAD_PINCH_END_MS) {
+        touchpadPinching = false
+        startPinchLanding()
+    }
+    if (snapAnimation) {
+        stepSnapAnimation()
+        return
+    }
+    if (document.querySelector('#continuousZoom').checked || !lastZoomInput || tourMode || mouseDown || cameraAnimation.playing || pinchAnchor) {
         return
     }
     if (dragVelocity.x !== 0 || dragVelocity.y !== 0) {
         return
     }
-    if (currentZoom !== zoomLevel || performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) {
+    if (performance.now() - lastZoomInput.time < ZOOM_SNAP_DELAY_MS) {
         return
     }
 
     var target = nearestPixelPerfectZoom(zoomLevel)
-    if (Math.abs(target - zoomLevel) > 1e-9) {
-        currentPos = { ...zoomCenter } // Animate from the current position, as onMouseWheel does
-        zoom(target / zoomLevel, lastZoomInput.x, lastZoomInput.y)
-        zoomLevel = target
-        var r = app.renderer.resolution // Land on whole canvas pixels
-        zoomCenter.x = Math.round(zoomCenter.x * r) / r
-        zoomCenter.y = Math.round(zoomCenter.y * r) / r
+    if (lastZoomInput.direction * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the last zoom direction: snap to the next one ahead
+        target = nextPixelPerfectZoom(zoomLevel, lastZoomInput.direction)
     }
+    var velocity = 0
+    if (currentZoom !== zoomLevel) {                 // Still easing: take over from what is on screen, at its speed
+        velocity = displayedZoomVelocity
+        zoomLevel = currentZoom
+        zoomCenter = { ...currentPos }
+    }
+    startLanding(velocity, target, lastZoomInput.x, lastZoomInput.y)
     lastZoomInput = null // Round once per zoom gesture
+}
+
+/** Duration of a snap from rest across a log-zoom distance of `distance`. */
+function snapDuration (distance) {
+    const SNAP_BASE_MS = 150;           // Duration of the shortest snap
+    const SNAP_MS_PER_LOG_ZOOM = 1000;  // Extra duration per unit of |ln(target / zoom)|
+    return SNAP_BASE_MS + SNAP_MS_PER_LOG_ZOOM * Math.abs(distance)
+}
+
+/**
+ * On releasing a pinch, glide on at the release velocity and come to rest where the glide would end:
+ * on the nearest pixel-perfect zoom, or exactly there with continuous zoom.
+ */
+function startPinchLanding () {
+    const GLIDE_MS = 150;                // Glide duration: zoom carries on at the release velocity for this duration
+    const VELOCITY_WINDOW_MS = 100;      // Time window over which velocity is averaged to give the release velocity
+    pinchEndTime = -Infinity             // One landing per release
+    pinchAnchor = smoothedPinchAnchor = null
+    var samples = pinchZoomHistory
+    pinchZoomHistory = []
+    if (!lastZoomInput) {                // The pinch never changed the zoom
+        return
+    }
+
+    var velocity = 0 // d ln(zoom)/dt, per ms
+    if (samples.length >= 2) {
+        var last = samples[samples.length - 1]
+        var first = samples.find(function (sample) { return last.time - sample.time <= VELOCITY_WINDOW_MS })
+        if (last.time > first.time) {
+            velocity = (last.logZoom - first.logZoom) / (last.time - first.time)
+        }
+    }
+    var projected = zoomLevel * Math.exp(velocity * GLIDE_MS)
+    var target = document.querySelector('#continuousZoom').checked
+        ? clamp(projected, zoomMin, zoomMax)
+        : nearestPixelPerfectZoom(projected)
+    if (velocity * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
+        target = nextPixelPerfectZoom(zoomLevel, velocity)
+    }
+    startLanding(velocity, target, lastZoomInput.x, lastZoomInput.y)
+    lastZoomInput = null
+}
+
+/**
+ * Start a landing from the current zoom, at `velocity` (d ln(zoom)/dt, per ms), onto `target`, around the
+ * screen point (x, y). Ahead of the motion it decelerates onto the target; behind it, or from rest, it takes
+ * as long as a snap.
+ */
+function startLanding (velocity, target, x, y) {
+    const LANDING_MIN_MS = 100;                         // Shortest landing
+    var distance = Math.log(target / zoomLevel)
+    var duration = snapDuration(distance)
+    if (velocity * distance > 0) {
+        duration = clamp(3 * distance / velocity, LANDING_MIN_MS, duration)
+    }
+    if (distance !== 0 || velocity !== 0) {
+        snapAnimation = {
+            from: zoomLevel,
+            to: target,
+            x: x,
+            y: y,
+            start: performance.now(),
+            velocity: velocity,
+            duration: duration,
+            last: zoomLevel,                            // Zoom the snap last set; any other change cancels the snap
+        }
+    }
+}
+
+/**
+ * Whether the system's glide has taken over a touchpad scroll: a run of same-direction scroll events that don't
+ * grow, starting from a large enough event, that has dropped by GLIDE_DROP. Fingers on the touchpad give
+ * fluctuating amounts; the system glide gives smoothly shrinking ones.
+ */
+function systemGlideStarted (deltaPixels) {
+    const GLIDE_DROP = 0.25;            // How much the run must have dropped from its first event
+    const GLIDE_MIN_EVENTS = 4;         // Shortest run, first event included
+    const GLIDE_MIN_START_PX = 5;       // Runs starting smaller are too slow to tell apart from fingers
+    const GLIDE_EVENT_GAP_MS = 100;     // A system glide sends an event every frame; a longer gap starts a new run
+    var size = Math.abs(deltaPixels)
+    var sign = Math.sign(deltaPixels)
+    var now = performance.now()
+    if (scrollRun && sign === scrollRun.sign && size <= scrollRun.size && now - scrollRun.time < GLIDE_EVENT_GAP_MS) {
+        scrollRun.size = size
+        scrollRun.count++
+        scrollRun.time = now
+    } else {
+        scrollRun = { sign: sign, startSize: size, size: size, count: 1, startTime: now, time: now }
+    }
+    return scrollRun.count >= GLIDE_MIN_EVENTS && scrollRun.startSize >= GLIDE_MIN_START_PX
+        && scrollRun.size <= (1 - GLIDE_DROP) * scrollRun.startSize
+}
+
+/**
+ * Take over a touchpad scroll once the system's glide has started: land from the displayed zoom at its current
+ * speed, in the scroll's direction, on the level nearest where the scroll velocity would carry the scroll's
+ * target zoom, and ignore the rest of the system glide.
+ */
+function startScrollLanding (deltaPixels) {
+    const SCROLL_GLIDE_MS = 200;        // Projection time: about the system glide's own time constant
+    const VELOCITY_WINDOW_MS = 100;     // Time window before the glide over which the scroll velocity is averaged
+    var glideStart = scrollRun.startTime
+    var samples = wheelZoomHistory.filter(function (sample) { return sample.time <= glideStart && glideStart - sample.time <= VELOCITY_WINDOW_MS })
+    var scrollVelocity = 0 // d ln(zoom)/dt of the scroll's target zoom, per ms
+    if (samples.length >= 2 && samples[samples.length - 1].time > samples[0].time) {
+        scrollVelocity = (samples[samples.length - 1].logZoom - samples[0].logZoom) / (samples[samples.length - 1].time - samples[0].time)
+    }
+    var direction = -Math.sign(deltaPixels)
+    var projected = zoomLevel * Math.exp(scrollVelocity * SCROLL_GLIDE_MS)
+    var target = document.querySelector('#continuousZoom').checked
+        ? clamp(projected, zoomMin, zoomMax)
+        : nearestPixelPerfectZoom(projected)
+    if (direction * Math.log(target / zoomLevel) < 0) { // The nearest level is behind the motion: land on the next one ahead instead
+        target = nextPixelPerfectZoom(zoomLevel, direction)
+    }
+    var velocity = currentZoom !== zoomLevel ? displayedZoomVelocity : 0
+    zoomLevel = currentZoom                             // Land from what is on screen
+    zoomCenter = { ...currentPos }
+    startLanding(velocity, target, lastZoomInput.x, lastZoomInput.y)
+    swallowedGlide = { sign: Math.sign(deltaPixels), size: Math.abs(deltaPixels), time: performance.now() }
+    scrollRun = null
+    wheelZoomHistory = []
+    lastZoomInput = null
+}
+
+/** Whether a scroll event is the rest of a system glide that a landing has taken over: same direction, not growing. */
+function isSwallowedGlide (deltaPixels) {
+    const GLIDE_EVENT_GAP_MS = 100;     // A system glide sends an event every frame; a longer gap ends it
+    if (!swallowedGlide) {
+        return false
+    }
+    var size = Math.abs(deltaPixels)
+    var now = performance.now()
+    if (Math.sign(deltaPixels) === swallowedGlide.sign && size <= swallowedGlide.size && now - swallowedGlide.time < GLIDE_EVENT_GAP_MS) {
+        swallowedGlide.size = size
+        swallowedGlide.time = now
+        return true
+    }
+    swallowedGlide = null               // A new gesture
+    return false
+}
+
+/**
+ * Advance a running snap: log zoom follows a cubic Hermite curve around the snap point, 
+ * from `snapAnimation.from` with the starting velocity to `snapAnimation.to` at rest. 
+ * With zero starting velocity this is a smoothstep.
+ */
+function stepSnapAnimation () {
+    if (cameraAnimation.playing || zoomLevel !== snapAnimation.last) { // Interrupted by another zoom or camera move
+        snapAnimation = null
+        return
+    }
+    var u = Math.min((performance.now() - snapAnimation.start) / snapAnimation.duration, 1)
+    var distance = Math.log(snapAnimation.to / snapAnimation.from)
+    var logOffset = distance * u * u * (3 - 2 * u)                                       // Smoothstep: from rest to rest
+        + snapAnimation.velocity * snapAnimation.duration * u * (1 - u) * (1 - u)        // Starting velocity, fading out
+    var zoomNow = snapAnimation.from * Math.exp(logOffset)
+    instantZoom(zoomNow / zoomLevel, snapAnimation.x, snapAnimation.y)
+    showZoomIndicator()
+    if (u === 1) {
+        var r = app.renderer.resolution // Land exactly on the target and on whole canvas pixels
+        zoomLevel = currentZoom = snapAnimation.to
+        map.scale.set(zoomLevel)
+        map.x = zoomCenter.x = Math.round(zoomCenter.x * r) / r
+        map.y = zoomCenter.y = Math.round(zoomCenter.y * r) / r
+        checkMapBoundaries()
+        currentPos = { ...zoomCenter }
+        snapAnimation = null
+        return
+    }
+    snapAnimation.last = zoomLevel
 }
 
 // Zoom options
@@ -947,7 +1166,7 @@ function snapZoom () {
 function selectedZoom (areaSpecificZoom) {
     var setting = document.querySelector('#areaDefaultZoom').value
     var zoom = setting === 'area' ? areaSpecificZoom : parseFloat(setting)
-    return Math.min(Math.max(zoom / displayDensity, zoomMin), zoomMax)
+    return clamp(zoom / displayDensity, zoomMin, zoomMax)
 }
 
 // Display density 
@@ -1042,18 +1261,28 @@ function onAreaBorderToggled(isHidden) {
 
 /** Callback occurring when a drag action starts. */
 function onDragStart () {
-    previousTouch = null
+    previousAnchor = null
     previousPinchDistance = 0
     mouseDown = true
     dragVelocity = { x: 0, y: 0 }
 }
 
-/** Callback occurring when a drag action ends. */
-function onDragEnd () {
-    previousTouch = null
-    previousPinchDistance = 0
+/** Callback occurring when a drag action ends. A release that ends a pinch starts its landing. */
+function onDragEnd (evt) {
+    const PINCH_RELEASE_MS = 150; // Fingers lifted within this of each other count as releasing the pinch
+    if (previousAnchor && previousAnchor.fingers === 2) {
+        pinchEndTime = performance.now()
+    }
+    previousAnchor = null
+    var remainingTouches = evt.data.originalEvent.targetTouches
+    if (remainingTouches && remainingTouches.length > 0) { // A finger is still down; keep dragging with it
+        return
+    }
     mouseDown = false
     dragging = false
+    if (performance.now() - pinchEndTime < PINCH_RELEASE_MS) {
+        startPinchLanding()
+    }
 }
 
 /** Changes a menu tab. */
@@ -1081,69 +1310,102 @@ function changeTab (n) {
     }
 }
 
-function onClick (e) {
+function onClick (evt) {
     if (!dragging && !cameraAnimation.playing) {
-        zoomCenter = { x: Math.round(-(e.data.global.x - map.x) + window.innerWidth / 2), 
-                        y: Math.round(-(e.data.global.y - map.y) + window.innerHeight / 2) }
+        zoomCenter = { x: Math.round(-(evt.data.global.x - map.x) + window.innerWidth / 2), 
+                        y: Math.round(-(evt.data.global.y - map.y) + window.innerHeight / 2) }
         currentPos = { x: map.x, y: map.y }
         dragVelocity = { x: 0, y: 0 }
     }
 }
 
 /** Callback occurring when a drag move occurs */
-function onDragMove (e) {
+function onDragMove (evt) {
     if (mouseDown && !cameraAnimation.playing) {
-        if (e.data.originalEvent.type === 'touchmove' && e.data.originalEvent.touches && e.data.originalEvent.touches.length === 2) {
-            var touches = e.data.originalEvent.touches
-            var pinchX = touches[0].pageX - touches[1].pageX
-            var pinchY = touches[0].pageY - touches[1].pageY
-            var currentPinchDistance = Math.sqrt((pinchX * pinchX) + (pinchY * pinchY))
-            // console.log(currentPinchDistance, currentPinchDistance > previousPinchDistance ? 'Zoom In' : 'Zoom Out')
-            
-            if (previousPinchDistance) {
-                var diff = Math.abs(currentPinchDistance - previousPinchDistance)
-                if (diff > 1) {
-                    // Set x and y positions relative to pinch middle
-                    if (currentPinchDistance > previousPinchDistance) { // Zoom / Pinch outwards
-                        pinchForTick = {
-                            factor: 1.06,
-                            x: touches[0].pageX - (pinchX / 2),
-                            y: touches[0].pageY - (pinchY / 2),
-                        }
-                    }
-                    if (currentPinchDistance < previousPinchDistance) { // Zoom / Pinch inwards
-                        pinchForTick = {
-                            factor: .94,
-                            x: touches[0].pageX - (pinchX / 2),
-                            y: touches[0].pageY - (pinchY / 2),
-                        }
-                    }
-                }
-                
-            }
-            previousPinchDistance = currentPinchDistance
-        } 
         dragging = true
         var velocityX = 0
         var velocityY = 0
-        if (e.data.originalEvent.type === 'touchmove') {
-            var touch = e.data.originalEvent.touches[0]
-            if (previousTouch && touch) {
-                velocityX = touch.pageX - previousTouch.pageX
-                velocityY = touch.pageY - previousTouch.pageY
+        if (evt.data.originalEvent.type === 'touchmove') {
+            // One finger pans directly; two fingers are followed by smoothPinch on each frame
+            var anchor = touchAnchor(evt.data.originalEvent.touches)
+            if (anchor.fingers === 2 && anchor.spread > 0) {
+                if (!previousAnchor || previousAnchor.fingers !== 2) { // A pinch starts where the fingers are
+                    smoothedPinchAnchor = { x: anchor.x, y: anchor.y, spread: anchor.spread, time: performance.now() }
+                    pinchZoomHistory = []
+                }
+                pinchAnchor = anchor
+            } else if (anchor.fingers === 1 && previousAnchor && previousAnchor.fingers === 1) {
+                velocityX = anchor.x - previousAnchor.x
+                velocityY = anchor.y - previousAnchor.y
             }
-            previousTouch = touch || null
+            previousAnchor = anchor
         } else {
-            velocityX = e.data.originalEvent.movementX
-            velocityY = e.data.originalEvent.movementY
+            velocityX = evt.data.originalEvent.movementX
+            velocityY = evt.data.originalEvent.movementY
         }
-        dragVelocity = { x: velocityX, y: velocityY }
-        map.x += dragVelocity.x
-        map.y += dragVelocity.y
+        dragVelocity = { x: velocityX, y: velocityY } // Zero while pinching: no inertia after a pinch
+        map.x += velocityX
+        map.y += velocityY
         zoomCenter = { x: map.x, y: map.y }
         currentPos = zoomCenter
         
         checkMapBoundaries()
+    }
+}
+
+/**
+ * Move the smoothed pinch anchor part of the way to the fingers' anchor, then pan 
+ * the map by its midpoint change and zoom by its spread change around it. 
+ * When one finger lifts, it finishes catching up; when both lift, startPinchLanding takes over.
+ */
+function smoothPinch (motion_blur_target) {
+    const PINCH_SMOOTHING_MS = 30; // Time constant: the map trails the fingers by about this much; 0 follows them exactly
+    if (!pinchAnchor) {
+        return
+    }
+    var logSpreadGap = Math.log(pinchAnchor.spread / smoothedPinchAnchor.spread)
+    var caughtUp = Math.hypot(pinchAnchor.x - smoothedPinchAnchor.x, pinchAnchor.y - smoothedPinchAnchor.y) < 0.5 && Math.abs(logSpreadGap) < 0.001
+    var smoothingFactor = (caughtUp || PINCH_SMOOTHING_MS <= 0) ? 1 : 1 - Math.exp(-(performance.now() - smoothedPinchAnchor.time) / PINCH_SMOOTHING_MS)
+    var smoothedX = smoothedPinchAnchor.x + smoothingFactor*(pinchAnchor.x - smoothedPinchAnchor.x)
+    var smoothedY = smoothedPinchAnchor.y + smoothingFactor*(pinchAnchor.y - smoothedPinchAnchor.y)
+    var zoomFactor = Math.exp(smoothingFactor * logSpreadGap) // Spread eases in log scale, like zoom
+
+    map.x += smoothedX - smoothedPinchAnchor.x
+    map.y += smoothedY - smoothedPinchAnchor.y
+    zoomCenter = { x: map.x, y: map.y }
+    currentPos = zoomCenter
+    if (zoomFactor !== 1) {
+        instantZoom(zoomFactor, smoothedX, smoothedY)
+        noteZoomInput(smoothedX, smoothedY, Math.sign(zoomFactor - 1))
+        showZoomIndicator()
+        if (map.scale.x < zoomMax && map.scale.x > zoomMin) {
+            if (!blurIsDisabled()) {
+                motion_blur_target.filters = [blurFilter]
+            }
+            blurFilter.strength = Math.abs(zoomFactor - 1) // Same blur per zoom speed as the wheel animation
+            blurFilter.center = [ smoothedX, smoothedY ]
+        }
+    }
+    smoothedPinchAnchor = { x: smoothedX, y: smoothedY, spread: smoothedPinchAnchor.spread * zoomFactor, time: performance.now() }
+
+    var stillPinching = mouseDown && previousAnchor && previousAnchor.fingers === 2
+    if (stillPinching) {
+        pinchZoomHistory.push({ time: performance.now(), logZoom: Math.log(zoomLevel) })
+    }
+    if (smoothingFactor === 1 && !stillPinching) {
+        pinchAnchor = smoothedPinchAnchor = null
+    }
+}
+
+/** Point a touch drag follows: the finger, or the midpoint of the first two fingers and their spread. */
+function touchAnchor (touches) {
+    var first = touches[0]
+    var second = touches[1] || touches[0]
+    return {
+        x: (first.pageX + second.pageX) / 2,
+        y: (first.pageY + second.pageY) / 2,
+        spread: Math.hypot(first.pageX - second.pageX, first.pageY - second.pageY),
+        fingers: Math.min(touches.length, 2),
     }
 }
 
@@ -1443,6 +1705,10 @@ function checkAutoHighlight() {
 }
 
 //#region Math
+/** Limits a value to the range [min, max]. */
+function clamp (value, min, max) {
+    return Math.min(Math.max(value, min), max)
+}
 
 /** Basic LERP function. */
 function lerp (start, end, amt){
@@ -1498,14 +1764,14 @@ function onResize () {
     }
 }
 
-function changeCameraSpeed (e) {
-    cameraSpeed = _defaultCameraSpeed * parseFloat(e)
-    document.querySelector('#cameraSpeed + small').textContent = `${e}x`
+function changeCameraSpeed (v) {
+    cameraSpeed = _defaultCameraSpeed * parseFloat(v)
+    document.querySelector('#cameraSpeed + small').textContent = `${v}x`
 }
 
-function changeTourCameraSpeed (e) {
-    tourCameraSpeed = _defaultTourCameraSpeed * parseFloat(e)
-    document.querySelector('#tourCameraSpeed + small').textContent = `${e}x`
+function changeTourCameraSpeed (v) {
+    tourCameraSpeed = _defaultTourCameraSpeed * parseFloat(v)
+    document.querySelector('#tourCameraSpeed + small').textContent = `${v}x`
 }
 
 /** Changes the currently active layer.
