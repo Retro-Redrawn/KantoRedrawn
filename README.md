@@ -61,7 +61,8 @@ area.js - Defines location regions and provides credit to artists
     - order: the position of an area screen within the area list. Should be sequential but doesn't need to be ordered.
     - title: Display name for an entry
     - ident: File identity for an entry; should match the file name without the file extension.
-    - artist: artist name.
+    - artistId: ID of the primary artist, as defined in the artist data.
+    - collaborators: optional array of additional artist IDs for this area. The primary artist and collaborators are all credited, with their names and avatars shown together. For example: `collaborators: ["ARTIST_2", "ARTIST_3"]`.
     - artistImageOverride: Name of the artist's avatar filename if the artist name doesn't match it.
     - animation: set to true if this area has a .gif version
     - point: pixel position of the area when displayed. x, y refers to the top-left co-ordinate. width and height are collected automatically from the source image(s) via a shell script (details below) and can be left as 0 for now.
