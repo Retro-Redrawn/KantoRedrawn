@@ -83,7 +83,7 @@ var activeLayerIndex = 0;
  * Whether the layers dropdown notification is currently active.
  * @type {boolean}
  */
-var layersNotificationActive = true;
+var layersNotificationActive = false;
 
 //#endregion
 
