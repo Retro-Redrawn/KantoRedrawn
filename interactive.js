@@ -46,6 +46,7 @@ if (urlFocus&& urlFocus.layer) {
     }
 }
 setActiveLayerDOM();
+document.querySelector('.layers-select-container').classList.toggle('notification-active', layersNotificationActive);
 
 
 
