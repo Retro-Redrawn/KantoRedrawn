@@ -46,8 +46,6 @@ if (urlFocus&& urlFocus.layer) {
     }
 }
 setActiveLayerDOM();
-document.querySelector('.layers-select-container').classList.toggle('notification-active', layersNotificationActive);
-
 
 
 // Map
@@ -132,6 +130,10 @@ var layerNewImages = fillWithArrays(Array.apply(null, Array(layerCount)));    //
 var layerOldImages = fillWithArrays(Array.apply(null, Array(layerCount)));
 var redrawImages = [layerNewImages, layerOldImages];
 var redrawsCount = redrawImages.length;    // Total number of redraw layers
+const layersSelectContainer = document.querySelector('.layers-select-container');
+if (layersSelectContainer) {
+    layersSelectContainer.classList.toggle('notification-active', layersNotificationActive);
+}
 
 // Start up
 loadImages()
