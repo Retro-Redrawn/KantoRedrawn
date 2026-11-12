@@ -155,7 +155,15 @@
 .area__info__artists-track {
     display:flex;
     width:max-content;
+}
+.area__info__artists--scrolling .area__info__artists-track {
     animation:area-artists-scroll 16s linear infinite;
+}
+.area__info__artists-group[aria-hidden="true"] {
+    display:none;
+}
+.area__info__artists--scrolling .area__info__artists-group[aria-hidden="true"] {
+    display:flex;
 }
 .area__info__artists-group {
     display:flex;
@@ -167,7 +175,6 @@
 }
 .area__info__artists-group a {
     display:inline-block;
-    font-size:1.3em;
 }
 .area__info__artists:hover .area__info__artists-track {
     animation-play-state:paused;

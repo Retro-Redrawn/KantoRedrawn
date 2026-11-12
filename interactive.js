@@ -139,6 +139,7 @@ if (layersSelectContainer) {
 loadImages()
 window.addEventListener('wheel', onMouseWheel, { passive: false }); // Not passive, so it can stop the browser zooming the page
 window.addEventListener('resize', onResize);
+window.addEventListener('resize', updateMenuCollaboratorScrolling);
 window.addEventListener('resize', updateMobileArtistTicker);
 window.addEventListener('keydown', onKeyDown);
 window.addEventListener('keydown', function (evt) { if (evt.key === 'Control') { ctrlHeld = true } })
@@ -542,6 +543,8 @@ function setUpAreas () {
         </li>`
         areaList.innerHTML += html
     }
+
+    updateMenuCollaboratorScrolling()
 }
 
 function getAreaArtists(area) {
@@ -601,6 +604,22 @@ function getArtistNamesHTML(artists) {
             ? `<a class="area__info__artist" href="${artist.url}" target="_blank" title="${artist.name}">${artist.name}</a>`
             : `<a class="area__info__artist">${artist.name}</a>`;
     }).join('');
+}
+
+function updateMenuCollaboratorScrolling() {
+    var tickers = document.querySelectorAll('#areas .area__info__artists');
+    tickers.forEach(function (ticker) {
+        var artistGroup = ticker.querySelector('.area__info__artists-group:not([aria-hidden="true"])');
+        if (!artistGroup || ticker.clientWidth === 0) {
+            ticker.classList.remove('area__info__artists--scrolling');
+            return;
+        }
+
+        var groupStyle = window.getComputedStyle(artistGroup);
+        var trailingPadding = parseFloat(groupStyle.paddingRight) || 0;
+        var textWidth = artistGroup.scrollWidth - trailingPadding;
+        ticker.classList.toggle('area__info__artists--scrolling', textWidth > ticker.clientWidth + 1);
+    });
 }
 
 // Copy area link to clipboard (uses current path + query params)
