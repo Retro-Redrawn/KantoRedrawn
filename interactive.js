@@ -347,8 +347,9 @@ function setupCanvas (useDefaultPosition) {
     // Set default position/zoom
     if (useDefaultPosition) {
         map.scale.set(zoomMin)
-        map.x = -((map.width) - (window.innerWidth / 2)) * map.scale.x
-        map.y = -((map.height) - (window.innerHeight / 2)) * map.scale.x
+        const bounds = map.getLocalBounds()
+        map.x = window.innerWidth / 2 - (bounds.x + bounds.width) * map.scale.x
+        map.y = window.innerHeight / 2 - (bounds.y + bounds.height) * map.scale.y
 
         currentPos.x = map.x
         currentPos.y = map.y
@@ -1785,12 +1786,22 @@ function newTourArea () {
 
 // #endregion
 
-/** Caps map position to the window inner extents. */
+/** Keeps the map content within reach of the viewport center. */
 function checkMapBoundaries () {
-    if (map.x > Math.floor(window.innerWidth / 2)) { map.x = Math.floor(window.innerWidth / 2) }
-    if (map.y > Math.floor(window.innerHeight / 2)) { map.y = Math.floor(window.innerHeight / 2) }
-    if (map.x < Math.floor(window.innerWidth / 2) - map.width) { map.x = Math.floor(window.innerWidth / 2) - map.width }
-    if (map.y < Math.floor(window.innerHeight / 2) - map.height) { map.y = Math.floor(window.innerHeight / 2) - map.height }
+    const bounds = map.getLocalBounds()
+    const minX = window.innerWidth / 2 - (bounds.x + bounds.width) * map.scale.x
+    const maxX = window.innerWidth / 2 - bounds.x * map.scale.x
+    const minY = window.innerHeight / 2 - (bounds.y + bounds.height) * map.scale.y
+    const maxY = window.innerHeight / 2 - bounds.y * map.scale.y
+
+    const boundedX = clamp(map.x, minX, maxX)
+    const boundedY = clamp(map.y, minY, maxY)
+    if (boundedX !== map.x) {
+        map.x = currentPos.x = zoomCenter.x = boundedX
+    }
+    if (boundedY !== map.y) {
+        map.y = currentPos.y = zoomCenter.y = boundedY
+    }
 }
 
 function checkAutoHighlight() {
